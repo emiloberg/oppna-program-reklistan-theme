@@ -1,0 +1,20 @@
+// This file may only have mixins which combine other mixins.
+//
+// Reason best described with an example:
+// If we repeatedly want to change the color of headings, paragraph text and
+// links; Instead of writing 3 lines, we merge them together to 1 mixin 
+// such as this:
+//
+// @mixin comb-color-negative {
+// 		@include headings-negative();
+// 		@include paragraph-negative();
+// 		@include links-negative();
+// }
+//
+// Namespace all combines with 'comb-', e.g. '@mixin comb-color-negative'.
+
+@mixin comb-color-negative {
+	@include headings-negative();
+	@include paragraph-negative();
+	@include links-negative();
+}

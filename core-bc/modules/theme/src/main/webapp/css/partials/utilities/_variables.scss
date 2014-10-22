@@ -1,0 +1,49 @@
+@import '../../aui_variables';
+
+
+// Breakpoints
+// -------------------------
+$bp-xsmall : 600px;
+$bp-small : 800px;
+$bp-medium : 1000px;
+$bp-large : 1199px;
+
+
+// Colors - contansts
+// -------------------------
+
+
+
+
+// Colors
+// -------------------------
+$text-color:			$textColor; //From _aui_variables
+
+
+// Fonts
+// -------------------------
+$base-font-size: 	$baseFontSize; //From _aui_variables
+$base-line-height:	$baseLineHeight; //From _aui_variables
+$base-font-weight:	400;
+
+$top-bar-font-size: 14px;
+
+$font-weight-normal: 		normal;
+$font-weight-bold:			bold;
+$font-weight-light: 		200;
+$font-weight-ultralight: 	100;
+
+
+// Padding and sizes
+// -------------------------
+$portlet-padding: 			0 10px;
+
+$top-bar-height:			40px;
+$menu-bar-height:			90px;
+$menu-bar-small-height:		70px;
+
+$dropdown-arrow-position: 	45px;
+
+$default-border-radius:		3px; //Compass named default variable.
+
+

@@ -1,0 +1,19 @@
+@import 'partials/utilities/mixins';
+
+// We all know that, no matter how hard we may try, sometimes we do need to
+// use quick fixes, hacks and questionable techniques in our code.
+// It happens, whether we like to admit it or not. Whilst this isn’t ideal,
+// we have to do it from time to time; all of us.
+//
+// The real problem, though, is that we rarely go back and tidy these
+// things up. They slip through the cracks, get ignored, go unnoticed,
+// and stay for good. This we do not have to do.
+//
+// What is needed is a way of allowing these hacks when necessary,
+// but making sure that they don’t go unnoticed and unresolved.
+// Enter shame.css.
+//
+// Read More:
+// http://csswizardry.com/2013/04/shame-css/
+// --------
+

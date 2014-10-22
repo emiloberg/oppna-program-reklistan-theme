@@ -1,0 +1,23 @@
+// This file contains all overall scaffolding which is not part of the grid.
+// Things like main content padding/margins
+// --------
+
+// Wrapper
+#wrapper {
+	padding: 1em 1em;
+
+	@include medium {
+		padding: 2em 5em;
+	}
+}
+
+
+.portlet-column-content.empty {
+	padding: 0;
+}
+
+.page-edit.controls-visible {
+	.portlet-column-content.empty {
+		padding: 50px;
+	}	
+}

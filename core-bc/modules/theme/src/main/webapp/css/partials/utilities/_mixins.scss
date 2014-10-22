@@ -1,0 +1,166 @@
+// Mediaqueries
+@mixin xsmall {
+  @media screen and (min-width : $bp-xsmall) {
+    @content;
+  }
+}
+
+@mixin small {
+	@media screen and (min-width : $bp-small) {
+		@content;
+	}
+}
+
+@mixin medium {
+	@media screen and (min-width : $bp-medium) {
+		@content;
+	}
+}
+
+@mixin large {
+	@media screen and (min-width : $bp-large) {
+		@content;
+	}
+}
+
+@mixin max-medium {
+  @media screen and (max-width : $bp-medium) {
+    @content;
+  }
+}
+
+// Clearfix
+// --------
+// For clearing floats like a boss h5bp.com/q
+@mixin clearfix {
+  *zoom: 1;
+
+  &:before,
+  &:after {
+    display: table;
+    content: '';
+    // Fixes Opera/contenteditable bug:
+    // http://nicolasgallagher.com/micro-clearfix-hack/#comment-36952
+    line-height: 0;
+  }
+
+  &:after {
+    clear: both;
+  }
+}
+
+// Colors when user select text. Preferebly set in body {}
+// --------
+@mixin markedtext($bg-color, $font-color) {
+  ::selection {
+    background: $bg-color;
+    color: $font-color;
+  }
+  ::-moz-selection {
+    background: $bg-color;
+    color: $font-color;
+  }
+}
+
+
+// Edge to edge. 
+// Used if we want to put background color edge to edge of the screen, even
+// to the left/right of the grid, without having to close the grid. 
+// Most commonly used together with background-color.
+// --------
+%edgetoedge {
+  margin-left: -9999px;
+  padding-left: 9999px;
+  margin-right: -9999px;
+  padding-right: 9999px;
+}
+
+// Creating a triangle
+// --------
+@mixin triangle ($size, $color, $direction) {
+  height: 0;
+  width: 0;
+
+  @if ($direction == up) or ($direction == down) or ($direction == right) or ($direction == left) {
+    border-color: transparent;
+    border-style: solid;
+    border-width: $size / 2;
+
+    @if $direction == up {
+      border-bottom-color: $color;
+
+    } @else if $direction == right {
+      border-left-color:   $color;
+
+    } @else if $direction == down {
+      border-top-color:    $color;
+
+    } @else if $direction == left {
+      border-right-color:  $color;
+    }
+  }
+
+  @else if ($direction == up-right) or ($direction == up-left) {
+    border-top: $size solid $color;
+
+    @if $direction == up-right {
+      border-left:  $size solid transparent;
+
+    } @else if $direction == up-left {
+      border-right: $size solid transparent;
+    }
+  }
+
+  @else if ($direction == down-right) or ($direction == down-left) {
+    border-bottom: $size solid $color;
+
+    @if $direction == down-right {
+      border-left:  $size solid transparent;
+
+    } @else if $direction == down-left {
+      border-right: $size solid transparent;
+    }
+  }
+}
+
+
+
+// Underline. For creating beautiful underlining (commonly of links)
+// Read more https://github.com/Team-Sass/toolkit
+// --------
+@mixin underline($background: #fff, $color: #000, $clear-descenders: true, $distance: 1, $width: 2, $extend: false) {
+
+  $px: .0625em;
+
+  @include underline-core($extend);
+
+  @if mixin-exists(background-image) and function-exists(linear-gradient) {
+    @include background-image(
+      linear-gradient(bottom, $background 75%, $color 75%)
+    );
+  }
+  @else {
+    background-image: linear-gradient(to top, $background 75%, $color 75%);
+  }
+  background-size: (2 * $px) ((1 + $width) * $px);
+  background-position: 0 (($width) * $px) + $distance;
+
+  @if $clear-descenders {
+    text-shadow: (1 * $px) (1 * $px) 0 $background, (-1 * $px) 0 0 $background;
+  }
+}
+
+@mixin underline-core($extend: null) {
+  $extend: if($extend != null, $extend, toolkit-get('underline extend'));
+
+  @if $extend {
+    @include dynamic-extend('underline') {
+      @include underline-core(false);
+    }
+  }
+  @else {
+    text-decoration: none;
+    background-repeat: repeat-x;
+  }
+}
+
