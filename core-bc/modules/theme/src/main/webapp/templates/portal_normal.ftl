@@ -140,91 +140,34 @@ MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
 
 
 
-<#-- CODEPEN START -->
-<!--
-	Based on the contacts video from Meaningful Transitions
-	https://www.google.com/design/spec/animation/meaningful-transitions.html#
--->
-
-<div class="app-wrapper">
-  <header class="app-bar">
-    <button id="menuToggle" class="app-bar-button menu-toggle menu-is-closed"><i class="fa fa-bars"></i></button>
-    <h1 id="appHeadline" class="app-headline">All Contacts</h1>
-    <button id="sortToggle" class="app-bar-button sort-toggle"><i class="fa fa-sort-alpha-asc"></i></button>
-  </header>
-  <div class="app-body">
-    <table id="contactList" class="contact-list">
-      <tbody>
-      </tbody>
-    </table>
-    <table id="contactInfo" class="contact-info">
-      <tbody>
-        <tr id="contactUsername" class="contact-info-item"><td class="contact-info-icon"><i class="fa fa-comment-o"></i></td><td class="contact-info-detail">joedoe</td></tr>
-        <tr id="contactEmail" class="contact-info-item"><td class="contact-info-icon"><i class="fa fa-envelope-o"></i></td><td class="contact-info-detail">john.smith@email.com</td></tr>
-        <tr id="contactHomeNumber" class="contact-info-item"><td class="contact-info-icon"><i class="fa fa-phone"></i></td><td class="contact-info-detail">(555) 987-1234</td></tr>
-        <tr id="contactWorkNumber" class="contact-info-item"><td class="contact-info-icon"><i class="fa fa-building-o"></i></td><td class="contact-info-detail">(555) 987-1234</td></tr>
-        <tr id="contactAddress" class="contact-info-item"><td class="contact-info-icon"><i class="fa fa-home"></i></td><td class="contact-info-detail">123 Elm Street</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-<#-- CODEPEN END -->
-
-
-<#--
-
-<div id="appbar" class="shadow-z-2">
-	<div class="inner">
-		<span class="title">Apa <a href="#" class="temp-go">Go go go</a> | <a href="#" class="temp-reset">Reset</a></span>
-	</div>
-</div>
-
-
-
-
-
-<div class="wrapper first">
-
-	<div id="frame-wrapper">
-		<div id="main-menu-placeholder" class="frame-dimensions"></div>
-		<div id="recdrugs-placeholder" class="frame-dimensions"></div>
-		<div id="recdrugs-details-placeholder" class="frame-dimensions"></div>
-	</div>
-
-</div>
-
-
-
-
-
-
-
-
-
+<div id="main-menu-placeholder"></div>
 <script id="main-menu-template" type="text/x-handlebars-template">
+	<div class="appbar shadow-z-2">
+		<div class="inner">
+			<span class="title">Apa <a href="#" class="temp-go">Go go go</a> | <a href="#" class="temp-reset">Reset</a></span>
+		</div>
+	</div>
 	{{#each this}}
-		<a href="#" class="main-menu-link list-item" data-link="{{chapter.0.fieldValue}}" data-fieldnumber={{@index}}>
+		<a href="#" class="main-menu-link list-item" data-link="{{chapter.0.fieldValue}}" data-fieldnumber="{{@index}}">
 			<div class="list-text typo-subhead">{{chapter.0.fieldValue}}</div>
-			<div id="recdrugs-menu-placeholder-{{@index}}"></div>
+			<div id="recdrugs-menu-placeholder-{{@index}}" class="submenu" ></div>
 		</a>
 	{{/each}}
 
 </script>
-
-
 <script id="recdrugs-menu-template" type="text/x-handlebars-template">
 	<div class="list">
 	{{#each this}}
 		{{#each heading}}
-			<a href="#" class="recdrugs-link" data-chapter="{{../chapter.0.fieldValue}}" data-link="{{fieldValue}}">
-				<div class="list-item">
-					<div class="list-text typo-subhead">{{fieldValue}}</div>
-				</div>
+			<a href="#" class="recdrugs-link list-item" data-chapter="{{../chapter.0.fieldValue}}" data-link="{{fieldValue}}" data-fieldnumber="{{@index}}">
+				<div class="list-text typo-subhead">{{fieldValue}}</div>
+				<div id="recdrugs-details-placeholder-{{@index}}" class="details" ></div>
 			</a>
 		{{/each}}
 	{{/each}}
 	</div>
 </script>
+
 
 
 
@@ -260,7 +203,7 @@ MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
 
 
 
--->
+
 
 <#--
 <a href="/group/control_panel">log in</a>

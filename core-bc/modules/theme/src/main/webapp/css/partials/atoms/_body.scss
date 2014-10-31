@@ -2,7 +2,8 @@ $body-background-color: $color-gray-gallery;
 
 body {
 	@include text-color-primary();
-	background-color: $body-background-color;
+	//background-color: $body-background-color;
+	background-color: $color-white;
 }
 
 /* asdf1231234adsfadsfsadfasdf4 */

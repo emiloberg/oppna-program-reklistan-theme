@@ -1,6 +1,6 @@
-#appbar {
+.appbar {
 	@include text-inverse();
-	position: fixed;
+	//position: fixed;
 	top: 0;
 	background-color: $appbar-background-color;
 	height: $mobile-appbar-height;
