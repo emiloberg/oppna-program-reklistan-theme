@@ -1,0 +1,9 @@
+#appbar {
+	@include text-inverse();
+	position: fixed;
+	top: 0;
+	background-color: $appbar-background-color;
+	height: $mobile-appbar-height;
+	line-height: $mobile-appbar-height;
+	width: 100%;
+}

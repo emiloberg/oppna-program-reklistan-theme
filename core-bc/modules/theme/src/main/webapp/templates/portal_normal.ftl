@@ -9,11 +9,25 @@
 <#-- 
 
 http://purecss.io/
+https://github.com/fians/Waves
+http://fian.my.id/marka/
+
+
+MATERIAL DESIGN TYPOGRAPHY: http://codepen.io/zavoloklom/pen/IkaFL
+
+MATERIAL DESIGN FONTS: http://zavoloklom.github.io/material-design-iconic-font/
+
+MATERIAL DESIGN MORPHING ICONS: http://codepen.io/eredo/pen/kwLAK
+
+
+MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
 
 -->
 
 <head>
 	<title>${the_title} - ${company_name}</title>
+
+
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="description" content="">
@@ -23,16 +37,16 @@ http://purecss.io/
 	<link class="lfr-css-file" href="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/css/custom.css?browserId=${browserId}&themeId=${themeDisplay.themeId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_utc}" rel="stylesheet" type="text/css">
 
 
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/js/lib/jquery/dist/jquery.min.js" type="text/javascript"></script>
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/js/lib/modernizr/modernizr.js" type="text/javascript"></script>
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/js/lib/x2js/xml2json.min.js" type="text/javascript"></script>
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/js/lib/bluebird/js/browser/bluebird.js" type="text/javascript"></script>
+	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/jquery/dist/jquery.min.js" type="text/javascript"></script>
+	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/modernizr/modernizr.js" type="text/javascript"></script>
+	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/handlebars/handlebars.min.js" type="text/javascript"></script>
 
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/js/lib/superagent/superagent.js" type="text/javascript"></script>
-
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/js/lib/handlebars/handlebars.min.js" type="text/javascript"></script>
+	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/svg4everybody/svg4everybody.ie8.min.js" type="text/javascript"></script>
 
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/js/main.js?browserId=${browserId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_utc}" type="text/javascript"></script>
+
+	<link href='http://fonts.googleapis.com/css?family=Roboto:500,900italic,900,400italic,100,700italic,300,700,500italic,100italic,300italic,400' rel='stylesheet' type='text/css'>
+
 
 </head>
 
@@ -40,6 +54,11 @@ http://purecss.io/
 
 
 <style>
+	body {
+		font-family: 'Roboto', sans-serif;
+		font-weight: 400;
+	}
+
 	.heading {
 		color: #0000CC;
 		text-transform: uppercase;
@@ -69,7 +88,7 @@ http://purecss.io/
 
 	.infobox {
 		width: 200px;
-		background-color: #eee;
+		background-color: #fff;
 		border-left: 5px solid #00C;
 		padding: 10px;
 		margin-top: 10px;
@@ -92,39 +111,126 @@ http://purecss.io/
 
 	.heading.item-0 {
 		padding-top: 0;
-	}	
+	}
+
+	.temp-spacer {
+		width: 350px;
+		float: left;
+		padding: 20px;
+		margin: 20px;
+		background-color: #eee;
+	}
+
+	.temp-hide {
+		display: none;
+	}
+
+
+	#temp-iphone {
+
+    background: url('${images_folder}/theme/temp-iphone-hand.png');
+    background-size: 326px 674px;
+    background-repeat: no-repeat;
+    width: 326px;
+    height: 674px;
+	}
+
 
 </style>
 
 
-Hello World
 
-<div id="menu-placeholder"></div>
+<#-- CODEPEN START -->
+<!--
+	Based on the contacts video from Meaningful Transitions
+	https://www.google.com/design/spec/animation/meaningful-transitions.html#
+-->
 
-<script id="menu-template" type="text/x-handlebars-template">
-<h2>Meny</h2>
-<ul>
-{{#each this}}
-	{{#each heading}}
-		<li>{{fieldValue}}</li>
+<div class="app-wrapper">
+  <header class="app-bar">
+    <button id="menuToggle" class="app-bar-button menu-toggle menu-is-closed"><i class="fa fa-bars"></i></button>
+    <h1 id="appHeadline" class="app-headline">All Contacts</h1>
+    <button id="sortToggle" class="app-bar-button sort-toggle"><i class="fa fa-sort-alpha-asc"></i></button>
+  </header>
+  <div class="app-body">
+    <table id="contactList" class="contact-list">
+      <tbody>
+      </tbody>
+    </table>
+    <table id="contactInfo" class="contact-info">
+      <tbody>
+        <tr id="contactUsername" class="contact-info-item"><td class="contact-info-icon"><i class="fa fa-comment-o"></i></td><td class="contact-info-detail">joedoe</td></tr>
+        <tr id="contactEmail" class="contact-info-item"><td class="contact-info-icon"><i class="fa fa-envelope-o"></i></td><td class="contact-info-detail">john.smith@email.com</td></tr>
+        <tr id="contactHomeNumber" class="contact-info-item"><td class="contact-info-icon"><i class="fa fa-phone"></i></td><td class="contact-info-detail">(555) 987-1234</td></tr>
+        <tr id="contactWorkNumber" class="contact-info-item"><td class="contact-info-icon"><i class="fa fa-building-o"></i></td><td class="contact-info-detail">(555) 987-1234</td></tr>
+        <tr id="contactAddress" class="contact-info-item"><td class="contact-info-icon"><i class="fa fa-home"></i></td><td class="contact-info-detail">123 Elm Street</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<#-- CODEPEN END -->
+
+
+<#--
+
+<div id="appbar" class="shadow-z-2">
+	<div class="inner">
+		<span class="title">Apa <a href="#" class="temp-go">Go go go</a> | <a href="#" class="temp-reset">Reset</a></span>
+	</div>
+</div>
+
+
+
+
+
+<div class="wrapper first">
+
+	<div id="frame-wrapper">
+		<div id="main-menu-placeholder" class="frame-dimensions"></div>
+		<div id="recdrugs-placeholder" class="frame-dimensions"></div>
+		<div id="recdrugs-details-placeholder" class="frame-dimensions"></div>
+	</div>
+
+</div>
+
+
+
+
+
+
+
+
+
+<script id="main-menu-template" type="text/x-handlebars-template">
+	{{#each this}}
+		<a href="#" class="main-menu-link list-item" data-link="{{chapter.0.fieldValue}}" data-fieldnumber={{@index}}>
+			<div class="list-text typo-subhead">{{chapter.0.fieldValue}}</div>
+			<div id="recdrugs-menu-placeholder-{{@index}}"></div>
+		</a>
 	{{/each}}
-{{/each}}	
-</ul>
+
+</script>
+
+
+<script id="recdrugs-menu-template" type="text/x-handlebars-template">
+	<div class="list">
+	{{#each this}}
+		{{#each heading}}
+			<a href="#" class="recdrugs-link" data-chapter="{{../chapter.0.fieldValue}}" data-link="{{fieldValue}}">
+				<div class="list-item">
+					<div class="list-text typo-subhead">{{fieldValue}}</div>
+				</div>
+			</a>
+		{{/each}}
+	{{/each}}
+	</div>
 </script>
 
 
 
-
-
-
-<div id="my-placeholder"></div>
-
-
-<script id="some-template" type="text/x-handlebars-template">
-<h2>Rekommenderade läkemedel</h2>
-{{#each this}}
-	<h3>{{fieldValue}}</h3>
-	{{#each heading}}
+<script id="recdrugs-details-template" type="text/x-handlebars-template">
+	<h2>Rekommenderade läkemedel</h2>
+	{{#each this}}
 		<div class="item-{{@index}} heading">{{fieldValue}}</div>
 		{{#each subheading1}}
 			{{#if fieldValue}}<div class="item-{{@index}} subheading">{{fieldValue}}</div>{{/if}}
@@ -136,9 +242,7 @@ Hello World
 						{{#if fieldValue}}
 							<div class="substance">
 								{{fieldValue}}
-								{{#check replaceable eq="true"}}
-									(ERSÄTTNINGSBART)
-								{{/check}}
+								{{#if replaceable.0.fieldValue}}(ersättningsbart){{/if}}
 							</div>
 						{{/if}}
 						{{#each drug}}
@@ -152,15 +256,15 @@ Hello World
 			{{#if fieldValue}}<div class="item-{{@index}} infobox">{{fieldValue}}</div>{{/if}}
 		{{/each}}
 	{{/each}}
-{{/each}}
 </script>
 
 
 
+-->
 
-
-
+<#--
 <a href="/group/control_panel">log in</a>
+-->
 
         <!-- TODO: Add Google Analytics-->
         <script>
@@ -174,9 +278,11 @@ Hello World
             */
         </script>
 
+		<div class="temp-hide">
 		${portletDisplay.recycle()}
 		${portletDisplay.setTitle(the_title)}
 		${theme.wrapPortlet("portlet.ftl", content_include)}
+		</div>
 
 </body>
 

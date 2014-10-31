@@ -1,23 +1,21 @@
-// This file contains all overall scaffolding which is not part of the grid.
-// Things like main content padding/margins
-// --------
+.inner {
+	padding-left: 16px;
+	padding-right: 16px;
+}
 
-// Wrapper
-#wrapper {
-	padding: 1em 1em;
+.wrapper {
+	max-width: 100%;
 
-	@include medium {
-		padding: 2em 5em;
+	@include small {
+		max-width: 960px;
+		margin: 0 auto;
+		padding-left: 16px;
+		padding-right: 16px;		
+	}
+
+	&.first {
+		margin-top: $mobile-appbar-height + $panel-margin;
 	}
 }
 
-
-.portlet-column-content.empty {
-	padding: 0;
-}
-
-.page-edit.controls-visible {
-	.portlet-column-content.empty {
-		padding: 50px;
-	}	
-}
+/* */

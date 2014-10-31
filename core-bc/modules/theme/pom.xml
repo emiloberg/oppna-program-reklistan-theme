@@ -17,6 +17,12 @@
 		<finalName>reklistan-theme</finalName>
 		<plugins>
 			<plugin>
+			  <artifactId>maven-war-plugin</artifactId>
+			  <configuration>
+					<warSourceExcludes>**/material-design-icons/</warSourceExcludes>
+			 </configuration>
+			</plugin>			
+			<plugin>
 				<groupId>com.liferay.maven.plugins</groupId>
 				<artifactId>liferay-maven-plugin</artifactId>
 				<version>6.2.10.9</version>
@@ -58,7 +64,7 @@
 	</dependencies>
 	<properties>
 		<liferay.auto.deploy.dir>${project.build.directory}/dummy-deploy</liferay.auto.deploy.dir>
-		<liferay.theme.parent>_styled</liferay.theme.parent>
+		<liferay.theme.parent>_unstyled</liferay.theme.parent>
 		<liferay.theme.type>ftl</liferay.theme.type>
 		<liferay.version>6.2.10.8</liferay.version>
 	</properties>
