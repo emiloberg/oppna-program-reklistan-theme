@@ -18,6 +18,7 @@ body {
 @import 'partials/utilities-material/mixins';
 @import 'partials/utilities-material/cards';
 @import 'partials/utilities-material/shadows';
+@import 'partials/utilities-material/material-design-iconic-font';
 
 
 @import 'partials/atoms/body';
@@ -27,5 +28,6 @@ body {
 
 
 @import 'partials/molecules/appbar';
+@import 'partials/molecules/recommended-drugs';
 
 @import 'partials/shame';

@@ -3,6 +3,16 @@ $text-inverse-color: $color-white;
   color: $text-inverse-color;
 }
 
+@mixin link-inverse {
+    a,
+    a:hover,
+    a:visited,
+    a:active {
+        color: $color-white;
+    }
+
+}
+
 // Mediaqueries
 @mixin xsmall {
   @media screen and (min-width : $bp-xsmall) {

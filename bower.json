@@ -17,6 +17,7 @@
     "jquery": "~2.1.1",
     "modernizr": "~2.8.3",
     "handlebars": "~2.0.0",
-    "svg4everybody": "~1.0.0"
+    "svg4everybody": "~1.0.0",
+    "material-design-iconic-font": "git://github.com/zavoloklom/material-design-iconic-font.git#~1.0.1"
   }
 }

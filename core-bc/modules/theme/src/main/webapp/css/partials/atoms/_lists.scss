@@ -1,124 +1,275 @@
-$list-text-padding: 16px;
-$list-padding-top: 8px;
-
-
-
-.list-separator {
-	@include color-list-separator();
-	height: 1px;
+.app-wrapper {
+    background-color: #fff;
+    margin: 0 auto;
+    position: relative;
+    width: 400px;
+    overflow: hidden;
 }
 
-.list-item {	
-	//@extend .shadow-z-1;
-	display: block;
-	background-color: $color-white;
-	padding: 8px 16px;
-//		background-color: $color-white;
-}
+.app-body {
+    padding: 53px 0 0;
 
-.list-item:hover {
-	//@include color-list-hover();
-}
+	height: 450px;
+	-ms-overflow-style: none;
+	overflow-y: auto;
+	overflow-x: hidden; 
 
-.list-text {
-	padding: 8px 0;
-}	
-
-.list-icon {
-	float: left;
-	width: 40px;
-	height: 40px;
-	
-	background-color: red;
-}
-
-.list-circle {
-	position: relative;
-	float: left;
-	width: 40px;
-	margin-right: 16px;
-	padding: 20px 0;
-	line-height: 0;
-	border-radius: 50%;
-	text-align: center;		
-	
-
-	font-size: 8px;
-
-	background: $color-blue;
-	color: $color-white;
-	
+	&.hide-mainmenu {
+		overflow-y: hidden; // Prevent scrolling the main menu when main menu isn't showing.
+	}  
 }
 
 /**
- * CODEPEN
+ * Appbar
+ *
+ */
+.appbar {
+    position: absolute;
+    width: 100%;
+    z-index: 3;  
+
+    height: 56px;
+
+    background-color: $color-blue;
+	@include text-inverse();
+	@include link-inverse();
+    @extend .shadow-z-1;
+
+    transition: background-color 500ms, box-shadow 500ms;
+}
+
+
+
+.app-title {
+    cursor: default;
+    display: inline-block;
+    font-size: 24px;
+    font-weight: normal;
+    margin: 0;
+    line-height: 56px;    
+}
+
+#appbar-menu-button {
+	cursor: pointer;
+    background: none;
+    border: none;
+	@include text-inverse();
+
+    outline: none;
+
+    padding: 16px;
+    height: 24px;
+    width: 24px;
+
+    float: left;
+
+
+ 	&:hover {
+    	color: #c1c1c1;
+	}
+
+	&:active {
+    	color: #919191;
+	}
+}
+
+
+/**
+ * Main menu
  *
  */
 
 
 
-
-.submenu {
-	transform: translateY(60px);
-	opacity: 0;
-	transition: all .4s linear;	
+.mainmenu {
+	display: block;
 }
 
-.submenu-visible {
-	
-	.appbar {
-		transform: translateY(-53px);
-		transition: all .4s linear;	
+.mainmenu-item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    position: relative;
+    display: block;
+    opacity: 1;
+    overflow: hidden;
+
+    -webkit-user-select: none; /** Make so that user can't select text in menues */
+    -moz-user-select: none;
+    -ms-user-select: none;  
+ 
+    -webkit-transition-property: opacity, top, -webkit-transform;
+    -webkit-transition-duration: 500ms;
+    -webkit-transform: translateY(0);
+
+    transition-property: opacity, top, transform, background-color;
+    transition-duration: 500ms;
+    transform: translateY(0);
+}
+
+.mainmenu-item-text {
+    cursor: inherit;
+
+    position: relative;
+    z-index: 2;
+
+	@extend .typo-list;
+	padding: 14px 16px;
+
+    -webkit-transition: -webkit-transform 500ms;
+
+    transition: transform 500ms;
+}
+
+
+.selected-submenu-item,
+.selected-mainmenu-item {
+	cursor: default;
+    pointer-events: none;
+    border: none;
+    background-color: $color-gray-temp;
+}
+
+.selected-mainmenu-item .mainmenu-item-text {
+    -webkit-transform: scale(1.2) translateX(28px);
+    transform: scale(1.2) translateX(28px);
+}
+
+.hide-mainmenu .mainmenu-item:not(.selected-mainmenu-item) {
+    pointer-events: none; /* do something better than this, not supported in IE10, polyfill? */
+
+    -webkit-transform: translateY(50px);
+    transform: translateY(50px);
+    opacity: 0;
+}
+
+
+
+/**
+ * Submenu
+ *
+ */
+
+#section,
+#submenu {
+    position: absolute;
+    opacity: 0;
+    top: 106px; /* Submenu position after animation finished when showing */
+    width: 100%;
+    z-index: 1;    
+
+    -webkit-transform: translateY(375px); /* Submenu position, before showing */
+    transform: translateY(375px);
+    -webkit-transition: -webkit-transform 500ms, opacity 1000ms;
+    transition: transform 500ms, opacity 1000ms;
+}
+
+#section.visible,
+#submenu.visible {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+}
+
+.submenu-item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+}
+
+
+.submenu-item-text {
+	@extend .typo-list;
+	padding: 14px 16px;
+}
+
+
+/**
+ * Section
+ *
+ */
+.hide-submenu {
+	#submenu-tabs {
+		opacity: 0;
+	    -webkit-transform: translateY(375px); /* Submenu position, before showing */
+	    transform: translateY(375px);
+	    -webkit-transition: -webkit-transform 500ms, opacity 1000ms;
+	    transition: transform 500ms, opacity 1000ms;		
 	}
 
-	> a {
-		transition: all 0.3s linear;	
+	.submenu-item:not(.selected-submenu-item) {
+		opacity: 0;
+	    -webkit-transform: translateY(375px); /* Submenu position, before showing */
+	    transform: translateY(375px);
+	    -webkit-transition: -webkit-transform 500ms, opacity 1000ms;
+	    transition: transform 500ms, opacity 1000ms;		
+	}
 
-		&:not(.has-submenu) {
-			transform: translateY(40px);
-			opacity:0;
-		}			
+	.selected-submenu-item {
+		transition: transform 500ms;
 
-		&.has-submenu {
+		.submenu-item-text {
+		    -webkit-transform: scale(1.2) translateX(28px);
+		    transform: scale(1.2) translateX(28px);
+		}
 
-			.submenu {
-				transform: translateY(0);
-				opacity: 1;
-			}
+	}
+
+}
+
+.section-details {
+	padding: 16px;
+}
+
+
+
+/**
+ * TABS
+ *
+ */
+
+ .md-tabs {
+
+ 	width: 100%;
+
+	@extend .typo-list;
+
+	@extend .shadow-z-2-no-top;
+
+	.tab {
+		display: block;
+		width: 50%;
+		box-sizing: border-box;
+		padding: 14px 16px 12px 14px;
+		float: left;
+		text-align: center;
+
+		background-color: $tabs-background-color;
+		border-bottom: 2px solid $tabs-background-color;
+
+		text-transform: uppercase;
+		font-size: 14px;
+		font-weight: 500;
+
+		&.selected {
+			border-bottom-color: $tabs-marking-color;
 		}
 	}
-}
 
 
+	a {
+		color: $tabs-color;
 
+		&:visited {
+			color: $tabs-color;				
+		}
 
-.details {
-	transform: translateY(60px);
-	opacity: 0;
-	transition: all .4s linear;	
-}
-
-.details-visible {
-	
-	.appbar {
-		transform: translateY(-53px);
-		transition: all .4s linear;	
-	}
-
-	> a a {	
-		transition: all 0.3s linear;
-		&:not(.has-details) {
-			transform: translateY(40px);
-			opacity:0;
+		&:active {
+			color: $tabs-color;				
 		}			
 
-		&.has-details {
-
-			.details {
-				transform: translateY(0);
-				opacity: 1;
-			}
+		&:hover {
+			color: $tabs-color;				
 		}
 	}
-}
 
+
+}

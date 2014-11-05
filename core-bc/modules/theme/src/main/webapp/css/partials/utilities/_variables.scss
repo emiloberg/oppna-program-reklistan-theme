@@ -13,9 +13,19 @@ $bp-large : 1199px;
 // -------------------------
 $color-white: rgb(255, 255, 255);
 $color-black: rgb(0, 0, 0);
-$color-blue: rgb(66, 133, 244);
+$color-blue: rgb(66, 133, 244); // VGR Blue: rgb(56, 98, 144)
+$color-teal: rgb(0, 150, 136);
+$color-brown: rgb(121, 85, 72);
 $color-gray-gallery: rgb(236, 236, 236);
 
+
+$color-gray-temp: rgb(250, 250, 250);
+$color-gray-temp1: rgb(150, 150, 150);
+
+
+$tabs-color: $color-gray-temp1;
+$tabs-background-color: $color-gray-temp;
+$tabs-marking-color: $color-blue;
 
 @mixin color-list-separator {
 	background-color: rgb(218, 218, 218);
@@ -24,7 +34,7 @@ $color-gray-gallery: rgb(236, 236, 236);
 
 @mixin color-list-hover {
 	background-color: rgb(242, 242, 242);
-	background-color: rgba(0, 0, 0, 0.05)
+	background-color: rgba(0, 0, 0, 0.05);
 }
 
 

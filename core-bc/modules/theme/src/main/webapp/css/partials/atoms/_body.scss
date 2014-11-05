@@ -2,8 +2,8 @@ $body-background-color: $color-gray-gallery;
 
 body {
 	@include text-color-primary();
-	//background-color: $body-background-color;
-	background-color: $color-white;
-}
+	background-color: $body-background-color;
 
-/* asdf1231234adsfadsfsadfasdf4 */
+	font-family: 'Roboto', sans-serif;
+	font-weight: 400;	
+}

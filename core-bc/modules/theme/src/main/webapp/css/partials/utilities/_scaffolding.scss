@@ -4,13 +4,16 @@
 }
 
 .wrapper {
+
+	background-color: $color-white;
+
 	max-width: 100%;
 
 	@include small {
-		max-width: 960px;
+		max-width: 500px;
 		margin: 0 auto;
-		padding-left: 16px;
-		padding-right: 16px;		
+//		padding-left: 16px;
+//		padding-right: 16px;
 	}
 
 	&.first {

@@ -31,7 +31,7 @@ MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="description" content="">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
 	<link href="http://localhost:6080/reklistan-theme/images/favicon.ico" rel="Shortcut Icon">
 	<link class="lfr-css-file" href="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/css/custom.css?browserId=${browserId}&themeId=${themeDisplay.themeId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_utc}" rel="stylesheet" type="text/css">
@@ -53,126 +53,40 @@ MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
 <body class="${css_class}">
 
 
-<style>
-	body {
-		font-family: 'Roboto', sans-serif;
-		font-weight: 400;
-	}
-
-	.heading {
-		color: #0000CC;
-		text-transform: uppercase;
-		font-weight: bold;
-	}
-
-	.subheading {
-		color: #0000CC;
-		font-weight: bold;	
-	}
-
-	.subheading-2 {
-		color: #0000CC;
-	}
-
-	.area {
-		font-weight: bold;
-	}
-
-	.substance {
-
-	}
-
-	.drug {
-		padding-left: 10px;
-	}
-
-	.infobox {
-		width: 200px;
-		background-color: #fff;
-		border-left: 5px solid #00C;
-		padding: 10px;
-		margin-top: 10px;
-	}
-
-	/* paddings */
-	.area,
-	.subheading-2 {
-		padding-top: 15px;
-	}
-
-	.area.item-0,
-	.subheading-2.item-0 {
-		padding-top: 0;
-	}
-
-	.heading {
-		padding-top: 45px;
-	}
-
-	.heading.item-0 {
-		padding-top: 0;
-	}
-
-	.temp-spacer {
-		width: 350px;
-		float: left;
-		padding: 20px;
-		margin: 20px;
-		background-color: #eee;
-	}
-
-	.temp-hide {
-		display: none;
-	}
 
 
-	#temp-iphone {
+<#-- APP -->
 
-    background: url('${images_folder}/theme/temp-iphone-hand.png');
-    background-size: 326px 674px;
-    background-repeat: no-repeat;
-    width: 326px;
-    height: 674px;
-	}
-
-
-</style>
-
-
-
-<div id="main-menu-placeholder"></div>
 <script id="main-menu-template" type="text/x-handlebars-template">
-	<div class="appbar shadow-z-2">
-		<div class="inner">
-			<span class="title">Apa <a href="#" class="temp-go">Go go go</a> | <a href="#" class="temp-reset">Reset</a></span>
-		</div>
-	</div>
 	{{#each this}}
-		<a href="#" class="main-menu-link list-item" data-link="{{chapter.0.fieldValue}}" data-fieldnumber="{{@index}}">
-			<div class="list-text typo-subhead">{{chapter.0.fieldValue}}</div>
-			<div id="recdrugs-menu-placeholder-{{@index}}" class="submenu" ></div>
-		</a>
+		<div class="mainmenu-item" data-chapter="{{chapter.0.fieldValue}}">
+			<div class="mainmenu-item-text">
+				{{chapter.0.fieldValue}}
+			</div>
+		</div>
 	{{/each}}
-
 </script>
+
 <script id="recdrugs-menu-template" type="text/x-handlebars-template">
-	<div class="list">
+	<div id="submenu-tabs" class="md-tabs">
+		<a href="#" class="tab">Terapiråd</a>
+		<a href="#" class="tab selected">Rek. läkemedel</a>
+	</div>
 	{{#each this}}
 		{{#each heading}}
-			<a href="#" class="recdrugs-link list-item" data-chapter="{{../chapter.0.fieldValue}}" data-link="{{fieldValue}}" data-fieldnumber="{{@index}}">
-				<div class="list-text typo-subhead">{{fieldValue}}</div>
-				<div id="recdrugs-details-placeholder-{{@index}}" class="details" ></div>
-			</a>
+			<div class="submenu-item" data-chapter="{{../chapter.0.fieldValue}}" data-section="{{fieldValue}}">
+				<div class="submenu-item-text">{{fieldValue}}</div>
+			</div>
 		{{/each}}
 	{{/each}}
-	</div>
 </script>
 
-
-
-
-<script id="recdrugs-details-template" type="text/x-handlebars-template">
-	<h2>Rekommenderade läkemedel</h2>
+<script id="recdrugs-section-template" type="text/x-handlebars-template">
+	<div id="section-tabs" class="md-tabs">
+		<a href="#" class="tab">Terapiråd</a>
+		<a href="#" class="tab selected">Rek. läkemedel</a>
+	</div>
+	<div class="section-details">
 	{{#each this}}
 		<div class="item-{{@index}} heading">{{fieldValue}}</div>
 		{{#each subheading1}}
@@ -199,8 +113,35 @@ MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
 			{{#if fieldValue}}<div class="item-{{@index}} infobox">{{fieldValue}}</div>{{/if}}
 		{{/each}}
 	{{/each}}
+	</div>
 </script>
 
+
+
+
+<div class="app-wrapper">
+  <header class="appbar">
+    <div id="appbar-menu-button"><i class="md md-menu md-2x"></i></div>
+    <h1 id="appHeadline" class="app-title">REK-listan</h1>
+  </header>
+  <div class="app-body">
+
+    <div class="mainmenu">
+    	<div id="main-menu-placeholder"></div>
+    </div>
+
+    <div id="submenu">
+		<div id="recdrugs-menu-placeholder" class="submenu"></div>
+    </div>
+
+    <div id="section">
+		<div id="recdrugs-section-placeholder" class="section"></div>
+    </div>    
+
+  </div>
+</div>
+
+<#-- /APP -->
 
 
 

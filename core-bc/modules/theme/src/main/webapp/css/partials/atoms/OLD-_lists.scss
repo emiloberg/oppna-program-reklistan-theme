@@ -1,0 +1,203 @@
+$list-text-padding: 16px;
+$list-padding-top: 8px;
+
+
+.list-item .list-text {
+//	@extend .shadow-z-1;
+	@extend .typo-list;
+	display: block;
+	padding: 14px 16px;
+
+
+	border-bottom: 1px solid rgba(0, 0, 0, 0.12);	
+//		background-color: $color-white;
+
+	.list-item {
+//		padding: 8px 0;
+	}
+
+}
+
+
+/*
+.list-separator {
+	@include color-list-separator();
+	height: 1px;
+}
+
+.list-item {	
+	//@extend .shadow-z-1;
+	display: block;
+	background-color: $color-white;
+//	padding: 8px 16px;
+//		background-color: $color-white;
+
+	.list-item {
+//		padding: 8px 0;
+	}
+}
+
+.list-item:hover {
+	//@include color-list-hover();
+}
+
+.list-text {
+	padding: 8px 0;
+}	
+
+.list-icon {
+	float: left;
+	width: 40px;
+	height: 40px;
+	
+	background-color: red;
+}
+
+.list-circle {
+	position: relative;
+	float: left;
+	width: 40px;
+	margin-right: 16px;
+	padding: 20px 0;
+	line-height: 0;
+	border-radius: 50%;
+	text-align: center;		
+	
+
+	font-size: 8px;
+
+	background: $color-blue;
+	color: $color-white;
+	
+}
+*/
+
+/**
+ * CODEPEN
+ *
+ */
+
+
+
+.menu-link {
+	cursor: pointer;
+}
+
+.submenu {
+	transform: translateY(60px);
+	opacity: 0;
+	transition: all .4s ease;	
+}
+
+.submenu-visible {
+	
+	// .appbar {
+	// 	transform: translateY(-53px);
+	// 	transition: all .4s ease;	
+	// }
+
+	> .menu-link {
+		transition: all 0.5s ease;	
+
+		&:not(.has-submenu) {
+			transform: translateY(40px);
+			opacity:0;
+		}			
+
+		&.has-submenu {
+
+			.submenu {
+				transform: translateY(0);
+				opacity: 1;
+			}
+		}
+	}
+}
+
+
+
+
+.details {
+	transform: translateY(60px);
+	opacity: 0;
+	transition: all .4s ease;	
+}
+
+.details-visible {
+	
+	// .appbar {
+	// 	transform: translateY(-53px);
+	// 	transition: all .4s ease;	
+	// }
+
+	> .menu-link .menu-link {	
+		transition: all 0.3s ease;
+		&:not(.has-details) {
+			transform: translateY(40px);
+			opacity:0;
+		}			
+
+		&.has-details {
+
+			.details {
+				transform: translateY(0);
+				opacity: 1;
+			}
+		}
+	}
+}
+
+
+
+
+
+/**
+ * Appbar
+ *
+ */
+
+.submenu-visible .has-submenu > .appbarable {
+
+	padding: 0;
+	line-height: 53px;
+	height: 53px;
+	padding-left: 16px;
+	padding-right: 16px;
+
+	background-color: #f5f5f5;
+	font-size: 24px;
+
+}
+
+/*
+
+
+
+.submenu-visible .has-submenu > .appbarable,
+.details-visible .has-details > .appbarable {
+	transition: background-color 0.2s linear, font-size 0.2s linear, color 0.2s linear 0s;
+	@include text-inverse();
+	height: $mobile-appbar-height;
+	line-height: $mobile-appbar-height;
+	width: 100%;
+	padding: 0 16px;
+	font-size: 20px; //get from variable
+
+	.appbar-left {
+		display: block;
+	}
+
+	.md {
+		font-size: 1.2em; //Icon font-sizes
+		padding-right: 32px;
+	}
+}
+
+.submenu-visible .has-submenu > .appbarable {
+	background-color: $color-teal;
+}
+
+.details-visible .has-details > .appbarable {
+	background-color: $color-brown;
+}
+*/
