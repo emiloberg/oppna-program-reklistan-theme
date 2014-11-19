@@ -1,82 +1,125 @@
-/**
- * Initialize things
+// TODO: Add checks to see if the current view is already loaded, if so, only show the view, don't load the data
+
+var navObj = {
+    currentTab: 'drugs',
+    currentView: '',
+    currentChapter: '',
+    currentDetails: ''
+};
+
+
+
+
+/* ************************************************************************* *\
+ * 
+ * INITIALIZE
  *
- */
+\* ************************************************************************* */
 $(function() {
 	registerEvents();
-	printTemplate(recDrugs, "#main-menu-template", '#main-menu-placeholder'); //Menu
+    initializeRoute();
+	printTemplate(dataDrugs.entries, "#main-menu-template", '#main-menu-placeholder');
 
 });
 
-/**
- * Mangle data + template and create output
- *
- * @param {string} data JSON-data
- * @param {string} templateSelector Selector for the element holding the template
- * @param {string} targetSelector Selector for the element where finished DOM should be placed.
- */
-function printTemplate(data, templateSelector, targetSelector) {
-	var templateHTML = $(templateSelector).html();
-	var target = $(targetSelector);
-	var template = Handlebars.compile(templateHTML);
-	target.html(template(data));
-//	showNew(targetSelector);
+function initializeRoute() {
+    routie({
+        '!/:tab/:chapter': function(tab, chapter) {
+            showSubmenu(chapter, tab);
+        },
+        '!/:tab/:chapter/:section': function(tab, chapter, section) {
+            showSubmenu(chapter, tab);
+            showDetails(chapter, section, tab);
+
+        },
+        '*': function () {
+            backToMainMenu();
+        }
+    });
 }
 
-/**
- * Register Events.
+
+
+/* ************************************************************************* *\
+ * 
+ * REGISTER EVENTS
  *
- */
+\* ************************************************************************* */
 function registerEvents() {
 
 	$('body')
 	.on( "click", ".mainmenu-item", function(e) {
         var chapter = $(this).data('chapter');
-        routie('!chapter/' + makeUrlSafe(chapter));
+        routie('!/' + navObj.currentTab + '/' + makeUrlSafe(chapter));
 		e.preventDefault();
 	})
 	.on( "click", ".submenu-item", function(e) {
         var self = $(this);
         var chapter = self.data('chapter');
         var section = self.data('section');
-        routie('!chapter/' + makeUrlSafe(chapter) + '/section/' + makeUrlSafe(section));
+        routie('!/' + navObj.currentTab + '/' + makeUrlSafe(chapter) + '/' + makeUrlSafe(section));
 		e.preventDefault();
 	})
 	.on( "click", "#appbar-menu-button", function(e) {
-        var jqMenuButton = $('#appbar-menu-button');
-        var backTo = jqMenuButton.data('navback-to');
-        var chapter = jqMenuButton.data('navback-chapter');
-        if (backTo === 'submenu') {
-            showSubMenu();
-            routie('!chapter/' + makeUrlSafe(chapter));
-        } else if (backTo === 'mainmenu') {
-            showMainMenu();
+        if (navObj.currentView === 'details') {
+            backToSubmenu();
+            routie('!/' + navObj.currentTab + '/' + makeUrlSafe(navObj.currentChapter));
+        } else if (navObj.currentView === 'submenu') {
+            backToMainMenu();
             routie('');
         }
 		e.preventDefault();
-	});
+	})
+    .on( "click", ".js-tab-item", function(e) {
+        var self = $(this);
+        switchTab(self.data('tab'));
+        e.preventDefault();
+    });
 }
 
 
 
-/**
+/* ************************************************************************* *\
+ * 
+ * SWITCH TAB
+ *
+\* ************************************************************************* */
+function switchTab(tab) {
+    var oldTab = navObj.currentTab;
+    var jqOldSubmenu = $('#submenu-' + oldTab);
+    var jqOldDetails = $('#details-' + oldTab);
+
+    navObj.currentTab = tab;
+
+    if (navObj.currentView === 'submenu') {
+        routie('!/' + navObj.currentTab + '/' + navObj.currentChapter);
+        jqOldSubmenu.removeClass('active');
+    } else if (navObj.currentView === 'details') {
+        routie('!/' + navObj.currentTab + '/' + navObj.currentChapter + '/' + navObj.currentDetails);
+        jqOldDetails.removeClass('active');
+    }
+}
+
+/* ************************************************************************* *\
+ * 
  * SHOW SUBMENU
  *
- */
-function showSubmenu(chapter) {
-    showSubMenu();
+\* ************************************************************************* */
+function showSubmenu(chapter, tab) {
+
+    backToSubmenu();
 
     // TODO - Add error handling to see if chapter exist
 
     // Elements
     var jqMainMenu = $('#mainmenu');
-    var jqSubmenu = $('#submenu');
+    var jqSubmenu = $('#submenu-' + tab);
 
     // Filter big fat data array to only show current chapter and print template
-    var filtered = recDrugs.filter(function (entry) {
+    var filtered = getActiveTabData(tab).entries.filter(function (entry) {
         return (makeUrlSafe(entry.chapter[0].fieldValue) === chapter);
     });
-    printTemplate(filtered, "#recdrugs-menu-template", '#recdrugs-menu-placeholder');
+    printTemplate(filtered, "#submenu-template", '#submenu-' + tab + '-placeholder');
 
     // Flip Active Classes
     jqMainMenu.removeClass('active');
@@ -87,64 +130,89 @@ function showSubmenu(chapter) {
     jqMenuIcon.removeClass('md-menu');
     jqMenuIcon.addClass('md-close');
 
-    // Add data to menu button (to be able to navigate back)
-    var jqMenuButton = $('#appbar-menu-button');
-    jqMenuButton.data('navback-to', 'mainmenu');
+    // Set currentView
+    navObj.currentView = 'submenu';
+    navObj.currentChapter = chapter;
+
+    // Check if tabs should be shown or not
+    var jqTab = $('#submenu-' + tab + ' .js-submenu-tabs');
+    var jqActiveTab = $('#submenu-' + tab + ' .js-tab-item-' + tab);
+    if(isSectionAvailableOnOtherTab(chapter, '', tab)) {
+        jqActiveTab.addClass('selected');
+    } else {
+        jqTab.addClass('disabled');
+    }
 }
 
-/**
+
+/* ************************************************************************* *\
+ * 
  * SHOW SECTION
  *
- */
-function showSection(chapter, section) {
+\* ************************************************************************* */
+function showDetails(chapter, details, tab) {
 
-    // TODO - Add error handling to see if chapter and section exist
+    // TODO - Add error handling to see if chapter and details exist
 
     // Elements
-    var jqSection = $('#section');
-    var jqSubmenu = $('#submenu');
+    var jqDetails = $('#details-' + tab);
+    var jqSubmenu = $('#submenu-' + tab);
 
 
-    // Filter big fat data array to only show current section and print template
-	var filtered = recDrugs.filter(function (entry) {
+    // Filter big fat data array to only show current details and print template
+	var filtered = getActiveTabData(tab).entries.filter(function (entry) {
 		return (makeUrlSafe(entry.chapter[0].fieldValue) === chapter);
 	});
 	
 	if (filtered.length === 1 ) {
 		filtered = filtered[0].heading.filter(function (entry) {
-			return (makeUrlSafe(entry.fieldValue) === section);
+			return (makeUrlSafe(entry.fieldValue) === details);
 		});
 	} else {
 		// TODO: Add error handling
 	}
-	printTemplate(filtered, "#recdrugs-section-template", '#recdrugs-section-placeholder');
+	printTemplate(filtered, '#details-' + tab + '-template', '#details-' + tab + '-placeholder');
 
     // Flip Active Classes
     jqSubmenu.removeClass('active');
-    jqSection.addClass('active');
+    jqDetails.addClass('active');
 
-    // Add data to menu button (to be able to navigate back)
-    var jqMenuButton = $('#appbar-menu-button');
-    jqMenuButton.data('navback-to', 'submenu');
-    jqMenuButton.data('navback-chapter', chapter);
+    // Set Current View
+    navObj.currentView = 'details';
+    navObj.currentDetails = details;
 
+    // Check if tabs should be shown or not
+    var jqTab = $('#details-' + tab + ' .js-details-tabs');
+    var jqActiveTab = $('#details-' + tab + ' .js-tab-item-' + tab);
+    if(isSectionAvailableOnOtherTab(chapter, details, tab)) {
+        jqActiveTab.addClass('selected');
+    } else {
+        jqTab.addClass('disabled');
+    }
+    
 }
 
-function showSubMenu() {
-    var jqSection = $('#section');
-    if (jqSection.hasClass('active')) {
+
+/* ************************************************************************* *\
+ * 
+ * BACK TO
+ *
+\* ************************************************************************* */
+function backToSubmenu() {
+    var jqDetails = $('#details-' + navObj.currentTab);
+    if (jqDetails.hasClass('active')) {
 
         // Elements
-        var jqSubmenu = $('#submenu');
+        var jqSubmenu = $('#submenu-' + navObj.currentTab);
 
         // Flip Active Classes
         jqSubmenu.addClass('active');
-        jqSection.removeClass('active');
+        jqDetails.removeClass('active');
     }
 }
 
-function showMainMenu() {
-    var jqSubmenu = $('#submenu');
+function backToMainMenu() {
+    var jqSubmenu = $('#submenu-' + navObj.currentTab);
     if (jqSubmenu.hasClass('active')) {
 
         // Elements
@@ -159,45 +227,62 @@ function showMainMenu() {
         jqMenuIcon.addClass('md-menu');
         jqMenuIcon.removeClass('md-close');
 
+        // Reset current tab to default
+        navObj.currentTab = 'drugs';
+
     }
 }
 
 
 
 
-/**
- * ROUTIE
- *
- */
-
-$(function() {
-
-    routie({
-        '!chapter/:chapter': function(chapter) {
-            console.log('Found Chapter: ' + chapter);
-            showSubmenu(chapter);
-        },
-        '!chapter/:chapter/section/:section': function(chapter, section) {
-            console.log('Found Chapter + Section ' + chapter + ', ' + section);
-            showSubmenu(chapter);
-            showSection(chapter, section);
-
-        },
-        '*': function () {
-            console.log('Didn\'t find url info - Showing main menu');
-            showMainMenu();
-        }
-    });
-
-});
 
 
-/**
+/* ************************************************************************* *\
+ * 
  * HELPERS
  *
- */
+\* ************************************************************************* */
 
- function makeUrlSafe(str) {
+function isSectionAvailableOnOtherTab(chapter, details, tab) {
+
+    var filtered = getNoneActiveTabData(tab).entries.filter(function (entry) {
+        return (makeUrlSafe(entry.chapter[0].fieldValue) === chapter);
+    });
+    
+    if (details.length > 0) {
+        if (filtered.length === 1 ) {
+            filtered = filtered[0].heading.filter(function (entry) {
+                return (makeUrlSafe(entry.fieldValue) === details);
+            });
+        } else {
+            return false;
+        }
+    }
+
+    if (filtered.length > 0) {
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+ /**
+ * Mangle data + template and create output
+ *
+ * @param {string} data JSON-data
+ * @param {string} templateSelector Selector for the element holding the template
+ * @param {string} targetSelector Selector for the element where finished DOM should be placed.
+ */
+function printTemplate(data, templateSelector, targetSelector) {
+    var templateHTML = $(templateSelector).html();
+    var target = $(targetSelector);
+    var template = Handlebars.compile(templateHTML);
+    target.html(template(data));
+}
+
+function makeUrlSafe(str) {
     var ret = str;
     ret = ret.replace(/ /g, '_');
     ret = removeDiacritics(ret);
@@ -206,19 +291,29 @@ $(function() {
     return ret;
  }
 
+function getActiveTabData(tab) {
+    if (tab === 'drugs' ) {
+        return dataDrugs;
+    } else if (tab === 'advice') {
+        return dataAdvice;
+    }
+}
+
+function getNoneActiveTabData(tab) {
+    if (tab === 'drugs' ) {
+        return dataAdvice;
+    } else if (tab === 'advice') {
+        return dataDrugs;
+    }
+}
 
 
 
-
-
-
-
-
-/**
+/* ************************************************************************* *\
+ * 
  * REMOVE DIACRITICS
  *
- */
-
+\* ************************************************************************* */
  var defaultDiacriticsRemovalap = [
     {'base':'A', 'letters':'\u0041\u24B6\uFF21\u00C0\u00C1\u00C2\u1EA6\u1EA4\u1EAA\u1EA8\u00C3\u0100\u0102\u1EB0\u1EAE\u1EB4\u1EB2\u0226\u01E0\u00C4\u01DE\u1EA2\u00C5\u01FA\u01CD\u0200\u0202\u1EA0\u1EAC\u1EB6\u1E00\u0104\u023A\u2C6F'},
     {'base':'AA','letters':'\uA732'},

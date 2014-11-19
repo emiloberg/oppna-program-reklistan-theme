@@ -1,5 +1,30 @@
+.second-bar {
+    width: 100%;
+    z-index: 3;  
+    height: 56px;
+    background-color: $tabs-background-color;
+    text-align: center
+}
+
+.second-bar-title {
+    display: inline-block;
+    font-size: 24px;
+    font-weight: normal;
+        //margin: 0 0 0 56px;
+    margin: 0;
+    line-height: 56px;
+}
+
+.view-topper {
+    line-height: 0;
+    @extend .shadow-z-2-no-top;
+}
+
+
+
 #app-wrapper {
-	width: 800px;
+	max-width: 800px; // TEMP
+    min-width: 400px; // TEMP
 	position: relative;
 	margin: 0 auto;	
 }
@@ -13,7 +38,6 @@
 	@include text-inverse();
 	@include link-inverse();
     @extend .shadow-z-1;
-    transition: background-color 500ms, box-shadow 500ms;
 }
 
 
@@ -103,7 +127,9 @@
 
     @extend .typo-list;
 
-    @extend .shadow-z-2-no-top;
+    &.disabled {
+        display: none;
+    }
 
     .tab {
         display: block;
@@ -121,8 +147,11 @@
         font-weight: 500;
 
         &.selected {
+            pointer-events: none;
+            cursor: default;
             border-bottom-color: $tabs-marking-color;
         }
+
     }
 
 

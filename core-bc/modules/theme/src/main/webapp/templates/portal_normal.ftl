@@ -68,10 +68,15 @@ MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
 	{{/each}}
 </script>
 
-<script id="recdrugs-menu-template" type="text/x-handlebars-template">
-	<div id="submenu-tabs" class="md-tabs">
-		<a href="#" class="tab">Terapiråd</a>
-		<a href="#" class="tab selected">Rek. läkemedel</a>
+<script id="submenu-template" type="text/x-handlebars-template">
+	<div class="view-topper">
+		<div class="second-bar">
+			<h2 class="second-bar-title">{{this.0._title}}</h2>
+		</div>
+		<div class="js-submenu-tabs md-tabs">
+			<a href="#" class="tab js-tab-item js-tab-item-advice" data-tab="advice">Terapiråd</a>
+			<a href="#" class="tab js-tab-item js-tab-item-drugs" data-tab="drugs">Rek. läkemedel</a>
+		</div>
 	</div>
 	{{#each this}}
 		{{#each heading}}
@@ -82,14 +87,39 @@ MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
 	{{/each}}
 </script>
 
-<script id="recdrugs-section-template" type="text/x-handlebars-template">
-	<div id="section-tabs" class="md-tabs">
-		<a href="#" class="tab">Terapiråd</a>
-		<a href="#" class="tab selected">Rek. läkemedel</a>
+<script id="details-advice-template" type="text/x-handlebars-template">
+	<div class="view-topper">
+		<div class="second-bar">
+			<h2 class="second-bar-title">{{this.0.fieldValue}}</h2>
+		</div>
+		<div class="js-details-tabs md-tabs">
+			<a href="#" class="tab js-tab-item js-tab-item-advice" data-tab="advice">Terapiråd</a>
+			<a href="#" class="tab js-tab-item js-tab-item-drugs" data-tab="drugs">Rek. läkemedel</a>
+		</div>
 	</div>
 	<div class="section-details">
 	{{#each this}}
 		<div class="item-{{@index}} heading">{{fieldValue}}</div>
+		{{#each body}}
+			<div class="item-{{@index}} body">{{{fieldValue}}}</div>
+		{{/each}}		
+	{{/each}}
+	</div>
+</script>
+
+<script id="details-drugs-template" type="text/x-handlebars-template">
+	<div class="view-topper">
+		<div class="second-bar">
+			<h2 class="second-bar-title">{{this.0.fieldValue}}</h2>
+		</div>
+		<div class="js-details-tabs md-tabs">
+			<a href="#" class="tab js-tab-item js-tab-item-advice" data-tab="advice">Terapiråd</a>
+			<a href="#" class="tab js-tab-item js-tab-item-drugs" data-tab="drugs">Rek. läkemedel</a>
+		</div>
+	</div>
+	<div class="section-details">
+	{{#each this}}
+		<#-- <div class="item-{{@index}} heading">{{fieldValue}}</div> -->
 		{{#each subheading1}}
 			{{#if fieldValue}}<div class="item-{{@index}} subheading">{{fieldValue}}</div>{{/if}}
 			{{#each subheading2}}
@@ -115,7 +145,7 @@ MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
 								{{#each infoboxDrug}}
 									{{#if fieldValue}}<div class="item-{{@index}} infobox">{{fieldValue}}</div>{{/if}}
 								{{/each}}
-							{{/each}}						
+							{{/each}}					
 						{{/each}}
 
 					{{/each}}
@@ -141,16 +171,24 @@ MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
   </header>
   <div class="app-body">
 
-    <div id="mainmenu" class="screen screen--list active">
+    <div id="mainmenu" class="screen active">
     	<div id="main-menu-placeholder"></div>
     </div>
 
-    <div id="submenu" class="screen screen--list">
-		<div id="recdrugs-menu-placeholder" class="submenu"></div>
+    <div id="submenu-drugs" class="screen">
+		<div id="submenu-drugs-placeholder" class="submenu"></div>
     </div>
 
-    <div id="section" class="screen screen--body">
-		<div id="recdrugs-section-placeholder" class="section"></div>
+    <div id="submenu-advice" class="screen">
+		<div id="submenu-advice-placeholder" class="submenu"></div>
+    </div>    
+
+    <div id="details-drugs" class="screen">
+		<div id="details-drugs-placeholder" class="section"></div>
+    </div>
+
+    <div id="details-advice" class="screen">
+		<div id="details-advice-placeholder" class="section"></div>
     </div>    
 
   </div>
