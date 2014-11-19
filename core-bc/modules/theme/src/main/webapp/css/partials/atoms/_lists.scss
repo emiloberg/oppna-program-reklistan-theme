@@ -1,40 +1,18 @@
-.app-wrapper {
-    background-color: #fff;
-    margin: 0 auto;
-    position: relative;
-    width: 400px;
-    overflow: hidden;
+#app-wrapper {
+	width: 800px;
+	position: relative;
+	margin: 0 auto;	
 }
 
-.app-body {
-    padding: 53px 0 0;
-
-	height: 450px;
-	-ms-overflow-style: none;
-	overflow-y: auto;
-	overflow-x: hidden; 
-
-	&.hide-mainmenu {
-		overflow-y: hidden; // Prevent scrolling the main menu when main menu isn't showing.
-	}  
-}
-
-/**
- * Appbar
- *
- */
 .appbar {
     position: absolute;
     width: 100%;
     z-index: 3;  
-
     height: 56px;
-
     background-color: $color-blue;
 	@include text-inverse();
 	@include link-inverse();
     @extend .shadow-z-1;
-
     transition: background-color 500ms, box-shadow 500ms;
 }
 
@@ -73,203 +51,96 @@
 	}
 }
 
-
-/**
- * Main menu
- *
- */
-
-
-
-.mainmenu {
-	display: block;
-}
-
-.mainmenu-item {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-    cursor: pointer;
-    position: relative;
-    display: block;
-    opacity: 1;
-    overflow: hidden;
-
-    -webkit-user-select: none; /** Make so that user can't select text in menues */
-    -moz-user-select: none;
-    -ms-user-select: none;  
- 
-    -webkit-transition-property: opacity, top, -webkit-transform;
-    -webkit-transition-duration: 500ms;
-    -webkit-transform: translateY(0);
-
-    transition-property: opacity, top, transform, background-color;
-    transition-duration: 500ms;
-    transform: translateY(0);
-}
-
-.mainmenu-item-text {
-    cursor: inherit;
-
-    position: relative;
-    z-index: 2;
-
-	@extend .typo-list;
-	padding: 14px 16px;
-
-    -webkit-transition: -webkit-transform 500ms;
-
-    transition: transform 500ms;
+.app-body {
+	padding-top: 56px;
 }
 
 
-.selected-submenu-item,
-.selected-mainmenu-item {
-	cursor: default;
-    pointer-events: none;
-    border: none;
-    background-color: $color-gray-temp;
-}
-
-.selected-mainmenu-item .mainmenu-item-text {
-    -webkit-transform: scale(1.2) translateX(28px);
-    transform: scale(1.2) translateX(28px);
-}
-
-.hide-mainmenu .mainmenu-item:not(.selected-mainmenu-item) {
-    pointer-events: none; /* do something better than this, not supported in IE10, polyfill? */
-
-    -webkit-transform: translateY(50px);
-    transform: translateY(50px);
-    opacity: 0;
-}
+// #mainmenu { background-color: rgb(220, 170, 170); } 
+// #submenu { background-color: rgb(170, 220, 170); } 
+// #section { background-color: rgb(170, 170, 220); } 
 
 
+.screen {
+    display: none;
+	position: absolute;
+	width: 100%;
+    background-color: $color-white;
 
-/**
- * Submenu
- *
- */
-
-#section,
-#submenu {
-    position: absolute;
-    opacity: 0;
-    top: 106px; /* Submenu position after animation finished when showing */
-    width: 100%;
-    z-index: 1;    
-
-    -webkit-transform: translateY(375px); /* Submenu position, before showing */
-    transform: translateY(375px);
-    -webkit-transition: -webkit-transform 500ms, opacity 1000ms;
-    transition: transform 500ms, opacity 1000ms;
-}
-
-#section.visible,
-#submenu.visible {
-    opacity: 1;
-    -webkit-transform: translateY(0);
-    transform: translateY(0);
-}
-
-.submenu-item {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-    cursor: pointer;
-}
-
-
-.submenu-item-text {
-	@extend .typo-list;
-	padding: 14px 16px;
-}
-
-
-/**
- * Section
- *
- */
-.hide-submenu {
-	#submenu-tabs {
-		opacity: 0;
-	    -webkit-transform: translateY(375px); /* Submenu position, before showing */
-	    transform: translateY(375px);
-	    -webkit-transition: -webkit-transform 500ms, opacity 1000ms;
-	    transition: transform 500ms, opacity 1000ms;		
-	}
-
-	.submenu-item:not(.selected-submenu-item) {
-		opacity: 0;
-	    -webkit-transform: translateY(375px); /* Submenu position, before showing */
-	    transform: translateY(375px);
-	    -webkit-transition: -webkit-transform 500ms, opacity 1000ms;
-	    transition: transform 500ms, opacity 1000ms;		
-	}
-
-	.selected-submenu-item {
-		transition: transform 500ms;
-
-		.submenu-item-text {
-		    -webkit-transform: scale(1.2) translateX(28px);
-		    transform: scale(1.2) translateX(28px);
-		}
-
-	}
-
+    &.active {
+        display: block;
+    }
 }
 
 .section-details {
-	padding: 16px;
+    padding: 14px 16px;
+}
+
+
+// LIST 
+
+.list-item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    display: block;
+    opacity: 1;
+}
+
+.list-item-text {
+    cursor: inherit;
+    @extend .typo-list;
+    padding: 14px 16px;
 }
 
 
 
-/**
- * TABS
- *
- */
-
- .md-tabs {
-
- 	width: 100%;
-
-	@extend .typo-list;
-
-	@extend .shadow-z-2-no-top;
-
-	.tab {
-		display: block;
-		width: 50%;
-		box-sizing: border-box;
-		padding: 14px 16px 12px 14px;
-		float: left;
-		text-align: center;
-
-		background-color: $tabs-background-color;
-		border-bottom: 2px solid $tabs-background-color;
-
-		text-transform: uppercase;
-		font-size: 14px;
-		font-weight: 500;
-
-		&.selected {
-			border-bottom-color: $tabs-marking-color;
-		}
-	}
 
 
-	a {
-		color: $tabs-color;
 
-		&:visited {
-			color: $tabs-color;				
-		}
+.md-tabs {
 
-		&:active {
-			color: $tabs-color;				
-		}			
+    width: 100%;
 
-		&:hover {
-			color: $tabs-color;				
-		}
-	}
+    @extend .typo-list;
+
+    @extend .shadow-z-2-no-top;
+
+    .tab {
+        display: block;
+        width: 50%;
+        box-sizing: border-box;
+        padding: 14px 16px 12px 14px;
+        float: left;
+        text-align: center;
+
+        background-color: $tabs-background-color;
+        border-bottom: 2px solid $tabs-background-color;
+
+        text-transform: uppercase;
+        font-size: 14px;
+        font-weight: 500;
+
+        &.selected {
+            border-bottom-color: $tabs-marking-color;
+        }
+    }
+
+
+    a {
+        color: $tabs-color;
+
+        &:visited {
+            color: $tabs-color;             
+        }
+
+        &:active {
+            color: $tabs-color;             
+        }           
+
+        &:hover {
+            color: $tabs-color;             
+        }
+    }
 
 
 }

@@ -45,6 +45,8 @@ MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
 
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/js/main.js?browserId=${browserId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_utc}" type="text/javascript"></script>
 
+	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/routie/dist/routie.min.js" type="text/javascript"></script>
+
 	<link href='http://fonts.googleapis.com/css?family=Roboto:500,900italic,900,400italic,100,700italic,300,700,500italic,100italic,300italic,400' rel='stylesheet' type='text/css'>
 
 
@@ -52,15 +54,14 @@ MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
 
 <body class="${css_class}">
 
-
-
-
 <#-- APP -->
+
+
 
 <script id="main-menu-template" type="text/x-handlebars-template">
 	{{#each this}}
-		<div class="mainmenu-item" data-chapter="{{chapter.0.fieldValue}}">
-			<div class="mainmenu-item-text">
+		<div class="list-item mainmenu-item" data-chapter="{{chapter.0.fieldValue}}">
+			<div class="list-item-text mainmenu-item-text">
 				{{chapter.0.fieldValue}}
 			</div>
 		</div>
@@ -74,8 +75,8 @@ MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
 	</div>
 	{{#each this}}
 		{{#each heading}}
-			<div class="submenu-item" data-chapter="{{../chapter.0.fieldValue}}" data-section="{{fieldValue}}">
-				<div class="submenu-item-text">{{fieldValue}}</div>
+			<div class="list-item submenu-item" data-chapter="{{../chapter.0.fieldValue}}" data-section="{{fieldValue}}">
+				<div class="list-item-text submenu-item-text">{{fieldValue}}</div>
 			</div>
 		{{/each}}
 	{{/each}}
@@ -95,21 +96,33 @@ MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
 				{{#if fieldValue}}<div class="item-{{@index}} subheading-2">{{fieldValue}}</div>{{/if}}
 				{{#each area}}
 					{{#if fieldValue}}<div class="item-{{@index}} area">{{fieldValue}}</div>{{/if}}
-					{{#each substance}}
-						{{#if fieldValue}}
-							<div class="substance">
-								{{fieldValue}}
-								{{#if replaceable.0.fieldValue}}(ersättningsbart){{/if}}
-							</div>
-						{{/if}}
-						{{#each drug}}
-							{{#if fieldValue}}<div class="item-{{@index}} drug">{{fieldValue}}</div>{{/if}}
-						{{/each}}						
-					{{/each}}					
+					{{#each recommendedFor}}
+						{{#if fieldValue}}<div class="item-{{@index}} recommended-for">{{fieldValue}}</div>{{/if}}
+						{{#each substance}}
+							{{#if fieldValue}}
+								<div class="substance">
+									{{fieldValue}}
+									{{#if replaceableSubstance.0.fieldValue}}(ersättningsbart){{/if}}
+								</div>
+							{{/if}}
+							{{#each drug}}
+								{{#if fieldValue}}
+									<div class="item-{{@index}} drug">
+										{{fieldValue}}
+										{{#if replaceableDrug.0.fieldValue}}(ersättningsbart){{/if}}
+									</div>
+								{{/if}}
+								{{#each infoboxDrug}}
+									{{#if fieldValue}}<div class="item-{{@index}} infobox">{{fieldValue}}</div>{{/if}}
+								{{/each}}
+							{{/each}}						
+						{{/each}}
+
+					{{/each}}
 				{{/each}}				
 			{{/each}}
 		{{/each}}
-		{{#each infobox}}
+		{{#each infoboxHeading}}
 			{{#if fieldValue}}<div class="item-{{@index}} infobox">{{fieldValue}}</div>{{/if}}
 		{{/each}}
 	{{/each}}
@@ -119,22 +132,24 @@ MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
 
 
 
-<div class="app-wrapper">
+
+
+<div id="app-wrapper">
   <header class="appbar">
     <div id="appbar-menu-button"><i class="md md-menu md-2x"></i></div>
     <h1 id="appHeadline" class="app-title">REK-listan</h1>
   </header>
   <div class="app-body">
 
-    <div class="mainmenu">
+    <div id="mainmenu" class="screen screen--list active">
     	<div id="main-menu-placeholder"></div>
     </div>
 
-    <div id="submenu">
+    <div id="submenu" class="screen screen--list">
 		<div id="recdrugs-menu-placeholder" class="submenu"></div>
     </div>
 
-    <div id="section">
+    <div id="section" class="screen screen--body">
 		<div id="recdrugs-section-placeholder" class="section"></div>
     </div>    
 
