@@ -80,7 +80,7 @@ MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
 	</div>
 	{{#each this}}
 		{{#each heading}}
-			<div class="list-item submenu-item" data-chapter="{{../chapter.0.fieldValue}}" data-section="{{fieldValue}}">
+			<div class="list-item submenu-item {{#eq body.0.type.0.fieldValue eq='is-header-less'}}list-item--is-headerless{{/eq}}" data-chapter="{{../chapter.0.fieldValue}}" data-section="{{fieldValue}}">
 				<div class="list-item-text submenu-item-text">{{fieldValue}}</div>
 			</div>
 		{{/each}}
@@ -99,7 +99,7 @@ MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
 	</div>
 	<div class="section-details">
 	{{#each this}}
-		<div class="item-{{@index}} heading">{{fieldValue}}</div>
+		<#-- <div class="item-{{@index}} heading">{{fieldValue}}</div> -->
 		{{#each body}}
 			<div class="item-{{@index}} body">{{{fieldValue}}}</div>
 		{{/each}}		
@@ -166,8 +166,13 @@ MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
 
 <div id="app-wrapper">
   <header class="appbar">
-    <div id="appbar-menu-button"><i class="md md-menu md-2x"></i></div>
-    <h1 id="appHeadline" class="app-title">REK-listan</h1>
+  	<div id="appbar-menu-navigation-wrapper" class="js-navigation-button">
+		<div id="appbar-menu-button" class="js-appbar-menu-button">
+			<i class="md md-menu md-4x"></i>
+	    </div>
+	    <div id="appbar-menu-navigation-label">Tillbaka</div>
+    </div>
+<#--    <h1 id="appHeadline" class="app-title">REK-listan</h1> -->
   </header>
   <div class="app-body">
 

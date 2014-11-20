@@ -51,28 +51,27 @@
     line-height: 56px;    
 }
 
+#appbar-menu-navigation-wrapper {
+    cursor: pointer;
+    outline: none;
+    height: 56px;
+}
+
+#appbar-menu-navigation-label {
+    line-height: 56px;
+    font-size: 24px;
+}
+
 #appbar-menu-button {
-	cursor: pointer;
     background: none;
     border: none;
 	@include text-inverse();
-
-    outline: none;
-
-    padding: 16px;
-    height: 24px;
-    width: 24px;
-
+    line-height: 56px;
     float: left;
+}
 
-
- 	&:hover {
-    	color: #c1c1c1;
-	}
-
-	&:active {
-    	color: #919191;
-	}
+.appbar-menu-button--label {
+    font-size: 20px;
 }
 
 .app-body {
@@ -108,6 +107,14 @@
     cursor: pointer;
     display: block;
     opacity: 1;
+
+    &:hover {
+        background-color: $color-gray-gallery;
+    }
+}
+
+.list-item--is-headerless {
+    background-color: $color-yellow-halfandhalf;
 }
 
 .list-item-text {

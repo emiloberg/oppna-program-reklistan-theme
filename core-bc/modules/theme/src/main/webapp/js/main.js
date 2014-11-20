@@ -9,6 +9,13 @@ var navObj = {
 
 
 
+Handlebars.registerHelper('eq', function(context, options) {
+    if (context === options.hash.eq) {
+        return options.fn(context);
+    } else {
+        return '';
+    }
+});
 
 /* ************************************************************************* *\
  * 
@@ -60,7 +67,7 @@ function registerEvents() {
         routie('!/' + navObj.currentTab + '/' + makeUrlSafe(chapter) + '/' + makeUrlSafe(section));
 		e.preventDefault();
 	})
-	.on( "click", "#appbar-menu-button", function(e) {
+	.on( "click", ".js-navigation-button", function(e) {
         if (navObj.currentView === 'details') {
             backToSubmenu();
             routie('!/' + navObj.currentTab + '/' + makeUrlSafe(navObj.currentChapter));
@@ -126,9 +133,9 @@ function showSubmenu(chapter, tab) {
     jqSubmenu.addClass('active');
 
     //Change Menu Icon
-    var jqMenuIcon = $('#appbar-menu-button i');
+    var jqMenuIcon = $('.js-appbar-menu-button i');
     jqMenuIcon.removeClass('md-menu');
-    jqMenuIcon.addClass('md-close');
+    jqMenuIcon.addClass('md-chevron-left');
 
     // Set currentView
     navObj.currentView = 'submenu';
@@ -223,9 +230,9 @@ function backToMainMenu() {
         jqSubmenu.removeClass('active');
 
         //Change Menu Icon
-        var jqMenuIcon = $('#appbar-menu-button i');
+        var jqMenuIcon = $('.js-appbar-menu-button i');
         jqMenuIcon.addClass('md-menu');
-        jqMenuIcon.removeClass('md-close');
+        jqMenuIcon.removeClass('md-chevron-left');
 
         // Reset current tab to default
         navObj.currentTab = 'drugs';
