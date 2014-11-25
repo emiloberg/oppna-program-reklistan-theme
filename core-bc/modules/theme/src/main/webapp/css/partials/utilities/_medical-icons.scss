@@ -1,0 +1,461 @@
+@font-face {
+	font-family: 'webfont-medical-icons';
+	src:url('../lib/webfont-medical-icons/packages/webfont-medical-icons/fonts/webfont-medical-icons.eot');
+	src:url('../lib/webfont-medical-icons/packages/webfont-medical-icons/fonts/webfont-medical-icons.eot?#iefix') format('embedded-opentype'),
+		url('../lib/webfont-medical-icons/packages/webfont-medical-icons/fonts/webfont-medical-icons.ttf') format('truetype'),
+		url('../lib/webfont-medical-icons/packages/webfont-medical-icons/fonts/webfont-medical-icons.woff') format('woff'),
+		url('../lib/webfont-medical-icons/packages/webfont-medical-icons/fonts/webfont-medical-icons.svg#webfont-medical-icons') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="medicon-"], [class*=" medicon-"] {
+	font-family: 'webfont-medical-icons';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.medicon-15x {
+  font-size: 1.5em;
+}
+
+.medicon-i-womens-health:before {
+	content: "\e600";
+}
+.medicon-i-waiting-area:before {
+	content: "\e601";
+}
+.medicon-i-volume-control:before {
+	content: "\e602";
+}
+.medicon-i-ultrasound:before {
+	content: "\e603";
+}
+.medicon-i-text-telephone:before {
+	content: "\e604";
+}
+.medicon-i-surgery:before {
+	content: "\e605";
+}
+.medicon-i-stairs:before {
+	content: "\e606";
+}
+.medicon-i-radiology:before {
+	content: "\e607";
+}
+.medicon-i-physical-therapy:before {
+	content: "\e608";
+}
+.medicon-i-pharmacy:before {
+	content: "\e609";
+}
+.medicon-i-pediatrics:before {
+	content: "\e60a";
+}
+.medicon-i-pathology:before {
+	content: "\e60b";
+}
+.medicon-i-outpatient:before {
+	content: "\e60c";
+}
+.medicon-i-mental-health:before {
+	content: "\e60d";
+}
+.medicon-i-medical-records:before {
+	content: "\e60e";
+}
+.medicon-i-medical-library:before {
+	content: "\e60f";
+}
+.medicon-i-mammography:before {
+	content: "\e610";
+}
+.medicon-i-laboratory:before {
+	content: "\e611";
+}
+.medicon-i-labor-delivery:before {
+	content: "\e612";
+}
+.medicon-i-immunizations:before {
+	content: "\e613";
+}
+.medicon-i-imaging-root-category:before {
+	content: "\e614";
+}
+.medicon-i-imaging-alternative-pet:before {
+	content: "\e615";
+}
+.medicon-i-imaging-alternative-mri:before {
+	content: "\e616";
+}
+.medicon-i-imaging-alternative-mri-two:before {
+	content: "\e617";
+}
+.medicon-i-imaging-alternative-ct:before {
+	content: "\e618";
+}
+.medicon-i-fire-extinguisher:before {
+	content: "\e619";
+}
+.medicon-i-family-practice:before {
+	content: "\e61a";
+}
+.medicon-i-emergency:before {
+	content: "\e61b";
+}
+.medicon-i-elevators:before {
+	content: "\e61c";
+}
+.medicon-i-ear-nose-throat:before {
+	content: "\e61d";
+}
+.medicon-i-drinking-fountain:before {
+	content: "\e61e";
+}
+.medicon-i-cardiology:before {
+	content: "\e61f";
+}
+.medicon-i-billing:before {
+	content: "\e620";
+}
+.medicon-i-anesthesia:before {
+	content: "\e621";
+}
+.medicon-i-ambulance:before {
+	content: "\e622";
+}
+.medicon-i-alternative-complementary:before {
+	content: "\e623";
+}
+.medicon-i-administration:before {
+	content: "\e624";
+}
+.medicon-i-social-services:before {
+	content: "\e625";
+}
+.medicon-i-smoking:before {
+	content: "\e626";
+}
+.medicon-i-restrooms:before {
+	content: "\e627";
+}
+.medicon-i-restaurant:before {
+	content: "\e628";
+}
+.medicon-i-respiratory:before {
+	content: "\e629";
+}
+.medicon-i-registration:before {
+	content: "\e62a";
+}
+.medicon-i-oncology:before {
+	content: "\e62b";
+}
+.medicon-i-nutrition:before {
+	content: "\e62c";
+}
+.medicon-i-nursery:before {
+	content: "\e62d";
+}
+.medicon-i-no-smoking:before {
+	content: "\e62e";
+}
+.medicon-i-neurology:before {
+	content: "\e62f";
+}
+.medicon-i-mri-pet:before {
+	content: "\e630";
+}
+.medicon-i-interpreter-services:before {
+	content: "\e631";
+}
+.medicon-i-internal-medicine:before {
+	content: "\e632";
+}
+.medicon-i-intensive-care:before {
+	content: "\e633";
+}
+.medicon-i-inpatient:before {
+	content: "\e634";
+}
+.medicon-i-information-us:before {
+	content: "\e635";
+}
+.medicon-i-infectious-diseases:before {
+	content: "\e636";
+}
+.medicon-i-hearing-assistance:before {
+	content: "\e637";
+}
+.medicon-i-health-services:before {
+	content: "\e638";
+}
+.medicon-i-health-education:before {
+	content: "\e639";
+}
+.medicon-i-gift-shop:before {
+	content: "\e63a";
+}
+.medicon-i-genetics:before {
+	content: "\e63b";
+}
+.medicon-i-first-aid:before {
+	content: "\e63c";
+}
+.medicon-i-dermatology:before {
+	content: "\e63d";
+}
+.medicon-i-dental:before {
+	content: "\e63e";
+}
+.medicon-i-coffee-shop:before {
+	content: "\e63f";
+}
+.medicon-i-chapel:before {
+	content: "\e640";
+}
+.medicon-i-cath-lab:before {
+	content: "\e641";
+}
+.medicon-i-care-staff-area:before {
+	content: "\e642";
+}
+.medicon-i-accessibility:before {
+	content: "\e643";
+}
+.medicon-i-diabetes-education:before {
+	content: "\e644";
+}
+.medicon-i-hospital:before {
+	content: "\e645";
+}
+.medicon-i-kidney:before {
+	content: "\e646";
+}
+.medicon-i-ophthalmology:before {
+	content: "\e647";
+}
+.medicon-womens-health:before {
+	content: "\e648";
+}
+.medicon-waiting-area:before {
+	content: "\e649";
+}
+.medicon-volume-control:before {
+	content: "\e64a";
+}
+.medicon-ultrasound:before {
+	content: "\e64b";
+}
+.medicon-text-telephone:before {
+	content: "\e64c";
+}
+.medicon-surgery:before {
+	content: "\e64d";
+}
+.medicon-stairs:before {
+	content: "\e64e";
+}
+.medicon-radiology:before {
+	content: "\e64f";
+}
+.medicon-physical-therapy:before {
+	content: "\e650";
+}
+.medicon-pharmacy:before {
+	content: "\e651";
+}
+.medicon-pediatrics:before {
+	content: "\e652";
+}
+.medicon-pathology:before {
+	content: "\e653";
+}
+.medicon-outpatient:before {
+	content: "\e654";
+}
+.medicon-ophthalmology:before {
+	content: "\e655";
+}
+.medicon-mental-health:before {
+	content: "\e656";
+}
+.medicon-medical-records:before {
+	content: "\e657";
+}
+.medicon-medical-library:before {
+	content: "\e658";
+}
+.medicon-mammography:before {
+	content: "\e659";
+}
+.medicon-laboratory:before {
+	content: "\e65a";
+}
+.medicon-labor-delivery:before {
+	content: "\e65b";
+}
+.medicon-kidney:before {
+	content: "\e65c";
+}
+.medicon-immunizations:before {
+	content: "\e65d";
+}
+.medicon-imaging-root-category:before {
+	content: "\e65e";
+}
+.medicon-imaging-alternative-pet:before {
+	content: "\e65f";
+}
+.medicon-imaging-alternative-mri:before {
+	content: "\e660";
+}
+.medicon-imaging-alternative-mri-two:before {
+	content: "\e661";
+}
+.medicon-imaging-alternative-ct:before {
+	content: "\e662";
+}
+.medicon-hospital:before {
+	content: "\e663";
+}
+.medicon-fire-extinguisher:before {
+	content: "\e664";
+}
+.medicon-family-practice:before {
+	content: "\e665";
+}
+.medicon-emergency:before {
+	content: "\e666";
+}
+.medicon-elevators:before {
+	content: "\e667";
+}
+.medicon-ear-nose-throat:before {
+	content: "\e668";
+}
+.medicon-drinking-fountain:before {
+	content: "\e669";
+}
+.medicon-diabetes-education:before {
+	content: "\e66a";
+}
+.medicon-cardiology:before {
+	content: "\e66b";
+}
+.medicon-billing:before {
+	content: "\e66c";
+}
+.medicon-anesthesia:before {
+	content: "\e66d";
+}
+.medicon-ambulance:before {
+	content: "\e66e";
+}
+.medicon-alternative-complementary:before {
+	content: "\e66f";
+}
+.medicon-administration:before {
+	content: "\e670";
+}
+.medicon-accessibility:before {
+	content: "\e671";
+}
+.medicon-social-services:before {
+	content: "\e672";
+}
+.medicon-smoking:before {
+	content: "\e673";
+}
+.medicon-restrooms:before {
+	content: "\e674";
+}
+.medicon-restaurant:before {
+	content: "\e675";
+}
+.medicon-respiratory:before {
+	content: "\e676";
+}
+.medicon-oncology:before {
+	content: "\e677";
+}
+.medicon-nutrition:before {
+	content: "\e678";
+}
+.medicon-nursery:before {
+	content: "\e679";
+}
+.medicon-no-smoking:before {
+	content: "\e67a";
+}
+.medicon-neurology:before {
+	content: "\e67b";
+}
+.medicon-mri-pet:before {
+	content: "\e67c";
+}
+.medicon-interpreter-services:before {
+	content: "\e67d";
+}
+.medicon-internal-medicine:before {
+	content: "\e67e";
+}
+.medicon-intensive-care:before {
+	content: "\e67f";
+}
+.medicon-inpatient:before {
+	content: "\e680";
+}
+.medicon-information-us:before {
+	content: "\e681";
+}
+.medicon-infectious-diseases:before {
+	content: "\e682";
+}
+.medicon-hearing-assistance:before {
+	content: "\e683";
+}
+.medicon-health-services:before {
+	content: "\e684";
+}
+.medicon-health-education:before {
+	content: "\e685";
+}
+.medicon-gift-shop:before {
+	content: "\e686";
+}
+.medicon-genetics:before {
+	content: "\e687";
+}
+.medicon-first-aid:before {
+	content: "\e688";
+}
+.medicon-dental:before {
+	content: "\e689";
+}
+.medicon-coffee-shop:before {
+	content: "\e68a";
+}
+.medicon-chapel:before {
+	content: "\e68b";
+}
+.medicon-cath-lab:before {
+	content: "\e68c";
+}
+.medicon-care-staff-area:before {
+	content: "\e68d";
+}
+.medicon-registration:before {
+	content: "\e68e";
+}
+.medicon-dermatology:before {
+	content: "\e68f";
+}

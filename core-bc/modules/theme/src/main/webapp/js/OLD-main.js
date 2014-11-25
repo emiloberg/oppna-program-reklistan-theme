@@ -38,7 +38,7 @@ function registerEvents() {
 		showSection(this);
 		e.preventDefault();
 	})
-	.on( "click", "#appbar-menu-button", function(e) {
+	.on( "click", ".js-appbar-menu-button", function(e) {
 		backMenu();
 		e.preventDefault();
 	});
@@ -56,7 +56,7 @@ function showSubmenu(elClicked) {
     var jqSubmenu = $('#submenu');
     var jqAppBody = $('.app-body');
     var jqClicked = $(elClicked);
-    var jqMenuButton = $('#appbar-menu-button');
+    var jqMenuButton = $('.js-appbar-menu-button');
 
 	// Filter big fat data array to only show current chapter and print template
 	var clickedChapter = jqClicked.data('chapter');
@@ -86,7 +86,7 @@ function showSubmenu(elClicked) {
     jqClicked.data('translate', translateClicked);
 
     // Change menu icon
-    var jqMenuIcon = $('#appbar-menu-button i');
+    var jqMenuIcon = $('.js-appbar-menu-button i');
 
     // Add data to menu button (to be able to navigate back)
     jqMenuButton.data('navbackfrom', 'submenu');
@@ -105,7 +105,7 @@ function showSection(elClicked) {
     var jqClicked = $(elClicked);
     var jqSection = $('#section');
     var jqSelectedMainMenuItem = $('.selected-mainmenu-item');
-    var jqMenuButton = $('#appbar-menu-button');
+    var jqMenuButton = $('.js-appbar-menu-button');
 
 
     // Filter big fat data array to only show current section and print template
@@ -159,7 +159,7 @@ function showSection(elClicked) {
  */
 function backMenu() {
 	// Elements
-	var jqMenuButton = $('#appbar-menu-button');
+	var jqMenuButton = $('.js-appbar-menu-button');
 	var backFrom = jqMenuButton.data('navbackfrom');
 
 	if (backFrom === 'section') {
@@ -170,7 +170,7 @@ function backMenu() {
 }
 
 function reverToSubMenu() {
-	var jqMenuButton = $('#appbar-menu-button');
+	var jqMenuButton = $('.js-appbar-menu-button');
 	var jqSelectedSubMenuItem = $('.selected-submenu-item');
 	var jqSection = $('#section');
 	var jqAppBody = $('.app-body');
@@ -209,7 +209,7 @@ function reverToSubMenu() {
  *
  */
 function revertToMainMenu() {
-	var jqMenuButton = $('#appbar-menu-button');
+	var jqMenuButton = $('.js-appbar-menu-button');
 
     // Remove classes
     var jqCurrentSelectMainmenuItem = $(".selected-mainmenu-item");
@@ -218,7 +218,7 @@ function revertToMainMenu() {
     jqCurrentSelectMainmenuItem.offsetHeight; // Force a redraw so the browser doesn't skip the animation
 
     // Change menu icon
-    var jqMenuIcon = $('#appbar-menu-button i');
+    var jqMenuIcon = $('.js-appbar-menu-button i');
     jqMenuIcon.removeClass('md-close');
     jqMenuIcon.addClass('md-menu');
     

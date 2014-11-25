@@ -16,3 +16,11 @@
 	line-height: 20px;
 	color: tint($color-black, 13);
 }
+
+
+h3 {
+	font-size: 15px;
+	line-height: 16px;
+	font-weight: $bold-font-weight;
+	@include rhythm(0, 0.25, 0.25, 0);
+}

@@ -52,7 +52,7 @@ html, body {
     line-height: 56px;    
 }
 
-#appbar-menu-button {
+.js-appbar-menu-button {
 	cursor: pointer;
     background: none;
     border: none;
@@ -216,7 +216,7 @@ html, body {
 
 // TABS
 
- .md-tabs {
+ .mat-tabs {
 
  	width: 100%;
 

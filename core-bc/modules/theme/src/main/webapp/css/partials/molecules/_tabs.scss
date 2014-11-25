@@ -1,0 +1,69 @@
+.tabs {
+
+    width: 100%;
+
+    display: inline-block;
+
+    @extend .typo-list;
+
+    &.disabled {
+        display: none;
+    }
+
+    .tab {
+        display: block;
+        width: 50%;
+        box-sizing: border-box;
+        padding: 15px 16px 12px 14px;
+        float: left;
+        text-align: center;
+        text-decoration: none;
+
+        background-color: $tabs-background-color;
+        border-bottom: 2px solid $tabs-background-color;
+
+        text-transform: uppercase;
+        font-size: 14px;
+        font-weight: 500;
+
+        &.selected {
+            pointer-events: none;
+            cursor: default;
+            border-bottom-color: $tabs-marking-color;
+        }
+
+        &.disabled {
+            display: none
+        }
+
+        &.single {
+            width: 100%;
+        }
+
+    }
+
+
+    a {
+        color: $tabs-color;
+
+        &:visited {
+            color: $tabs-color;             
+        }
+
+        &:active {
+            color: $tabs-color;             
+        }           
+
+        &:hover {
+            color: $tabs-color;             
+        }
+    }
+
+
+}
+
+@include medium {
+    .details-tabs {
+        display: none;
+    }
+}

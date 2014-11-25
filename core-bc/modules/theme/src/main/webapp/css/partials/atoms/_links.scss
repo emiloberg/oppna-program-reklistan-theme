@@ -1,3 +1,24 @@
-a {
-	text-decoration: none;
+@mixin links-normal() {
+	a {
+		@include nowrap-links-normal();
+	}
 }
+
+@mixin nowrap-links-normal() {
+	text-decoration: underline;
+	color: $link-color;
+
+	&:visited {
+		color: $link-color;
+	}
+
+	&:hover {
+		color: $link-color-hover;
+	}
+
+	&:active {
+		color: $link-color-hover;
+	}
+}
+
+@include links-normal();

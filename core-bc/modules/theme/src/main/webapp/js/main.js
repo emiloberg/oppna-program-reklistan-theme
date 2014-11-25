@@ -7,6 +7,8 @@ var navObj = {
     currentDetails: ''
 };
 
+var sizeMedium = 800;
+
 
 
 Handlebars.registerHelper('eq', function(context, options) {
@@ -32,14 +34,17 @@ $(function() {
 function initializeRoute() {
     routie({
         '!/:tab/:chapter': function(tab, chapter) {
-            showSubmenu(chapter, tab);
+            console.info('Route: chapter');
+            showSubmenu(chapter, '', tab);
         },
         '!/:tab/:chapter/:section': function(tab, chapter, section) {
-            showSubmenu(chapter, tab);
+            console.info('Route: chapter & section');
+            showSubmenu(chapter, section, tab);
             showDetails(chapter, section, tab);
 
         },
         '*': function () {
+            console.info('Route: *');
             backToMainMenu();
         }
     });
@@ -68,43 +73,35 @@ function registerEvents() {
 		e.preventDefault();
 	})
 	.on( "click", ".js-navigation-button", function(e) {
-        if (navObj.currentView === 'details') {
-            backToSubmenu();
+
+        
+        console.group('Clicked Back');
+        console.dir(navObj);
+        if( $(window).width() >= sizeMedium) {
+            console.log('Screen is under ' + sizeMedium + ' pixels, running "Back to main nav".');
+            routie('');
+        } else if (navObj.currentView === 'details') {
+            console.log('Current view is: Details');
             routie('!/' + navObj.currentTab + '/' + makeUrlSafe(navObj.currentChapter));
         } else if (navObj.currentView === 'submenu') {
-            backToMainMenu();
+            console.log('Current view is: Submenu');
             routie('');
         }
 		e.preventDefault();
+
+        console.groupEnd();
 	})
     .on( "click", ".js-tab-item", function(e) {
-        var self = $(this);
-        switchTab(self.data('tab'));
+        var jqSelf = $(this);
+        navObj.currentTab = jqSelf.data('tab');
+        if (jqSelf.data('tabtype') === 'submenu') {
+            routie('!/' + navObj.currentTab + '/' + makeUrlSafe(navObj.currentChapter));
+        } else if (jqSelf.data('tabtype') === 'details') {
+            routie('!/' + navObj.currentTab + '/' + makeUrlSafe(navObj.currentChapter) + '/' + makeUrlSafe(navObj.currentDetails));
+        }
+
         e.preventDefault();
     });
-}
-
-
-
-/* ************************************************************************* *\
- * 
- * SWITCH TAB
- *
-\* ************************************************************************* */
-function switchTab(tab) {
-    var oldTab = navObj.currentTab;
-    var jqOldSubmenu = $('#submenu-' + oldTab);
-    var jqOldDetails = $('#details-' + oldTab);
-
-    navObj.currentTab = tab;
-
-    if (navObj.currentView === 'submenu') {
-        routie('!/' + navObj.currentTab + '/' + navObj.currentChapter);
-        jqOldSubmenu.removeClass('active');
-    } else if (navObj.currentView === 'details') {
-        routie('!/' + navObj.currentTab + '/' + navObj.currentChapter + '/' + navObj.currentDetails);
-        jqOldDetails.removeClass('active');
-    }
 }
 
 /* ************************************************************************* *\
@@ -112,7 +109,7 @@ function switchTab(tab) {
  * SHOW SUBMENU
  *
 \* ************************************************************************* */
-function showSubmenu(chapter, tab) {
+function showSubmenu(chapter, section, tab) {
 
     backToSubmenu();
 
@@ -124,33 +121,95 @@ function showSubmenu(chapter, tab) {
 
     // Filter big fat data array to only show current chapter and print template
     var filtered = getActiveTabData(tab).entries.filter(function (entry) {
-        return (makeUrlSafe(entry.chapter[0].fieldValue) === chapter);
+        return (makeUrlSafe(entry._title, true) === chapter);
     });
+
+
+    // Check first entry in the filtered array to see if it actually contains some data
+    // if not, switch to the other tab
+    if (filtered[0].heading[0].fieldValue.length === 0) {
+        if (tab === 'drugs' ) {
+            navObj.currentTab = 'advice';
+        } else if (tab === 'advice') {
+            navObj.currentTab = 'drugs';
+        }
+        routie('!/' + navObj.currentTab + '/' + chapter);
+        return;
+    }
+
+
     printTemplate(filtered, "#submenu-template", '#submenu-' + tab + '-placeholder');
 
+    // Remove active classes for big screen
+    if (tab === 'drugs') {
+        $('#submenu-advice')
+            .removeClass('active')
+            .removeClass('active-submenu');
+    } else {
+        $('#submenu-drugs')
+            .removeClass('active')
+            .removeClass('active-submenu');
+    }
+
     // Flip Active Classes
+    jqMainMenu.addClass('anim-slided-left');
     jqMainMenu.removeClass('active');
     jqSubmenu.addClass('active');
+    jqSubmenu.addClass('active-submenu');
 
     //Change Menu Icon
     var jqMenuIcon = $('.js-appbar-menu-button i');
     jqMenuIcon.removeClass('md-menu');
     jqMenuIcon.addClass('md-chevron-left');
 
-    // Set currentView
-    navObj.currentView = 'submenu';
-    navObj.currentChapter = chapter;
+    // Set Current View
+    setCurrentView('submenu', chapter, '');
 
     // Check if tabs should be shown or not
-    var jqTab = $('#submenu-' + tab + ' .js-submenu-tabs');
+
+//    var jqTab = $('#submenu-' + tab + ' .js-submenu-tabs');
     var jqActiveTab = $('#submenu-' + tab + ' .js-tab-item-' + tab);
-    if(isSectionAvailableOnOtherTab(chapter, '', tab)) {
+    var jqOtherTab = $('#submenu-' + tab + ' .js-tab-item-' + otherTab(tab));
+    if(isDataOnOtherTab(chapter, '', tab)) {
         jqActiveTab.addClass('selected');
     } else {
-        jqTab.addClass('disabled');
+        jqActiveTab
+            .addClass('selected')
+            .addClass('single')
+        jqOtherTab.addClass('disabled');
+    }
+
+    // Remove all previous highlights
+    $('.js-submenu-item').removeClass('active-menu-item');
+
+
+    // If there's a section showing aswell
+    if (section.length > 0 ) {
+
+        // Set Highlight on current section if there is one.
+        jqSubmenu.find('.js-submenu-item').each(function () {
+            var jqSelf = $(this);
+            if (section === makeUrlSafe(jqSelf.data('section'), false)) {
+                jqSelf.addClass('active-menu-item');
+            }
+
+        });
     }
 }
 
+
+function setCurrentView(currentView, chapter, details) {
+
+    navObj.currentView = currentView;
+    navObj.currentChapter = chapter;
+    navObj.currentDetails = details;
+
+    $('#app-wrapper')
+        .removeClass('showing-details')
+        .removeClass('showing-mainmenu')
+        .removeClass('showing-submenu')
+        .addClass('showing-' + currentView);
+}
 
 /* ************************************************************************* *\
  * 
@@ -158,7 +217,7 @@ function showSubmenu(chapter, tab) {
  *
 \* ************************************************************************* */
 function showDetails(chapter, details, tab) {
-
+    
     // TODO - Add error handling to see if chapter and details exist
 
     // Elements
@@ -168,25 +227,32 @@ function showDetails(chapter, details, tab) {
 
     // Filter big fat data array to only show current details and print template
 	var filtered = getActiveTabData(tab).entries.filter(function (entry) {
-		return (makeUrlSafe(entry.chapter[0].fieldValue) === chapter);
+		return (makeUrlSafe(entry._title, true) === chapter);
 	});
 	
 	if (filtered.length === 1 ) {
 		filtered = filtered[0].heading.filter(function (entry) {
-			return (makeUrlSafe(entry.fieldValue) === details);
+			return (makeUrlSafe(entry.fieldValue, true) === details);
 		});
 	} else {
 		// TODO: Add error handling
 	}
 	printTemplate(filtered, '#details-' + tab + '-template', '#details-' + tab + '-placeholder');
 
+    // Remove active classes for big screen
+    if (tab === 'drugs') {
+        $('#details-advice').removeClass('active');
+    } else {
+        $('#details-drugs').removeClass('active');
+    }
+
     // Flip Active Classes
+    jqSubmenu.addClass('anim-slided-left');
     jqSubmenu.removeClass('active');
     jqDetails.addClass('active');
 
     // Set Current View
-    navObj.currentView = 'details';
-    navObj.currentDetails = details;
+    setCurrentView('details', chapter, details);
 
     // Check if tabs should be shown or not
     var jqTab = $('#details-' + tab + ' .js-details-tabs');
@@ -214,20 +280,26 @@ function backToSubmenu() {
 
         // Flip Active Classes
         jqSubmenu.addClass('active');
+        jqSubmenu.addClass('active-submenu');
+        jqSubmenu.removeClass('anim-slided-right');
+        jqSubmenu.removeClass('anim-slided-left');
         jqDetails.removeClass('active');
     }
 }
 
 function backToMainMenu() {
+    console.log('backToMainMenu körs');
     var jqSubmenu = $('#submenu-' + navObj.currentTab);
-    if (jqSubmenu.hasClass('active')) {
+//    if (jqSubmenu.hasClass('active')) {
 
         // Elements
         var jqMainMenu = $('#mainmenu');
 
         // Flip Active Classes
         jqMainMenu.addClass('active');
+        jqSubmenu.addClass('anim-slided-right');
         jqSubmenu.removeClass('active');
+        jqSubmenu.removeClass('active-submenu');
 
         //Change Menu Icon
         var jqMenuIcon = $('.js-appbar-menu-button i');
@@ -237,7 +309,10 @@ function backToMainMenu() {
         // Reset current tab to default
         navObj.currentTab = 'drugs';
 
-    }
+        // Set currentView
+        setCurrentView('mainmenu', '', '');
+
+//    }
 }
 
 
@@ -254,13 +329,13 @@ function backToMainMenu() {
 function isSectionAvailableOnOtherTab(chapter, details, tab) {
 
     var filtered = getNoneActiveTabData(tab).entries.filter(function (entry) {
-        return (makeUrlSafe(entry.chapter[0].fieldValue) === chapter);
+        return (makeUrlSafe(entry._title, true) === chapter);
     });
     
     if (details.length > 0) {
         if (filtered.length === 1 ) {
             filtered = filtered[0].heading.filter(function (entry) {
-                return (makeUrlSafe(entry.fieldValue) === details);
+                return (makeUrlSafe(entry.fieldValue, true) === details);
             });
         } else {
             return false;
@@ -274,6 +349,32 @@ function isSectionAvailableOnOtherTab(chapter, details, tab) {
     }
 
 }
+
+
+
+/**
+ * Checking if there's data available on the other tab.
+ * 
+ * If we're currently seeing 'drugs', check that the first entry on
+ * 'advice' actually contains a heading. If so, return true, else return false.
+ *
+ */
+function isDataOnOtherTab(chapter, details, tab) {
+    var filtered = getNoneActiveTabData(tab).entries.filter(function (entry) {
+        return (makeUrlSafe(entry._title, true) === chapter);
+    });
+
+    if (filtered.length > 0 ) {
+        if(filtered[0].heading[0].fieldValue.length > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
 
  /**
  * Mangle data + template and create output
@@ -289,11 +390,14 @@ function printTemplate(data, templateSelector, targetSelector) {
     target.html(template(data));
 }
 
-function makeUrlSafe(str) {
+function makeUrlSafe(str, dontURIEncode) {
     var ret = str;
     ret = ret.replace(/ /g, '_');
     ret = removeDiacritics(ret);
-    ret = encodeURIComponent(ret);
+
+    if (dontURIEncode === false) {
+       ret = encodeURIComponent(ret);
+    }
 
     return ret;
  }
@@ -314,6 +418,13 @@ function getNoneActiveTabData(tab) {
     }
 }
 
+function otherTab(tab) {
+    if (tab === 'drugs' ) {
+        return 'advice';
+    } else if (tab === 'advice') {
+        return 'drugs';
+    }
+}
 
 
 /* ************************************************************************* *\

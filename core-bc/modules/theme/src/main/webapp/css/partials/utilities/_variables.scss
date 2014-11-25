@@ -3,10 +3,10 @@
 
 // Breakpoints
 // -------------------------
-$bp-xsmall : 600px;
-$bp-small : 800px;
-$bp-medium : 1000px;
-$bp-large : 1199px;
+$bp-xsmall : 400px;
+$bp-small : 600px;
+$bp-medium : 768px;
+$bp-large : 1000px;
 
 
 // Colors - contansts
@@ -19,18 +19,43 @@ $color-brown: rgb(121, 85, 72);
 $color-gray-gallery: rgb(236, 236, 236);
 $color-yellow-halfandhalf: rgb(252, 255, 223);
 
+$color-vgr-red:		rgb(133, 26, 49);
+$color-vgr-blue: 	rgb(0, 82, 146);
+$color-vgr-green: 	rgb(096, 117, 57);
+$color-vgr-yellow: 	rgb(225, 168, 0);
+
+$color-vgr-red-light:		rgba(133, 26, 49, 0.7);
+$color-vgr-blue-light:	 	rgba(0, 82, 146, 0.7);
+$color-vgr-green-light: 	rgba(096, 117, 57, 0.7);
+$color-vgr-yellow-light: 	rgba(225, 168, 0, 0.7);
+
 
 $color-gray-temp: rgb(250, 250, 250);
 $color-gray-temp1: rgb(150, 150, 150);
+$color-gray-temp2: rgb(185, 185, 185);
 
+$color-gray-temp4: rgb(218, 218, 218);
+$color-gray-temp4-alpha: rgba(0, 0, 0, 0.12);
+
+
+$link-color: $color-vgr-blue;
+$link-color-hover: $color-vgr-blue-light;
+
+$primary-color: $color-vgr-red;
 
 $tabs-color: $color-gray-temp1;
 $tabs-background-color: $color-gray-temp;
-$tabs-marking-color: $color-blue;
+$tabs-marking-color: $primary-color;
 
-@mixin color-list-separator {
-	background-color: rgb(218, 218, 218);
-	background-color: rgba(0, 0, 0, 0.12);
+$appbar-background-color: $primary-color;
+
+$details-color: $primary-color;
+$details-infobox-left-border: $primary-color;
+$details-replaceable-color: $primary-color;
+
+@mixin border-bottom-line {
+	border-bottom: 1px solid $color-gray-temp4;
+	border-bottom: 1px solid $color-gray-temp4-alpha;
 }
 
 @mixin color-list-hover {
@@ -45,6 +70,7 @@ $tabs-marking-color: $color-blue;
 $base-font-size: 	14px;
 $base-line-height:	21px;
 $base-font-weight:	400;
+$bold-font-weight:	500;
 
 @mixin text-color-primary {
 	color: rgb(0, 0, 0);
@@ -66,16 +92,20 @@ $base-font-weight:	400;
  * Margins
  *
  */
- $panel-margin: 20px;
+ 
 
 
 
 /**
- * App bar
+ * Sizes
  *
  */
-$mobile-appbar-height: 56px;
-$appbar-background-color: $color-blue;
+$full-row-height: 56px;
+
+
+$appbar-height: $full-row-height;
+$desktop-left-menu-width: 350px;
+$tablet-left-menu-width: 250px;
 
 
 

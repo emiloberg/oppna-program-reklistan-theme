@@ -1,0 +1,13 @@
+.mt-small--inline {
+    display: none;
+    @include small {
+        display: inline;
+    }
+}
+
+.mt-small {
+    display: none;
+    @include small {
+        display: block;
+    }
+}

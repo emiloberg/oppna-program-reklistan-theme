@@ -14,6 +14,8 @@ body {
 
 @import 'partials/utilities/mixins';
 @import 'partials/utilities/scaffolding';
+@import 'partials/utilities/breakpoints-content';
+@import 'partials/utilities/medical-icons';
 
 @import 'partials/utilities-material/mixins';
 @import 'partials/utilities-material/cards';
@@ -26,8 +28,10 @@ body {
 @import 'partials/atoms/headings';
 @import 'partials/atoms/lists';
 
-
+@import 'partials/molecules/tabs';
+@import 'partials/molecules/secondbar';
 @import 'partials/molecules/appbar';
 @import 'partials/molecules/recommended-drugs';
+@import 'partials/molecules/meta-navigation';
 
 @import 'partials/shame';

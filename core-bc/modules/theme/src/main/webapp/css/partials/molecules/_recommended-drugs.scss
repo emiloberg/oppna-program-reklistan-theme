@@ -1,57 +1,163 @@
-	.recommended-for {
-		font-style: italic;
+
+.subheading,
+.subheading-2,
+.area,
+.recommended-for,
+.substance,
+.infobox {
+	@include margin-leader(1);
+
+	&.item-0 {
+		margin-top: 0;
+	}
+}
+
+.subheading {
+	color: $details-color;
+	font-weight: $bold-font-weight;	
+	font-size: 16px;
+}
+
+.subheading-2 {
+	color: $details-color;
+//	font-size: 16px;
+}
+
+.area {
+	font-weight: $bold-font-weight;
+//	font-size: 16px;
+}
+
+.recommended-for {
+	font-style: italic;
+}	
+
+.substance {
+
+}
+
+.drug {
+	padding-left: 1em;
+}
+
+.advice-infobox-small,
+.infobox {
+	background-color: $color-gray-temp;
+	border-left: 5px solid $details-infobox-left-border;
+	@include rhythm(0, 0.5, 0.5, 0);
+	padding-left: 1em;
+	padding-right: 1em;
+
+	&.item-0 {
+		margin-top: 1em;
+	}
+}
+
+.infobox-drug {
+	margin-left: 1em; // same as .drug
+}
+
+
+
+
+.replaceable {
+	color: $details-replaceable-color;
+}
+
+
+
+
+.advice-drugs {
+	background-color: $color-gray-temp;
+//	border: 1px solid $color-gray-temp4;
+	padding: 1em;
+	margin: 1em 0;
+
+	ul {
+		margin: 0;
+		padding: 0 0 0 1em;
+		list-style-type: none;		
 	}
 
-	.heading {
-		color: #0000CC;
-		text-transform: uppercase;
-		font-weight: bold;
-	}
+	li {
+		list-style-type: none;
 
-	.subheading {
-		color: #0000CC;
-		font-weight: bold;	
-	}
+	}	
 
-	.subheading-2 {
-		color: #0000CC;
-	}
-
-	.area {
-		font-weight: bold;
-	}
-
-	.substance {
-
-	}
-
-	.drug {
-		padding-left: 10px;
-	}
-
-	.infobox {
-		width: 200px;
-		background-color: #fff;
-		border-left: 5px solid #00C;
-		padding: 10px;
-		margin-top: 10px;
-	}
-
-	/* paddings */
-	.area,
-	.subheading-2 {
-		padding-top: 15px;
-	}
-
-	.area.item-0,
-	.subheading-2.item-0 {
+	.advice-subheading {
+		padding-bottom: 1em;
 		padding-top: 0;
+		border-bottom: 1px solid $color-gray-temp4;
+		margin-bottom: 0.75em;		
+		text-align: center;
+	}
+}
+
+
+
+
+
+.advice-for-childs {
+
+	&:before{
+		content: '\003C 18';
+		display: block;
+		position:relative;
+		float: left;
+		width:34px;
+		border-radius:17px;
+		padding:17px 0;
+		line-height:0;
+		background: $color-vgr-blue;
+		color: $color-white;
+		text-align:center;
+		font-size: 12px;
+		margin: 1.25em 1em 0 0;
 	}
 
-	.heading {
-		padding-top: 45px;
+}
+
+.details-image {
+	width: 100%;
+	text-align: center;
+
+	img {
+		max-width: 100%;
+		@include rhythm(0, 1, 0, 0);
 	}
 
-	.heading.item-0 {
-		padding-top: 0;
+	.fullscreen-link {
+		display: block;
+		padding-left: 1em;
+		padding-right: 1em;
+		@include rhythm(0, 1, 1, 0);
+		background-color: $color-vgr-yellow-light;
+
+		color: $color-black;
+
+		&:visited,
+		&:active
+		&:hover {
+			color: $color-black;
+		}
+	
+		@include medium {
+			@include nowrap-links-normal();
+						background-color: transparent;
+		}
 	}
+}
+
+.no-touch .details-image .fullscreen-link {
+	&:hover,
+	&:active {
+		background-color: $color-vgr-yellow;
+	}
+
+	@include medium {
+		&:hover,
+		&:active {
+			background-color: transparent;
+		}		
+	}
+}		

@@ -44,7 +44,7 @@ The repository is handled by Bower, but to be able to handle the CSS-file as SCS
     <i class="md md-invert-colors md-rotate-180"></i> md-rotate-180<br>
     <i class="md md-invert-colors md-rotate-270"></i> md-rotate-270<br>
     <i class="md md-invert-colors md-flip-horizontal"></i> md-flip-horizontal<br>
-    <i class="md md-invert-colors md-flip-vertical"></i> icon-flip-vertical
+    <i class="md md-invert-colors md-flip-vertical"></i> md-flip-vertical
 
 */
 
@@ -77,6 +77,9 @@ The repository is handled by Bower, but to be able to handle the CSS-file as SCS
   font-size: 1.5em;
   line-height: .5em;
   vertical-align: -35%;
+}
+.md-15x {
+  font-size: 1.5em;
 }
 .md-2x {
   font-size: 2em;

@@ -1,0 +1,22 @@
+.view-topper {
+    line-height: 0;
+    @extend .shadow-z-2-no-top;
+}
+
+.second-bar {
+    width: 100%;
+//    z-index: 3;  
+    min-height: 48px;
+    background-color: $tabs-background-color;
+    text-align: center;
+    padding-bottom: 1px; // As menu items have 1px border, this makes the second-bar line up with the menu items.
+}
+
+.second-bar-title {
+    display: inline-block;
+    font-size: 24px;
+    font-weight: normal;
+    margin: 0;
+    padding: 0 16px;
+    line-height: 48px;
+}

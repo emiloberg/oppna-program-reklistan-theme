@@ -14,6 +14,7 @@ $text-inverse-color: $color-white;
 }
 
 // Mediaqueries
+
 @mixin xsmall {
   @media screen and (min-width : $bp-xsmall) {
     @content;
@@ -36,6 +37,12 @@ $text-inverse-color: $color-white;
 	@media screen and (min-width : $bp-large) {
 		@content;
 	}
+}
+
+@mixin max-small {
+  @media screen and (max-width : $bp-small) {
+    @content;
+  }
 }
 
 @mixin max-medium {

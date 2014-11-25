@@ -1,11 +1,38 @@
-/*
 .appbar {
+    background-color: $appbar-background-color;
 	@include text-inverse();
-	//position: fixed;
-	top: 0;
-	background-color: $appbar-background-color;
-	height: $mobile-appbar-height;
-	line-height: $mobile-appbar-height;
-	width: 100%;
+	@include link-inverse();
+    @extend .shadow-z-1;
 }
-*/
+
+// .appbar-title {
+//     cursor: default;
+//     display: inline-block;
+//     font-size: 24px;
+//     font-weight: normal;
+//     margin: 0;
+//     line-height: 56px;    
+// }
+
+.appbar-menu-navigation-wrapper {
+    cursor: pointer;
+    outline: none;
+    height: 56px;
+}
+
+.appbar-menu-navigation-label {
+    line-height: 56px;
+    font-size: 24px;
+}
+
+.appbar-menu-button {
+    background: none;
+    border: none;
+	@include text-inverse();
+    line-height: 56px;
+    float: left;
+}
+
+.appbar-menu-button--label {
+    font-size: 20px;
+}
