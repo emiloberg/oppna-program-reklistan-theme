@@ -19,6 +19,7 @@
     "handlebars": "~2.0.0",
     "svg4everybody": "~1.0.0",
     "material-design-iconic-font": "git://github.com/zavoloklom/material-design-iconic-font.git#~1.0.1",
-    "routie": "~0.3.2"
+    "routie": "~0.3.2",
+    "webfont-medical-icons": "git://github.com/samcome/webfont-medical-icons.git"
   }
 }
