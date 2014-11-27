@@ -132,14 +132,14 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 			<a href="#" class="tab js-tab-item js-tab-item-advice" data-tabtype="details" data-tab="advice">Terapiråd</a>
 		</div>
 	</div>
-	<div class="section-details">
+	<div class="section-details section-details-advice">
 	{{#each this}}
 		{{#each body}}
 			<div class="item-{{@index}} advice-{{type.0.fieldValue}} body">
 				{{#if subheading.0.fieldValue}}
 					<h3 class="advice-subheading">{{subheading.0.fieldValue}}</h2>
 				{{/if}}
-				{{{fieldValue}}}
+				{{{markdownify fieldValue}}}
 				{{#each image}}
 					{{#if fieldValue}}
 						<div class="details-image">
@@ -164,7 +164,7 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 			<a href="#" class="tab js-tab-item js-tab-item-advice" data-tabtype="details" data-tab="advice">Terapiråd</a>
 		</div>
 	</div>
-	<div class="section-details">
+	<div class="section-details section-details-drugs">
 	{{#each this}}
 		<#-- <div class="item-{{@index}} heading">{{fieldValue}}</div> -->
 		{{#each subheading1}}
@@ -178,8 +178,10 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 						{{#each substance}}
 							{{#if fieldValue}}
 								<div class="item-{{@index}} substance">
-									{{fieldValue}}
-									{{#if replaceableSubstance.0.fieldValue}}<span class="replaceable">&#8860;</span>{{/if}}
+									{{markdownify fieldValue}}
+									{{#if replaceableSubstance.0.fieldValue}}
+										<span class="replaceable">&#8860;</span>
+									{{/if}}
 								</div>
 							{{/if}}
 							{{#each drug}}
@@ -190,7 +192,11 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 									</div>
 								{{/if}}
 								{{#each infoboxDrug}}
-									{{#if fieldValue}}<div class="item-{{@index}} infobox infobox-drug"><span class="replaceable">{{fieldValue}}</span></div>{{/if}}
+									{{#if fieldValue}}
+										<div class="item-{{@index}} infobox infobox-drug">
+											{{markdownify fieldValue}}
+										</div>
+									{{/if}}
 								{{/each}}
 							{{/each}}					
 						{{/each}}
@@ -200,7 +206,14 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 			{{/each}}
 		{{/each}}
 		{{#each infoboxHeading}}
-			{{#if fieldValue}}<div class="item-{{@index}} infobox infobox-heading">{{fieldValue}}</div>{{/if}}
+			{{#if fieldValue}}
+				<div class="item-{{@index}} infobox infobox-heading">
+					{{#if infoboxHeadingHeading.0.fieldValue}}
+						<h3>{{infoboxHeadingHeading.0.fieldValue}}</h3>
+					{{/if}}
+					{{markdownify fieldValue}}
+				</div>
+			{{/if}}
 		{{/each}}
 	{{/each}}
 	</div>

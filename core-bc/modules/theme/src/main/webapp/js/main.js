@@ -10,7 +10,12 @@ var navObj = {
 var sizeMedium = 800;
 
 
-
+/**
+ * If variabale is equal to value-helper
+ *
+ * Usage:
+ * {{#eq variable eq='hello'}}Print this{{/#if}}
+ */
 Handlebars.registerHelper('eq', function(context, options) {
     if (context === options.hash.eq) {
         return options.fn(context);
@@ -18,6 +23,27 @@ Handlebars.registerHelper('eq', function(context, options) {
         return '';
     }
 });
+
+/**
+ * Parse the text and do some replacing
+ *
+ * Usage:
+ * {{markdownify variable}}
+ */
+
+Handlebars.registerHelper('markdownify', function(context) {
+//    var text = Handlebars.Utils.escapeExpression(context);
+    var text = context;
+
+    // Convert markdown links to html links
+    var text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="\$2">\$1</a>');
+
+    // Convert {{replaceable}} with icon
+    var text = text.replace('{{replaceable}}', '<span class="replaceable">&#8860;</span>');
+
+    return new Handlebars.SafeString(text);
+});
+
 
 /* ************************************************************************* *\
  * 
@@ -137,6 +163,10 @@ function showSubmenu(chapter, section, tab) {
         return;
     }
 
+    // If there's only ONE choice in the submenu, move the user there instantly
+    if (filtered[0].heading.length === 1) {
+        routie('!/' + navObj.currentTab + '/' + chapter + '/' + makeUrlSafe(filtered[0].heading[0].fieldValue));
+    }
 
     printTemplate(filtered, "#submenu-template", '#submenu-' + tab + '-placeholder');
 
@@ -175,7 +205,7 @@ function showSubmenu(chapter, section, tab) {
     } else {
         jqActiveTab
             .addClass('selected')
-            .addClass('single')
+            .addClass('single');
         jqOtherTab.addClass('disabled');
     }
 

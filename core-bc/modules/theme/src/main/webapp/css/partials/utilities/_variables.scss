@@ -50,8 +50,20 @@ $tabs-marking-color: $primary-color;
 $appbar-background-color: $primary-color;
 
 $details-color: $primary-color;
+
 $details-infobox-left-border: $primary-color;
+$details-infobox-background-color: $color-gray-temp;
+
+
 $details-replaceable-color: $primary-color;
+
+$details-table-header-background-color: $primary-color;
+$details-table-header-color: $color-white;
+$details-table-background-color: $color-gray-temp;
+
+$details-infobox-border-color: $primary-color;
+$details-infobox-heading-heading-color: $primary-color;
+
 
 @mixin border-bottom-line {
 	border-bottom: 1px solid $color-gray-temp4;

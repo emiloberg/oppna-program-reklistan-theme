@@ -1,10 +1,11 @@
-
+.section-details-advice h2,
 .subheading,
 .subheading-2,
 .area,
 .recommended-for,
 .substance,
 .infobox {
+	margin: 0;
 	@include margin-leader(1);
 
 	&.item-0 {
@@ -12,6 +13,7 @@
 	}
 }
 
+.section-details-advice h2,
 .subheading {
 	color: $details-color;
 	font-weight: $bold-font-weight;	
@@ -42,7 +44,7 @@
 
 .advice-infobox-small,
 .infobox {
-	background-color: $color-gray-temp;
+	background-color: $details-infobox-background-color;
 	border-left: 5px solid $details-infobox-left-border;
 	@include rhythm(0, 0.5, 0.5, 0);
 	padding-left: 1em;
@@ -117,9 +119,17 @@
 
 }
 
+/**
+ * Images
+ *
+ */
 .details-image {
 	width: 100%;
 	text-align: center;
+
+	a {
+		border: none;
+	}
 
 	img {
 		max-width: 100%;
@@ -161,3 +171,51 @@
 		}		
 	}
 }		
+
+
+/**
+ * Tables
+ *
+ */
+.section-details-advice {
+	table {
+		border: none;
+		background-color: $details-table-background-color;
+	}
+
+	td, th {
+		border-width: 0;
+		@include rhythm(0, 0.25, 0.25, 0);
+		padding-left: 1em;
+		padding-right: 1em;
+	}
+
+	th {
+		font-weight: $bold-font-weight;
+		color: $details-table-header-color;
+		background-color: $details-table-header-background-color;
+	}
+}
+
+/**
+ * ADVICE: Infobox medium
+ *
+ */
+ .advice-infobox-medium {
+ 	border: 2px solid $details-infobox-border-color;
+ 	@include rhythm(0, 0.5, 0.5, 0);
+ 	padding-left: 1em;
+ 	padding-right: 1em;
+ }
+
+ /**
+  * DRUGS: Infobox Heading
+  *
+  */
+  .infobox-heading {
+  	@include margin-trailer(1);
+
+  	h3 {
+  		color: $details-infobox-heading-heading-color;
+  	}
+  }

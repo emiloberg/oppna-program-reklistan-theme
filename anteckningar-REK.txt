@@ -8,26 +8,39 @@ Använda typer:
 	Inforuta liten (streck till vänster)
 	Barn
 	Rekommenderad fysisk träning
+	Rubriklös
+	Läkemedel
+	Inforuta (streck runt)
 
 
 
 
 
 JUST NU:
-	* Kolla igenom alla råd på Diabetes, kolla stajlen
-		Jämför mot PDF:en, ser allt ut som det ska?
-	* Kom på en lösning för faktarutan längst ner på Diabetes
 
 
 ATT GÖRA:
-	* För in ett sätt att skapa länkar
 	* Om användaren (på stor skärm) byter flik. Kolla om den sektionen användaren för närvarande kollar på också finns i den nya fliken
 	  och om så, byt direkt dit.
+
 	* Kanske se till att istället för att öppna bilder mha target="_blank" öppna de lite snyggare på stora skärmar.
 
-	* Fundera på hur man ska få in läkemedel för kapitel 4, diabetes. Den följer inte standarden.
+	* Märk ut och öppna externa länkar i nytt fönster.
 
-	* Centrera bilder och lägg till en "Större format"-knapp på små enheter
+
+	* Hitta på någon lösning för att visa "default"-innehåll när man klickar sig in på ett område.
+		T.ex. visa första sektionen, visa "allmänt"-sektionen, eller visa sektionen som är märkt "default".
+
+		Om det bara finns 1 sektion så ska man nog alltid ska visa den.
+
+
+	* Drugs: För in en icke repeterbar dropdown-box som barn till 'Rekommenderas för'. Den ska ha möjligt värde 'Barn'. Om barn är valt så visa upp ikon för barn. Se REK 2014, s54 för enda exemplet.
+
+	* Skapa ett sätt att föra in en "ersättningsbar"-symbol när användaren matar in andrahandsval under terapiråd. Se sidan 24, 26/REK 2015
+
+	* Måste göra något bättre med alla de här "se terapiråd på terapigruppens hemsida"
+
+	* I alla "rekommenderad fysisk träning"-boxar. Lägg in en länk till Terapigruppen Fysisk aktivitet, kapitel 6. Se rutan på sidan 27, 28
 
 
 SENARE:
@@ -35,4 +48,8 @@ SENARE:
 	artikel uppdateras/varje natt
 
 DONE:
+	* För in rubrik för infobox, se sidan 27 REK 2015.
+	* Centrera bilder och lägg till en "Större format"-knapp på små enheter
+	* För in ett sätt att skapa länkar
+	* Fundera på hur man ska få in läkemedel för kapitel 4, diabetes. Den följer inte standarden.
 	* För in ett sätt att kontrollera att det faktiskt finns några huvudrubriker i ett visst område. Om det inte gör det, visa andra fliken och ta bort den fliken som inte finns. Se 'Barn' som är sådan
