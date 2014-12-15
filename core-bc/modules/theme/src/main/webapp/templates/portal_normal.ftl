@@ -61,6 +61,7 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/handlebars/handlebars.min.js" type="text/javascript"></script>
 
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/svg4everybody/svg4everybody.ie8.min.js" type="text/javascript"></script>
+	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/fastclick/lib/fastclick.js" type="text/javascript"></script>
 
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/js/main.js?browserId=${browserId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_utc}" type="text/javascript"></script>
 
@@ -78,8 +79,44 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 
 
 <script id="main-menu-template" type="text/x-handlebars-template">
+	<div class="main-menu-news-container lt-medium">
+		<div class="list-item list-item-heading mainmenu-item ">
+			<div class="list-item-text mainmenu-item-text">
+				Nyheter
+			</div>
+		</div>
+		<div class="item-0 list-item mainmenu-item ">
+			<div class="list-item-text mainmenu-item-text">
+				Ny Regional Medicinsk riktlinje: Vitamin B12- och/eller folatbrist
+			</div>
+		</div>
+		<div class="list-item mainmenu-item ">
+			<div class="list-item-text mainmenu-item-text">
+				Ny Regional Medicinsk riktlinje: Psoriasis
+			</div>
+		</div>
+		<div class="list-item mainmenu-item ">
+			<div class="list-item-text mainmenu-item-text">
+				REKdag - 4 februari 2015
+			</div>
+		</div>
+		<div class="list-item list-item-read-more mainmenu-item ">
+			<div class="list-item-icon">
+				<i class="md md-chevron-right md-15x list-item-icon-body-color"></i>
+			</div>		
+			<div class="list-item-text mainmenu-item-text">
+				Läs alla nyheter <#--<i class="md md-chevron-right"></i>-->	
+			</div>		
+		</div>
+	</div>
+
+	<div class="list-item list-item-heading mainmenu-item lt-medium">
+		<div class="list-item-text mainmenu-item-text">
+			Områden
+		</div>
+	</div>
 	{{#each this}}
-		<div class="list-item mainmenu-item item-{{@index}}" data-chapter="{{_title}}">
+		<div class="list-item mainmenu-item item-{{@index}}" data-chapter="{{_title}}" data-drugsdata="{{#eq heading.0.fieldValue eq=''}}none{{/eq}}">
 			<div class="list-item-text mainmenu-item-text">
 				{{_title}}
 			</div>
@@ -93,7 +130,7 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 			<h2 class="second-bar-title">{{this.0._title}}</h2>
 		</div>
 		<div class="js-submenu-tabs tabs">
-			<a href="#" class="tab js-tab-item js-tab-item-drugs" data-tabtype="submenu" data-tab="drugs"><!--<span class="mt-small--inline">Rekommenderade </span>-->Läkemedel</a>
+			<a href="#" class="tab js-tab-item js-tab-item-drugs" data-tabtype="submenu" data-tab="drugs">Läkemedel</a>
 			<a href="#" class="tab js-tab-item js-tab-item-advice" data-tabtype="submenu" data-tab="advice">Terapiråd</a>
 		</div>
 	</div>
@@ -128,7 +165,7 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 			<h2 class="second-bar-title">{{this.0.fieldValue}}</h2>
 		</div>
 		<div class="js-details-tabs details-tabs tabs">
-			<a href="#" class="tab js-tab-item js-tab-item-drugs" data-tabtype="details" data-tab="drugs"><!--<span class="mt-small--inline">Rekommenderade </span>-->Läkemedel</a>
+			<a href="#" class="tab js-tab-item js-tab-item-drugs" data-tabtype="details" data-tab="drugs">Läkemedel</a>
 			<a href="#" class="tab js-tab-item js-tab-item-advice" data-tabtype="details" data-tab="advice">Terapiråd</a>
 		</div>
 	</div>
@@ -160,7 +197,7 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 			<h2 class="second-bar-title">{{this.0.fieldValue}}</h2>
 		</div>
 		<div class="js-details-tabs details-tabs tabs">
-			<a href="#" class="tab js-tab-item js-tab-item-drugs" data-tabtype="details" data-tab="drugs"><#--<span class="mt-small--inline">Rekommenderade </span>-->Läkemedel</a>
+			<a href="#" class="tab js-tab-item js-tab-item-drugs" data-tabtype="details" data-tab="drugs">Läkemedel</a>
 			<a href="#" class="tab js-tab-item js-tab-item-advice" data-tabtype="details" data-tab="advice">Terapiråd</a>
 		</div>
 	</div>
@@ -188,7 +225,9 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 								{{#if fieldValue}}
 									<div class="item-{{@index}} drug">
 										{{fieldValue}}
-										{{#if replaceableDrug.0.fieldValue}}&#8860;{{/if}}
+										{{#if replaceableDrug.0.fieldValue}}
+											<span class="replaceable">&#8860;</span>
+										{{/if}}
 									</div>
 								{{/if}}
 								{{#each infoboxDrug}}
@@ -224,14 +263,48 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 
 
 <div id="app-wrapper">
+	<div class="blurrer js-menu-blurrer"></div>
+
+	<div class="fly-menu-wrapper">
+		<div class="fly-menu">
+			<div class="logo">
+				<img src="${images_folder}/theme/vgr-w400-c.png">	
+			</div>
+			<div class="list-item">
+				<div class="list-item-icon">
+					<span class="md md-comment md-15x"></span>
+				</div>				
+				<div class="list-item-text">Nyheter</div>
+			</div>			
+			<div class="list-item"><div class="list-item-text">Regionala medicinska riktlinjer</div></div>
+			<div class="list-item"><div class="list-item-text">Kommunala akutläkemedelsförråd</div></div>
+			<div class="list-item"><div class="list-item-text">Sjuksköterskor/&shy;barnmorskor med förskrivningsrätt</div></div>
+			<div class="list-item"><div class="list-item-text">Regionala&shy;terapigrupperna/&shy;Läkemedelskommitten</div></div>
+			<div class="list-item"><div class="list-item-text">Biverkningsrapportering</div></div>
+			<div class="list-item"><div class="list-item-text">Dosexpedition/&shy;Substans</div></div>
+		</div>
+	</div>
+
 	<div id="topbar">
 	<div class="appbar">
-		<div class="appbar-menu-navigation-wrapper js-navigation-button">
-			<div class="appbar-menu-button js-appbar-menu-button">
-				<i class="md md-menu md-4x"></i>
-		    </div>
-	    	<div class="appbar-menu-navigation-label mt-small">Tillbaka</div>
+
+		<div class="appbar-menu-title-wrapper">
+			<div class="appbar-menu-title"><a class="js-appbar-title" href="#">REK<span class="thin">listan</span></a></div>
 		</div>
+
+		<div class="appbar-menu-sink-wrapper js-appbar-menu-sink-toggle">
+			<div class="appbar-menu-sink-button">
+				<i class="sink-menu-toggle md md-menu md-4x"></i>
+			</div>
+		</div>
+
+		<div class="appbar-menu-back-wrapper js-navigation-button">
+			<div class="appbar-menu-back-button js-appbar-menu-button">
+				<i class="md md-chevron-left md-4x"></i>
+		    </div>
+	    	<div class="appbar-menu-back-label mt-small">Tillbaka</div>
+		</div>
+
 	</div>
 	</div>
 	<div class="app-body">
@@ -257,16 +330,34 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 
 		<div id="details-filler" class="screen-filler">
 
-			<div class="meta-navigation">
-				<#--<span class="placeholder-standout">REK-LISTAN</span>-->
+			<div class="details-inner">
 
-				<ul>
-					<li><a href="#">Kommunala akutläkemedelsförråd</a></li>
-					<li><a href="#">Sjuksköterskor/barnmorskor med förskrivningsrätt</a></li>
-					<li><a href="#">Regionala terapigrupperna/Läkemedelskommitten</a></li>
-					<li><a href="#">Biverkningsrapportering</a></li>
-					<li><a href="#">Dosexpedition/Substans</a></li>
-				</ul>
+				<div class="vgr-logo">
+					<img src="${images_folder}/theme/vgr-w400-c.png">
+				</div>
+
+				<div class="link-list">
+					<h2>Nyheter</h2>
+					<ul>
+						<li><a href="#">Ny Regional Medicinsk riktlinje: Vitamin B12- och/eller folatbrist</a></li>
+						<li><a href="#">Ny Regional Medicinsk riktlinje: Psoriasis</a></li>
+						<li><a href="#">REKdag - 4 februari 2015</a></li>
+						<li><a href="#">Nyhetsbrev 2014-11-27. Emselex utesluts ut högkostnadsskydet</a></li>
+					</ul>
+				</div>
+
+				<div class="link-list">
+					<h2>Resurser</h2>
+					<ul>
+
+						<li><a href="#"><i class="md md-chevron-right"></i> Regionala medicinska riktlinjer</a></li>
+						<li><a href="#"><i class="md md-chevron-right"></i> Kommunala akutläkemedelsförråd</a></li>
+						<li><a href="#"><i class="md md-chevron-right"></i> Sjuksköterskor/&shy;barnmorskor med förskrivningsrätt</a></li>
+						<li><a href="#"><i class="md md-chevron-right"></i> Regionala&shy;terapigrupperna/&shy;Läkemedelskommitten</a></li>
+						<li><a href="#"><i class="md md-chevron-right"></i> Biverkningsrapportering</a></li>
+						<li><a href="#"><i class="md md-chevron-right"></i> Dosexpedition/&shy;Substans</a></li>
+					</ul>
+				</div>				
 
 			</div>
 

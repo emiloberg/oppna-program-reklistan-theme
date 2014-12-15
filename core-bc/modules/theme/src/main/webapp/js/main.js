@@ -7,7 +7,7 @@ var navObj = {
     currentDetails: ''
 };
 
-var sizeMedium = 800;
+var sizeMedium = 768;
 
 
 /**
@@ -36,10 +36,10 @@ Handlebars.registerHelper('markdownify', function(context) {
     var text = context;
 
     // Convert markdown links to html links
-    var text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="\$2">\$1</a>');
+    text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="\$2">\$1</a>');
 
     // Convert {{replaceable}} with icon
-    var text = text.replace('{{replaceable}}', '<span class="replaceable">&#8860;</span>');
+    text = text.replace('{{replaceable}}', '<span class="replaceable">&#8860;</span>');
 
     return new Handlebars.SafeString(text);
 });
@@ -55,22 +55,20 @@ $(function() {
     initializeRoute();
 	printTemplate(dataDrugs.entries, "#main-menu-template", '#main-menu-placeholder');
 
+    FastClick.attach(document.body);
 });
 
 function initializeRoute() {
     routie({
-        '!/:tab/:chapter': function(tab, chapter) {
-            console.info('Route: chapter');
+        '/:tab/:chapter': function(tab, chapter) {
             showSubmenu(chapter, '', tab);
         },
-        '!/:tab/:chapter/:section': function(tab, chapter, section) {
-            console.info('Route: chapter & section');
+        '/:tab/:chapter/:section': function(tab, chapter, section) {
             showSubmenu(chapter, section, tab);
             showDetails(chapter, section, tab);
 
         },
         '*': function () {
-            console.info('Route: *');
             backToMainMenu();
         }
     });
@@ -87,47 +85,72 @@ function registerEvents() {
 
 	$('body')
 	.on( "click", ".mainmenu-item", function(e) {
-        var chapter = $(this).data('chapter');
-        routie('!/' + navObj.currentTab + '/' + makeUrlSafe(chapter));
+        var self = $(this);
+        var chapter = self.data('chapter');
+
+        // By default, when clicking on a main menu item, the _drugs_ submenu will be shown,
+        // However, if the drugs main menu is empty (there are no content in the drugs article)
+        // we show the _advice_ menu instead.
+        var drugsData = self.data('drugsdata');
+        if(navObj.currentTab === 'drugs' && drugsData === 'none') {
+            navObj.currentTab = 'advice';
+        }
+
+        routie('/' + navObj.currentTab + '/' + makeUrlSafe(chapter));
 		e.preventDefault();
 	})
 	.on( "click", ".submenu-item", function(e) {
         var self = $(this);
         var chapter = self.data('chapter');
         var section = self.data('section');
-        routie('!/' + navObj.currentTab + '/' + makeUrlSafe(chapter) + '/' + makeUrlSafe(section));
+        routie('/' + navObj.currentTab + '/' + makeUrlSafe(chapter) + '/' + makeUrlSafe(section));
 		e.preventDefault();
+    })
+    .on( "click", ".js-appbar-menu-sink-toggle", function(e) {
+        var jqMenuFlyout = $('.fly-menu-wrapper');
+        var jqBlurrer = $('.js-menu-blurrer');
+        var jqBody = $('body');
+        jqBody.addClass('no-scroll');
+        jqMenuFlyout.addClass('active');
+        jqBlurrer.fadeIn(250);
 	})
+    .on( "click", ".js-menu-blurrer", function(e) {
+        var jqMenuFlyout = $('.fly-menu-wrapper');
+        var jqBlurrer = $('.js-menu-blurrer');
+        var jqBody = $('body');
+        jqBody.removeClass('no-scroll');
+        jqMenuFlyout.removeClass('active');
+        jqBlurrer.fadeOut(250);
+    })
 	.on( "click", ".js-navigation-button", function(e) {
 
-        
-        console.group('Clicked Back');
-        console.dir(navObj);
         if( $(window).width() >= sizeMedium) {
-            console.log('Screen is under ' + sizeMedium + ' pixels, running "Back to main nav".');
             routie('');
         } else if (navObj.currentView === 'details') {
-            console.log('Current view is: Details');
-            routie('!/' + navObj.currentTab + '/' + makeUrlSafe(navObj.currentChapter));
+            routie('/' + navObj.currentTab + '/' + makeUrlSafe(navObj.currentChapter));
         } else if (navObj.currentView === 'submenu') {
-            console.log('Current view is: Submenu');
             routie('');
         }
 		e.preventDefault();
-
-        console.groupEnd();
 	})
+    .on( "click", ".js-appbar-title", function(e) {
+        routie('');
+        e.preventDefault();
+    })
     .on( "click", ".js-tab-item", function(e) {
         var jqSelf = $(this);
         navObj.currentTab = jqSelf.data('tab');
         if (jqSelf.data('tabtype') === 'submenu') {
-            routie('!/' + navObj.currentTab + '/' + makeUrlSafe(navObj.currentChapter));
+            routie('/' + navObj.currentTab + '/' + makeUrlSafe(navObj.currentChapter));
         } else if (jqSelf.data('tabtype') === 'details') {
-            routie('!/' + navObj.currentTab + '/' + makeUrlSafe(navObj.currentChapter) + '/' + makeUrlSafe(navObj.currentDetails));
+            routie('/' + navObj.currentTab + '/' + makeUrlSafe(navObj.currentChapter) + '/' + makeUrlSafe(navObj.currentDetails));
         }
-
         e.preventDefault();
+    })
+    .on( "click", ".js-menu-blurrer", function(e) {
+        console.dir(this);
     });
+
 }
 
 /* ************************************************************************* *\
@@ -150,24 +173,6 @@ function showSubmenu(chapter, section, tab) {
         return (makeUrlSafe(entry._title, true) === chapter);
     });
 
-
-    // Check first entry in the filtered array to see if it actually contains some data
-    // if not, switch to the other tab
-    if (filtered[0].heading[0].fieldValue.length === 0) {
-        if (tab === 'drugs' ) {
-            navObj.currentTab = 'advice';
-        } else if (tab === 'advice') {
-            navObj.currentTab = 'drugs';
-        }
-        routie('!/' + navObj.currentTab + '/' + chapter);
-        return;
-    }
-
-    // If there's only ONE choice in the submenu, move the user there instantly
-    if (filtered[0].heading.length === 1) {
-        routie('!/' + navObj.currentTab + '/' + chapter + '/' + makeUrlSafe(filtered[0].heading[0].fieldValue));
-    }
-
     printTemplate(filtered, "#submenu-template", '#submenu-' + tab + '-placeholder');
 
     // Remove active classes for big screen
@@ -188,9 +193,9 @@ function showSubmenu(chapter, section, tab) {
     jqSubmenu.addClass('active-submenu');
 
     //Change Menu Icon
-    var jqMenuIcon = $('.js-appbar-menu-button i');
-    jqMenuIcon.removeClass('md-menu');
-    jqMenuIcon.addClass('md-chevron-left');
+    // var jqMenuIcon = $('.js-appbar-menu-button i');
+    // jqMenuIcon.removeClass('md-menu');
+    // jqMenuIcon.addClass('md-chevron-left');
 
     // Set Current View
     setCurrentView('submenu', chapter, '');
@@ -234,10 +239,11 @@ function setCurrentView(currentView, chapter, details) {
     navObj.currentChapter = chapter;
     navObj.currentDetails = details;
 
+    var classesToRemove = 'showing-details showing-mainmenu showing-submenu';
+    classesToRemove.replace('showing-' + currentView, '');
+
     $('#app-wrapper')
-        .removeClass('showing-details')
-        .removeClass('showing-mainmenu')
-        .removeClass('showing-submenu')
+        .removeClass(classesToRemove)
         .addClass('showing-' + currentView);
 }
 
@@ -318,31 +324,29 @@ function backToSubmenu() {
 }
 
 function backToMainMenu() {
-    console.log('backToMainMenu körs');
     var jqSubmenu = $('#submenu-' + navObj.currentTab);
-//    if (jqSubmenu.hasClass('active')) {
 
-        // Elements
-        var jqMainMenu = $('#mainmenu');
+    // Elements
+    var jqMainMenu = $('#mainmenu');
 
-        // Flip Active Classes
-        jqMainMenu.addClass('active');
-        jqSubmenu.addClass('anim-slided-right');
-        jqSubmenu.removeClass('active');
-        jqSubmenu.removeClass('active-submenu');
+    // Flip Active Classes
+    jqMainMenu.addClass('active');
+    jqSubmenu.addClass('anim-slided-right');
+    jqSubmenu.removeClass('active');
+    jqSubmenu.removeClass('active-submenu');
 
-        //Change Menu Icon
-        var jqMenuIcon = $('.js-appbar-menu-button i');
-        jqMenuIcon.addClass('md-menu');
-        jqMenuIcon.removeClass('md-chevron-left');
+    //Change Menu Icon
+    // var jqMenuIcon = $('.js-appbar-menu-button i');
+    // jqMenuIcon.addClass('md-menu');
+    // jqMenuIcon.removeClass('md-chevron-left');
 
-        // Reset current tab to default
-        navObj.currentTab = 'drugs';
+    // Reset current tab to default
+    navObj.currentTab = 'drugs';
 
-        // Set currentView
-        setCurrentView('mainmenu', '', '');
+    // Set currentView
+    setCurrentView('mainmenu', '', '');
 
-//    }
+
 }
 
 

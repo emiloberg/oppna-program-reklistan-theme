@@ -3,13 +3,12 @@
     cursor: pointer;
     display: block;
     opacity: 1;
-//    background-color: $color-white;
 
     &.active-menu-item {
         background-color: $color-yellow-halfandhalf;        
     }
 
-    .no-touch &:hover {
+    .no-touch &:not(.list-item-heading):hover {
             background-color: $color-yellow-halfandhalf;
     }
 
@@ -19,11 +18,31 @@
 
 }
 
-
 .list-item-text {
     cursor: inherit;
     @extend .typo-list;
     padding: 14px 16px;
+}
+
+.list-item-read-more {
+    // text-align: right;
+    border-bottom: none;
+    // .list-item-text {
+    //     color: $color-vgr-red;
+    // }
+}
+
+.list-item-heading {
+    cursor: default;
+    background-color: $color-gray-temp;
+    border-bottom: none;
+    text-align: center;
+    @extend .shadow-z-2-both;
+    line-height: 0; 
+    .list-item-text {
+        font-size: 24px;
+        font-weight: 300;
+    }    
 }
 
 .list-item-icon {
@@ -32,13 +51,16 @@
     height: 48px;
     line-height: 48px;
     text-align: center;
-    color: $color-gray-temp2;
+    color: $color-gray-temp;
 
     .medicon {
         line-height: 48px;
     }
-}
 
+    .list-item-icon-body-color {
+        @include text-color-primary();
+    }
+}
 
 
 .list-item.item-0 {

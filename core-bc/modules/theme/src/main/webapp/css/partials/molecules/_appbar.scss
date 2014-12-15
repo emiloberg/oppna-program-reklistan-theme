@@ -3,36 +3,109 @@
 	@include text-inverse();
 	@include link-inverse();
     @extend .shadow-z-1;
-}
 
-// .appbar-title {
-//     cursor: default;
-//     display: inline-block;
-//     font-size: 24px;
-//     font-weight: normal;
-//     margin: 0;
-//     line-height: 56px;    
-// }
-
-.appbar-menu-navigation-wrapper {
-    cursor: pointer;
-    outline: none;
     height: 56px;
+    width: 100%;
 }
 
-.appbar-menu-navigation-label {
-    line-height: 56px;
-    font-size: 24px;
+.appbar-menu-sink-menu-toggle,
+.appbar-menu-title-wrapper,
+.appbar-menu-back-wrapper {
+    outline: none;
+    height: $appbar-height;
 }
 
-.appbar-menu-button {
+
+.appbar-menu-sink-button,
+.appbar-menu-back-button {
     background: none;
     border: none;
-	@include text-inverse();
-    line-height: 56px;
+    @include text-inverse();
+    line-height: $appbar-height;
     float: left;
 }
 
-.appbar-menu-button--label {
+/**
+ * Title
+ *
+ */
+ .appbar-menu-title-wrapper {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-weight: 800;
+
+    .thin {
+        font-weight: 300;
+    }
+}
+
+.appbar-menu-title {
+    line-height: $appbar-height;
+    padding: 0 13px;
     font-size: 20px;
+
+    a,
+    a:visited,
+    a:active,
+    a:hover {
+        color: $color-white;
+        text-decoration: none;
+    }
+
+}
+
+
+/**
+ * Hamburger icon
+ *
+ */
+.appbar-menu-sink-wrapper {
+    position: absolute;
+    height: $appbar-height;
+
+    @include translate(-50px, 0);
+    opacity: 0;
+    @include single-transition(all, 350ms);
+}
+
+.showing-mainmenu {
+    .appbar-menu-sink-wrapper {
+        cursor: pointer;
+        opacity: 1;
+        @include translate(0, 0);
+
+        @include medium {
+            display: none;
+        }
+    }
+}
+
+/**
+ * Back icon
+ *
+ */
+.appbar-menu-back-wrapper {
+    position: absolute;
+    cursor: pointer;
+    height: $appbar-height;
+
+    @include translate(0, 0);
+    opacity: 1;    
+    @include single-transition(all, 350ms);
+}
+
+.showing-mainmenu {
+    .appbar-menu-back-wrapper {
+        cursor: default;
+        opacity: 0;
+        @include translate(50px, 0);
+    }
+}
+
+.appbar-menu-back-label {
+    line-height: $appbar-height;
+    font-size: 20px;
+    float: left;
+    font-weight: 300;
 }

@@ -38,6 +38,16 @@ $color-gray-temp4: rgb(218, 218, 218);
 $color-gray-temp4-alpha: rgba(0, 0, 0, 0.12);
 
 
+@mixin bg-color-dimmer {
+	background-color: rgb(218, 218, 218);
+	background-color: rgba(200, 200, 200, 0.6);
+}
+
+@mixin bg-color-gray-temp {
+	background-color: $color-gray-temp;
+}
+
+
 $link-color: $color-vgr-blue;
 $link-color-hover: $color-vgr-blue-light;
 
@@ -68,6 +78,11 @@ $details-infobox-heading-heading-color: $primary-color;
 @mixin border-bottom-line {
 	border-bottom: 1px solid $color-gray-temp4;
 	border-bottom: 1px solid $color-gray-temp4-alpha;
+}
+
+@mixin border-top-line {
+	border-top: 1px solid $color-gray-temp4;
+	border-top: 1px solid $color-gray-temp4-alpha;
 }
 
 @mixin color-list-hover {

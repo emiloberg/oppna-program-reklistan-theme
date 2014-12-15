@@ -136,7 +136,7 @@ MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
 <script id="main-menu-template" type="text/x-handlebars-template">
 	<div class="appbar shadow-z-2">
 		<div class="inner">
-			<span class="title">REK-listan</span>
+			<span class="title">REKlistan</span>
 		</div>
 	</div>
 	{{#each this}}

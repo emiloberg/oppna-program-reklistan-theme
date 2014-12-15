@@ -36,8 +36,6 @@ ATT GÖRA:
 
 	* Drugs: För in en icke repeterbar dropdown-box som barn till 'Rekommenderas för'. Den ska ha möjligt värde 'Barn'. Om barn är valt så visa upp ikon för barn. Se REK 2014, s54 för enda exemplet.
 
-	* Skapa ett sätt att föra in en "ersättningsbar"-symbol när användaren matar in andrahandsval under terapiråd. Se sidan 24, 26/REK 2015
-
 	* Måste göra något bättre med alla de här "se terapiråd på terapigruppens hemsida"
 
 	* I alla "rekommenderad fysisk träning"-boxar. Lägg in en länk till Terapigruppen Fysisk aktivitet, kapitel 6. Se rutan på sidan 27, 28
@@ -53,3 +51,4 @@ DONE:
 	* För in ett sätt att skapa länkar
 	* Fundera på hur man ska få in läkemedel för kapitel 4, diabetes. Den följer inte standarden.
 	* För in ett sätt att kontrollera att det faktiskt finns några huvudrubriker i ett visst område. Om det inte gör det, visa andra fliken och ta bort den fliken som inte finns. Se 'Barn' som är sådan
+	* Skapa ett sätt att föra in en "ersättningsbar"-symbol när användaren matar in andrahandsval under terapiråd. Se sidan 24, 26/REK 2015	
