@@ -14,12 +14,14 @@ body {
 
 @import 'partials/utilities/mixins';
 @import 'partials/utilities/scaffolding';
-@import 'partials/utilities/medical-icons';
+/* @import 'partials/utilities/medical-icons'; */
+@import 'partials/utilities/flaticon';
+@import 'partials/utilities/flaticon-utils';
 
 @import 'partials/utilities-material/mixins';
 @import 'partials/utilities-material/cards';
 @import 'partials/utilities-material/shadows';
-@import 'partials/utilities-material/material-design-iconic-font';
+/* @import 'partials/utilities-material/material-design-iconic-font'; */
 
 
 @import 'partials/atoms/body';
@@ -34,6 +36,7 @@ body {
 @import 'partials/molecules/meta-navigation';
 @import 'partials/molecules/fly-menu';
 @import 'partials/molecules/main-menu-news';
+@import 'partials/molecules/search';
 
 @import 'partials/utilities/breakpoints-content';
 
