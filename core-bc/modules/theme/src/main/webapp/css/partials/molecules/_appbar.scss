@@ -8,6 +8,7 @@
     width: 100%;
 }
 
+.appbar-menu-search-wrapper,
 .appbar-menu-sink-menu-toggle,
 .appbar-menu-title-wrapper,
 .appbar-menu-back-wrapper {
@@ -16,6 +17,7 @@
 }
 
 
+.appbar-menu-search-button, 
 .appbar-menu-sink-button,
 .appbar-menu-back-button {
     background: none;
@@ -54,7 +56,6 @@
     }
 
 }
-
 
 /**
  * Hamburger icon

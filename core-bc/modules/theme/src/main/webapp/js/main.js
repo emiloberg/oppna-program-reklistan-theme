@@ -1,3 +1,30 @@
+// TODO - Remove this temp
+var dataNews = [
+    {
+        slug: 'news1',        
+        title: 'Ny Regional Medicinsk riktlinje: Vitamin B12-brist',
+        content: '<p>Tid: 4 februari kl. 9.15 – 16.00 (registrering och fika från kl. 9.00)</p><p>Plats: Elite Park Avenue Hotel, Kungsportsavenyen 36‐38, Göteborg</p><p>Läkemedelskommittén bjuder in alla förskrivare i den offentliga och privata sjukvården i Västra Götalandsregionen till presentation av REKlistan 2015.  Dagen bjuder på föreläsningar där några av terapigrupperna berättar om de viktigaste nyheterna inom respektive område.<p>Under dagen kommer den nya ”REKappen” att lanseras och det kommer också finnas möjlighet att vid mingelsessioner på för‐och eftermiddag träffa representanter från de regionala terapigrupperna. Mer detaljerat program kommer i mitten av december</p><p><ul><li>Anmälan senast 28 januari 2015, <a href="http://www.vgregion.se/rekdag">www.vgregion.se/rekdag</a></li><li>Anmälan är bindande men platsen kan överlåtas till annan person.</li></ul></p><p>Varmt välkomna!<br>Läkemedelskommittén i Västra Götalandsregionen</p>'
+    },
+    {
+        slug: 'news2',        
+        title: 'Ytterligare preventivmedel subventioneras i VGR',
+        content: '<p>Tid: 4 februari kl. 9.15 – 16.00 (registrering och fika från kl. 9.00)</p><p>Plats: Elite Park Avenue Hotel, Kungsportsavenyen 36‐38, Göteborg</p><p>Läkemedelskommittén bjuder in alla förskrivare i den offentliga och privata sjukvården i Västra Götalandsregionen till presentation av REKlistan 2015.  Dagen bjuder på föreläsningar där några av terapigrupperna berättar om de viktigaste nyheterna inom respektive område.<p>Under dagen kommer den nya ”REKappen” att lanseras och det kommer också finnas möjlighet att vid mingelsessioner på för‐och eftermiddag träffa representanter från de regionala terapigrupperna. Mer detaljerat program kommer i mitten av december</p><p><ul><li>Anmälan senast 28 januari 2015, <a href="http://www.vgregion.se/rekdag">www.vgregion.se/rekdag</a></li><li>Anmälan är bindande men platsen kan överlåtas till annan person.</li></ul></p><p>Varmt välkomna!<br>Läkemedelskommittén i Västra Götalandsregionen</p>'
+    },
+    {
+        slug: 'news3',        
+        title: 'Emselex utesluts ut högkostnadsskydet',
+        content: '<p>Tid: 4 februari kl. 9.15 – 16.00 (registrering och fika från kl. 9.00)</p><p>Plats: Elite Park Avenue Hotel, Kungsportsavenyen 36‐38, Göteborg</p><p>Läkemedelskommittén bjuder in alla förskrivare i den offentliga och privata sjukvården i Västra Götalandsregionen till presentation av REKlistan 2015.  Dagen bjuder på föreläsningar där några av terapigrupperna berättar om de viktigaste nyheterna inom respektive område.<p>Under dagen kommer den nya ”REKappen” att lanseras och det kommer också finnas möjlighet att vid mingelsessioner på för‐och eftermiddag träffa representanter från de regionala terapigrupperna. Mer detaljerat program kommer i mitten av december</p><p><ul><li>Anmälan senast 28 januari 2015, <a href="http://www.vgregion.se/rekdag">www.vgregion.se/rekdag</a></li><li>Anmälan är bindande men platsen kan överlåtas till annan person.</li></ul></p><p>Varmt välkomna!<br>Läkemedelskommittén i Västra Götalandsregionen</p>'
+    },
+    {
+        slug: 'news4',        
+        title: 'Prissänkning på kombinationsläkemedel vid astma och KOL',
+        content: '<p>Tid: 4 februari kl. 9.15 – 16.00 (registrering och fika från kl. 9.00)</p><p>Plats: Elite Park Avenue Hotel, Kungsportsavenyen 36‐38, Göteborg</p><p>Läkemedelskommittén bjuder in alla förskrivare i den offentliga och privata sjukvården i Västra Götalandsregionen till presentation av REKlistan 2015.  Dagen bjuder på föreläsningar där några av terapigrupperna berättar om de viktigaste nyheterna inom respektive område.<p>Under dagen kommer den nya ”REKappen” att lanseras och det kommer också finnas möjlighet att vid mingelsessioner på för‐och eftermiddag träffa representanter från de regionala terapigrupperna. Mer detaljerat program kommer i mitten av december</p><p><ul><li>Anmälan senast 28 januari 2015, <a href="http://www.vgregion.se/rekdag">www.vgregion.se/rekdag</a></li><li>Anmälan är bindande men platsen kan överlåtas till annan person.</li></ul></p><p>Varmt välkomna!<br>Läkemedelskommittén i Västra Götalandsregionen</p>'
+    },
+];
+
+
+
+
 // TODO: Add checks to see if the current view is already loaded, if so, only show the view, don't load the data
 
 var navObj = {
@@ -53,13 +80,23 @@ Handlebars.registerHelper('markdownify', function(context) {
 $(function() {
 	registerEvents();
     initializeRoute();
-	printTemplate(dataDrugs.entries, "#main-menu-template", '#main-menu-placeholder');
+	
+
+    createMenuesAndBigStartPage();
 
     FastClick.attach(document.body);
+
+    $('[autofocus]:not(:focus)').eq(0).focus(); // Set focus to element with "autofocus=autofocus" in <IE10;
 });
 
 function initializeRoute() {
     routie({
+        '/resource/:newsitem': function(resourceItem) {
+            showGeneric('resource', resourceItem);
+        },
+        '/news/:newsitem': function(newsItem) {
+            showGeneric('news', newsItem);
+        },
         '/:tab/:chapter': function(tab, chapter) {
             showSubmenu(chapter, '', tab);
         },
@@ -84,7 +121,26 @@ function initializeRoute() {
 function registerEvents() {
 
 	$('body')
-	.on( "click", ".mainmenu-item", function(e) {
+    .on( "click", ".news-item", function(e) {
+        var jqSelf = $(this);
+        var item = jqSelf.data('item');
+        routie('/news/' + item);
+        e.preventDefault();
+    })
+    .on( "click", ".js-search-clear", function(e) {
+        $('.search-input').val('');
+        search.search('');
+    })
+    .on("keyup", ".js-search-input", function(e) {
+        search.search($.trim($('.js-search-input').val()));
+    })
+    .on("change", ".js-search-input", function(e) {
+        search.search($.trim($('.js-search-input').val()));
+    })
+    .on( "click", ".js-fly-menu-link", function(e) {
+        hideFlyOutMenu();
+    })
+	.on( "click", ".js-mainmenu-item", function(e) {
         var self = $(this);
         var chapter = self.data('chapter');
 
@@ -115,20 +171,16 @@ function registerEvents() {
         jqBlurrer.fadeIn(250);
 	})
     .on( "click", ".js-menu-blurrer", function(e) {
-        var jqMenuFlyout = $('.fly-menu-wrapper');
-        var jqBlurrer = $('.js-menu-blurrer');
-        var jqBody = $('body');
-        jqBody.removeClass('no-scroll');
-        jqMenuFlyout.removeClass('active');
-        jqBlurrer.fadeOut(250);
+        hideFlyOutMenu();
     })
 	.on( "click", ".js-navigation-button", function(e) {
-
         if( $(window).width() >= sizeMedium) {
             routie('');
         } else if (navObj.currentView === 'details') {
             routie('/' + navObj.currentTab + '/' + makeUrlSafe(navObj.currentChapter));
         } else if (navObj.currentView === 'submenu') {
+            routie('');
+        } else if (navObj.currentView === 'generic') {
             routie('');
         }
 		e.preventDefault();
@@ -146,11 +198,75 @@ function registerEvents() {
             routie('/' + navObj.currentTab + '/' + makeUrlSafe(navObj.currentChapter) + '/' + makeUrlSafe(navObj.currentDetails));
         }
         e.preventDefault();
-    })
-    .on( "click", ".js-menu-blurrer", function(e) {
-        console.dir(this);
     });
 
+}
+
+/* ************************************************************************* *\
+ * 
+ * HIDE FLY OUT MENU
+ *
+\* ************************************************************************* */
+function hideFlyOutMenu() {
+    var jqMenuFlyout = $('.fly-menu-wrapper');
+    var jqBlurrer = $('.js-menu-blurrer');
+    var jqBody = $('body');
+    jqBody.removeClass('no-scroll');
+    jqMenuFlyout.removeClass('active');
+    jqBlurrer.fadeOut(250);
+}
+
+/* ************************************************************************* *\
+ * 
+ * CREATE MAIN MENU
+ *
+\* ************************************************************************* */
+function createMenuesAndBigStartPage() {
+    var nNewsToShow = 3;
+    var data = {
+        areas: dataDrugs.entries,
+        news: dataNews.slice(0, nNewsToShow),
+        resources: dataResources
+    };
+    printTemplate(data, "#main-menu-template", '#main-menu-placeholder');
+    printTemplate(data, "#filler-template", '#details-filler-placeholder');
+    printTemplate(data, "#fly-menu-template", '#fly-menu-placeholder');
+}
+
+/* ************************************************************************* *\
+ * 
+ * SHOW GENERIC
+ *
+\* ************************************************************************* */
+function showGeneric(type, clickedItem) {
+
+    var data = {};
+    var templateSelector = '';
+
+    // Filter
+    if (type === 'news') {
+        templateSelector = '#news-template';
+        data = dataNews.filter(function (item) {
+            return item.slug === clickedItem;
+        });
+    } else if (type === 'resource') {
+        templateSelector = '#resource-template';
+        data = dataResources.entries.filter(function (item) {
+            return item._entryId == clickedItem;
+        });
+    }
+
+    // Current View
+    setCurrentView('generic', '', '');
+
+    // Elements
+    var jqMainMenu = $('#mainmenu');
+    var jqDetailsGeneric = $('#details-generic');
+    jqMainMenu.removeClass('active');
+    jqDetailsGeneric.addClass('active');
+
+    // Print
+    printTemplate(data, templateSelector, '#details-generic-placeholder');
 }
 
 /* ************************************************************************* *\
@@ -187,7 +303,7 @@ function showSubmenu(chapter, section, tab) {
     }
 
     // Flip Active Classes
-    jqMainMenu.addClass('anim-slided-left');
+//    jqMainMenu.addClass('anim-slided-left');
     jqMainMenu.removeClass('active');
     jqSubmenu.addClass('active');
     jqSubmenu.addClass('active-submenu');
@@ -239,7 +355,7 @@ function setCurrentView(currentView, chapter, details) {
     navObj.currentChapter = chapter;
     navObj.currentDetails = details;
 
-    var classesToRemove = 'showing-details showing-mainmenu showing-submenu';
+    var classesToRemove = 'showing-generic showing-details showing-mainmenu showing-submenu';
     classesToRemove.replace('showing-' + currentView, '');
 
     $('#app-wrapper')
@@ -283,7 +399,7 @@ function showDetails(chapter, details, tab) {
     }
 
     // Flip Active Classes
-    jqSubmenu.addClass('anim-slided-left');
+//    jqSubmenu.addClass('anim-slided-left');
     jqSubmenu.removeClass('active');
     jqDetails.addClass('active');
 
@@ -317,8 +433,8 @@ function backToSubmenu() {
         // Flip Active Classes
         jqSubmenu.addClass('active');
         jqSubmenu.addClass('active-submenu');
-        jqSubmenu.removeClass('anim-slided-right');
-        jqSubmenu.removeClass('anim-slided-left');
+//        jqSubmenu.removeClass('anim-slided-right');
+//        jqSubmenu.removeClass('anim-slided-left');
         jqDetails.removeClass('active');
     }
 }
@@ -331,7 +447,7 @@ function backToMainMenu() {
 
     // Flip Active Classes
     jqMainMenu.addClass('active');
-    jqSubmenu.addClass('anim-slided-right');
+//    jqSubmenu.addClass('anim-slided-right');
     jqSubmenu.removeClass('active');
     jqSubmenu.removeClass('active-submenu');
 
@@ -569,4 +685,102 @@ function removeDiacritics (str) {
     });
 }
 
+
+
+
+/* ************************************************************************* *\
+ * 
+ * SEARCH
+ *
+\* ************************************************************************* */
+
+
+$(function() {
+    search.initialize();
+});
+
+var search = {
+
+    _prevSearch: '',
+    _splitter: '|',
+
+    initialize: function () {
+        search.index = lunr(function () {
+            this.field('chapter', { boost: 20 });
+            this.field('section', { boost: 10 });
+            this.field('body');
+            this.ref('id');
+        });
+        search.createIndex();
+    },
+
+    createIndex: function () {
+        dataSearchDrugs.forEach(function (item) {
+            search.index.add({
+                id: 'drugs' + search._splitter + item.chapter + search._splitter + item.section,
+                chapter: item.chapter,
+                section: item.section,
+                body: item.content
+            });
+        });
+
+        // TODO, STRIP HTML TAGS FROM dataSearchAdvie and "true" strings from dataSearchDrugs.
+
+        dataSearchAdvice.forEach(function (item) {
+            search.index.add({
+                id: 'advice' + search._splitter + item.chapter + search._splitter + item.section,
+                chapter: item.chapter,
+                section: item.section,
+                body: item.content
+            });
+        });
+
+
+    },
+
+    search: function (searchFor) {
+
+        var jqMainMenu = $('#mainmenu');
+        var jqClearButton = $('.js-search-clear');
+        var jqSearchResultsHeader = $('.jq-search-results-heading');
+
+        var jqMainMenuItems = $('.js-mainmenu-items');
+        var jqMainMenuNewsContainer = $('.js-main-menu-news-container');
+        var jqSearchResultsContainer = $('.js-search-results');
+
+        if (searchFor.length > 0) {
+            jqClearButton.fadeIn(250);
+
+        } else {
+            jqClearButton.fadeOut(250);
+        }
+
+        if (searchFor.length < 3) {
+            search._prevSearch = searchFor;
+            jqMainMenu.removeClass('showing-searchresults');
+            jqSearchResultsHeader.slideUp();
+        } else if((searchFor !== search._prevSearch)) {
+            search._prevSearch = searchFor;
+
+            jqSearchResultsHeader.slideDown(350);
+
+
+            jqMainMenu.addClass('showing-searchresults');
+
+            var matches = search.index.search(searchFor).map(function (item) {
+                var fields = item.ref.split(search._splitter);
+                return {
+                    type: fields[0],
+                    link: fields[0] + '/' + makeUrlSafe(fields[1]) + '/' + makeUrlSafe(fields[2]),
+                    chapter: fields[1],
+                    section: fields[2]
+                };
+
+            });
+
+            printTemplate(matches, "#search-results-template", '#search-results-placeholder');
+
+        }
+    }
+};
 
