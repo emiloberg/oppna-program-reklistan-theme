@@ -4,6 +4,8 @@
     display: block;
     opacity: 1;
 
+    text-decoration: none;
+
     &.active-menu-item {
         background-color: $color-yellow-halfandhalf;        
     }
@@ -51,7 +53,7 @@
     height: 48px;
     line-height: 48px;
     text-align: center;
-    color: $color-gray-temp;
+    color: $color-gray-temp1;
 
     .medicon {
         line-height: 48px;
