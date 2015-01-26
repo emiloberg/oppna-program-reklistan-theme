@@ -53,7 +53,7 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
 	<link href="http://localhost:6080/reklistan-theme/images/favicon.ico" rel="Shortcut Icon">
-	<link class="lfr-css-file" href="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/css/custom.css?browserId=${browserId}&themeId=${themeDisplay.themeId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_utc}" rel="stylesheet" type="text/css">
+	<link class="lfr-css-file" href="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/css/custom.css?browserId=${browserId}&themeId=${themeDisplay.themeId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_local}" rel="stylesheet" type="text/css">
 
 
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/jquery/dist/jquery.min.js" type="text/javascript"></script>
@@ -63,7 +63,7 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/svg4everybody/svg4everybody.ie8.min.js" type="text/javascript"></script>
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/fastclick/lib/fastclick.js" type="text/javascript"></script>
 
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/js/main.js?browserId=${browserId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_utc}" type="text/javascript"></script>
+	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/js/main.js?browserId=${browserId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_local}" type="text/javascript"></script>
 
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/routie/dist/routie.min.js" type="text/javascript"></script>
 
@@ -250,15 +250,14 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 	</div>
 	<div class="section-details section-details-drugs">
 	{{#each this}}
-		<#-- <div class="item-{{@index}} heading">{{fieldValue}}</div> -->
 		{{#each subheading1}}
-			{{#if fieldValue}}<div class="item-{{@index}} subheading">{{fieldValue}}</div>{{/if}}
+			{{#if fieldValue}}<div class="item-{{@index}} subheading">{{markdownify fieldValue}}</div>{{/if}}
 			{{#each subheading2}}
-				{{#if fieldValue}}<div class="item-{{@index}} subheading-2">{{fieldValue}}</div>{{/if}}
+				{{#if fieldValue}}<div class="item-{{@index}} subheading-2">{{markdownify fieldValue}}</div>{{/if}}
 				{{#each area}}
-					{{#if fieldValue}}<div class="item-{{@index}} area">{{fieldValue}}</div>{{/if}}
+					{{#if fieldValue}}<div class="item-{{@index}} area">{{markdownify fieldValue}}</div>{{/if}}
 					{{#each recommendedFor}}
-						{{#if fieldValue}}<div class="item-{{@index}} recommended-for">{{fieldValue}}</div>{{/if}}
+						{{#if fieldValue}}<div class="item-{{@index}} recommended-for">{{markdownify fieldValue}}</div>{{/if}}
 						{{#each substance}}
 							{{#if fieldValue}}
 								<div class="item-{{@index}} substance">
@@ -271,7 +270,7 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 							{{#each drug}}
 								{{#if fieldValue}}
 									<div class="item-{{@index}} drug">
-										{{fieldValue}}
+										{{markdownify fieldValue}}
 										{{#if replaceableDrug.0.fieldValue}}
 											<span class="replaceable">&#8860;</span>
 										{{/if}}

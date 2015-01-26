@@ -181,6 +181,21 @@
 	table {
 		border: none;
 		background-color: $details-table-background-color;
+		width: 100%;
+
+		&.stacktable-original {
+			display: none;
+			@include small {
+				display: table;
+			}			
+		}
+
+		&.stacktable {
+			display: table;
+			@include small {
+				display: none;
+			}
+		}
 	}
 
 	td, th {
@@ -188,12 +203,26 @@
 		@include rhythm(0, 0.25, 0.25, 0);
 		padding-left: 1em;
 		padding-right: 1em;
+		vertical-align: top;
+
+		&.st-divider {
+			background-color: $color-gray-temp4;
+			height: 1px;
+			padding: 0;
+			margin: 0;
+		}
 	}
 
 	th {
 		font-weight: $bold-font-weight;
 		color: $details-table-header-color;
 		background-color: $details-table-header-background-color;
+		text-align: left;
+
+		&.st-head-row {
+			@include text-color-primary();			
+			background-color: $color-gray-temp4;
+		}
 	}
 
 	table.borders {
