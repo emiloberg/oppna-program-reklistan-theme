@@ -1,0 +1,14 @@
+.main-menu-logo {
+//	height: 96px;
+	text-align: center;
+
+	img {
+		width: 70%;
+		max-width: 400px;
+		padding: 24px 0;
+	}
+
+	@include medium() {
+		display: none;
+	}
+}

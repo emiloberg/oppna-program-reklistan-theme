@@ -1,3 +1,4 @@
+.section-details-generic h2,
 .section-details-advice h2,
 .subheading,
 .subheading-2,
@@ -13,6 +14,7 @@
 	}
 }
 
+.section-details-generic h2,
 .section-details-advice h2,
 .subheading {
 	color: $details-color;
@@ -96,28 +98,34 @@
 }
 
 
-
-
-
-.advice-for-childs {
-
-	&:before{
-		content: '\003C 18';
-		display: block;
-		position:relative;
-		float: left;
-		width:34px;
-		border-radius:17px;
-		padding:17px 0;
-		line-height:0;
-		background: $color-vgr-blue;
-		color: $color-white;
-		text-align:center;
-		font-size: 12px;
-		margin: 1.25em 1em 0 0;
-	}
-
+.child-icon {
+	width: 34px;
+	height: 34px;
+	padding: 1em 1em 0 0;
+	float: left;
 }
+
+
+
+// .advice-for-childs {
+
+// 	&:before{
+// 		content: '\003C 18';
+// 		display: block;
+// 		position:relative;
+// 		float: left;
+// 		width:34px;
+// 		border-radius:17px;
+// 		padding:17px 0;
+// 		line-height:0;
+// 		background: $color-vgr-blue;
+// 		color: $color-white;
+// 		text-align:center;
+// 		font-size: 12px;
+// 		margin: 1.25em 1em 0 0;
+// 	}
+
+// }
 
 /**
  * Images
@@ -177,6 +185,7 @@
  * Tables
  *
  */
+.section-details-generic,
 .section-details-advice {
 	table {
 		border: none;

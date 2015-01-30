@@ -7,19 +7,29 @@
     &:focus { // IE
         outline : none;
         background-color: $color-yellow-halfandhalf;
-    }	
+    }
+
+	&::-ms-clear { // IE10, remove "x" to empty input field
+  		width : 0;
+  		height: 0;
+	}
 }
 
-.search-wrapper {
-	margin-bottom: $full-row-height;
+// .search-wrapper {
+// 	margin-bottom: $full-row-height;
 
-	.showing-searchresults & {
-		margin-bottom: 0;
-	}
+// 	.showing-searchresults & {
+// 		margin-bottom: 0;
+// 	}
 
-	@include medium {
-		margin-bottom: 0;
-	}
+// 	@include medium {
+// 		margin-bottom: 0;
+// 	}
+// }
+
+/* TODO: Need to readd this */
+.lt-ie9 .search-wrapper {
+	display: none;
 }
 
 .search-input-container {

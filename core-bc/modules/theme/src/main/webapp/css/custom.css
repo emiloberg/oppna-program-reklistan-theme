@@ -15,6 +15,7 @@ body {
 @import 'partials/utilities/mixins';
 @import 'partials/utilities/scaffolding';
 /* @import 'partials/utilities/medical-icons'; */
+@import 'partials/utilities/icomoon';
 @import 'partials/utilities/flaticon';
 @import 'partials/utilities/flaticon-utils';
 
@@ -37,6 +38,7 @@ body {
 @import 'partials/molecules/fly-menu';
 @import 'partials/molecules/main-menu-news';
 @import 'partials/molecules/search';
+@import 'partials/molecules/logo';
 
 @import 'partials/utilities/breakpoints-content';
 

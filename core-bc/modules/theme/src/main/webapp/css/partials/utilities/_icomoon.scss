@@ -1,0 +1,37 @@
+@font-face {
+	font-family: 'icomoon';
+	src:url('../custom-lib/icomoon/icomoon.eot?ac1nuo');
+	src:url('../custom-lib/icomoon/icomoon.eot?#iefixac1nuo') format('embedded-opentype'),
+		url('../custom-lib/icomoon/icomoon.woff?ac1nuo') format('woff'),
+		url('../custom-lib/icomoon/icomoon.ttf?ac1nuo') format('truetype'),
+		url('../custom-lib/icomoon/icomoon.svg?ac1nuo#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="icomoon-"], [class*=" icomoon-"] {
+	font-family: 'icomoon';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icomoon-list-icon {
+	line-height: 2.3em;
+}
+
+.icomoon-child:before {
+	content: "\e601";
+}
+
+.icomoon-drug:before {
+	content: "\e600";
+}
+

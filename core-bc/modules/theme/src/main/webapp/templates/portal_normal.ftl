@@ -1,10 +1,15 @@
 <#include init />
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js ${root_css_class}" dir="<@liferay.language key="lang.dir" />" lang="${w3c_language_id}"> <!--<![endif]-->
 
+<#assign txtDrugs="Rek. läkemedel" />
+<#assign txtAdvice="Terapiråd" />
+<#assign txtResources="Övrigt" />
+<#assign txtNews="Nyheter" />
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7 ${root_css_class}" dir="<@liferay.language key="lang.dir" />" lang="${w3c_language_id}"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8 ${root_css_class}" dir="<@liferay.language key="lang.dir" />" lang="${w3c_language_id}"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9 ${root_css_class}" dir="<@liferay.language key="lang.dir" />" lang="${w3c_language_id}"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js ${root_css_class}" dir="<@liferay.language key="lang.dir" />" lang="${w3c_language_id}"> <!--<![endif]-->
 
 <#-- 
 
@@ -55,19 +60,28 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 	<link href="http://localhost:6080/reklistan-theme/images/favicon.ico" rel="Shortcut Icon">
 	<link class="lfr-css-file" href="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/css/custom.css?browserId=${browserId}&themeId=${themeDisplay.themeId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_local}" rel="stylesheet" type="text/css">
 
+	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/respond/dest/respond.min.js" type="text/javascript"></script>
+	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/es5-shim/es5-shim.min.js" type="text/javascript"></script>
 
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/jquery/dist/jquery.min.js" type="text/javascript"></script>
+	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/custom-lib/jquery/jquery-1.11.2.min.js" type="text/javascript"></script>
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/modernizr/modernizr.js" type="text/javascript"></script>
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/handlebars/handlebars.min.js" type="text/javascript"></script>
 
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/svg4everybody/svg4everybody.ie8.min.js" type="text/javascript"></script>
+
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/fastclick/lib/fastclick.js" type="text/javascript"></script>
+
 
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/js/main.js?browserId=${browserId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_local}" type="text/javascript"></script>
 
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/routie/dist/routie.min.js" type="text/javascript"></script>
 
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/lunr.js/lunr.min.js" type="text/javascript"></script>
+	
+	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/lunr.js/lunr.js" type="text/javascript"></script> 
+	
+	<#-- TODO LOAD lunr.MIN -->
+
+
 
 	<link href='https://fonts.googleapis.com/css?family=Roboto:500,900italic,900,400italic,100,700italic,300,700,500italic,100italic,300italic,400' rel='stylesheet' type='text/css'>
 
@@ -85,12 +99,7 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 
 				{{#eq type eq='drugs'}}
 					<div class="list-item-icon">
-						<i class="flaticon-biology icon-15x"></i>
-					</div>
-				{{/eq}}
-				{{#eq type eq='advice'}}
-					<div class="list-item-icon">
-						<i class="flaticon-round52 icon-15x"></i>
+						<span class="icomoon-drug icomoon-list-icon icon-15x"></span>
 					</div>
 				{{/eq}}
 
@@ -115,7 +124,7 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 	<div class="search-wrapper view-topper">
 		<div class="second-bar">
 			<div class="search-input-container">
-				<input type="text" class="search-input js-search-input" placeholder="Sök" autocorrect="off" autofocus="autofocus">
+				<input type="text" class="search-input js-search-input" placeholder="Sök" autocorrect="off">
 				<a href="#" class="search-clear js-search-clear">Rensa <i class="flaticon-close47"></i></a>
 			</div>
 
@@ -129,30 +138,34 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 
 	<div id="search-results-placeholder"></div>
 
+	<div class="main-menu-logo">
+		<img src="${images_folder}/theme/vgr-w400-c.png">
+	</div>	
+
 
 	{{#if news}}
-	<div class="main-menu-news-container js-main-menu-news-container lt-medium">
-		<div class="list-item list-item-heading">
-			<div class="list-item-text">
-				Nyheter
-			</div>
-		</div>
-		{{#each news}}
-			<div class="item-{{@index}} list-item news-item" data-item="{{slug}}">
+		<div class="main-menu-news-container js-main-menu-news-container lt-medium">
+			<div class="list-item list-item-heading">
 				<div class="list-item-text">
-					{{title}}
+					${txtNews}
 				</div>
 			</div>
-		{{/each}}
-		<div class="list-item list-item-read-more news-item">
-			<div class="list-item-icon">
-				<i class="flaticon-keyboard53 icon-15x list-item-icon-body-color"></i> 
-			</div>		
-			<div class="list-item-text">
-				Läs alla nyheter
-			</div>		
+			{{#each news}}
+				{{#if externallink.0.fieldValue}}
+					<a href="{{externallink.0.fieldValue}}" target="_blank" class="list-item item-{{@index}}">
+					<div class="list-item-icon">
+						<i class="flaticon-external1"></i>
+					</div>				
+				{{/if}}
+				{{#unless externallink.0.fieldValue}}
+					<a href="#/news/{{_entryId}}" class="list-item item-{{@index}}">
+				{{/unless}}
+				<div class="list-item-text">
+					{{_title}}
+				</div>
+				</a>
+			{{/each}}
 		</div>
-	</div>
 	{{/if}}
 
 	<div class="mainmenu-area-items">
@@ -162,7 +175,7 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 			</div>
 		</div>
 		{{#each areas}}
-			<div class="list-item js-mainmenu-item item-{{@index}}" data-chapter="{{_title}}" data-drugsdata="{{#eq heading.0.fieldValue eq=''}}none{{/eq}}">
+			<div class="list-item js-mainmenu-item item-{{@index}}" data-chapter="{{_title}}" data-drugsdata="{{#eq hasDrugs eq=false}}none{{/eq}}">
 				<div class="list-item-text">
 					{{_title}}
 				</div>
@@ -177,26 +190,16 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 			<h2 class="second-bar-title">{{this.0._title}}</h2>
 		</div>
 		<div class="js-submenu-tabs tabs">
-			<a href="#" class="tab js-tab-item js-tab-item-drugs" data-tabtype="submenu" data-tab="drugs">Läkemedel</a>
-			<a href="#" class="tab js-tab-item js-tab-item-advice" data-tabtype="submenu" data-tab="advice">Terapiråd</a>
+			<a href="#" class="tab js-tab-item js-tab-item-drugs" data-tabtype="submenu" data-tab="drugs">${txtDrugs}</a>
+			<a href="#" class="tab js-tab-item js-tab-item-advice" data-tabtype="submenu" data-tab="advice">${txtAdvice}</a>
 		</div>
 	</div>
 	{{#each this}}
 		{{#each heading}}
 			<div class="list-item submenu-item item-{{@index}} js-submenu-item" data-chapter="{{../_title}}" data-section="{{fieldValue}}">
-				{{#eq body.0.type.0.fieldValue eq='is-header-less'}}
-					<div class="list-item-icon">
-						<i class="flaticon-round52 icon-15x"></i> 
-					</div>
-				{{/eq}}
 				{{#eq body.0.type.0.fieldValue eq='physical-exercise'}}
 					<div class="list-item-icon">
 						<i class="flaticon-man460 icon-15x"></i> 
-					</div>
-				{{/eq}}
-				{{#eq body.0.type.0.fieldValue eq='for-childs'}}
-					<div class="list-item-icon">
-						<i class="flaticon-round52 icon-15x"></i> 
 					</div>
 				{{/eq}}
 
@@ -212,8 +215,8 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 			<h2 class="second-bar-title">{{this.0.fieldValue}}</h2>
 		</div>
 		<div class="js-details-tabs details-tabs tabs">
-			<a href="#" class="tab js-tab-item js-tab-item-drugs" data-tabtype="details" data-tab="drugs">Läkemedel</a>
-			<a href="#" class="tab js-tab-item js-tab-item-advice" data-tabtype="details" data-tab="advice">Terapiråd</a>
+			<a href="#" class="tab js-tab-item js-tab-item-drugs" data-tabtype="details" data-tab="drugs">${txtDrugs}</a>
+			<a href="#" class="tab js-tab-item js-tab-item-advice" data-tabtype="details" data-tab="advice">${txtAdvice}</a>
 		</div>
 	</div>
 	<div class="section-details section-details-advice">
@@ -223,6 +226,10 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 				{{#if subheading.0.fieldValue}}
 					<h3 class="advice-subheading">{{subheading.0.fieldValue}}</h2>
 				{{/if}}
+				{{#eq type.0.fieldValue eq='for-childs'}}
+					<img src="${images_folder}/theme/child.png" class="child-icon">
+				{{/eq}}
+
 				{{{markdownify fieldValue}}}
 				{{#each image}}
 					{{#if fieldValue}}
@@ -244,8 +251,8 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 			<h2 class="second-bar-title">{{this.0.fieldValue}}</h2>
 		</div>
 		<div class="js-details-tabs details-tabs tabs">
-			<a href="#" class="tab js-tab-item js-tab-item-drugs" data-tabtype="details" data-tab="drugs">Läkemedel</a>
-			<a href="#" class="tab js-tab-item js-tab-item-advice" data-tabtype="details" data-tab="advice">Terapiråd</a>
+			<a href="#" class="tab js-tab-item js-tab-item-drugs" data-tabtype="details" data-tab="drugs">${txtDrugs}</a>
+			<a href="#" class="tab js-tab-item js-tab-item-advice" data-tabtype="details" data-tab="advice">${txtAdvice}</a>
 		</div>
 	</div>
 	<div class="section-details section-details-drugs">
@@ -325,8 +332,8 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 				<h2 class="second-bar-title">{{_title}}</h2>
 			</div>
 		</div>
-		<div class="section-details">
-			{{{body.0.fieldValue}}}
+		<div class="section-details section-details-generic">
+			{{{markdownify body.0.fieldValue}}}
 		</div>
 	{{/each}}
 </script>
@@ -340,18 +347,24 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 
 		{{#if news}}
 			<div class="link-list">
-				<h2>Nyheter</h2>
+				<h2>${txtNews}</h2>
 				<ul>
 					{{#each news}}
-						<li><a href="#/news/{{slug}}">{{title}}</a></li>
+						{{#if externallink.0.fieldValue}}
+							<li><a href="{{externallink.0.fieldValue}}" target="_blank"><i class="flaticon-external1"></i> {{_title}}</a></li>
+						{{/if}}
+						{{#unless externallink.0.fieldValue}}
+							<li><a href="#/news/{{_entryId}}"><i class="flaticon-keyboard53"></i> {{_title}}</a></li>
+						{{/unless}}
 					{{/each}}
 				</ul>
+
 			</div>
 		{{/if}}
 
 		{{#if resources}}
 			<div class="link-list">
-				<h2>Resurser</h2>
+				<h2>${txtResources}</h2>
 				<ul>
 					{{#each resources.entries}}
 						{{#if externallink.0.fieldValue}}
@@ -371,9 +384,6 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 <script id="fly-menu-template" type="text/x-handlebars-template">
 	<div class="fly-menu-wrapper">
 		<div class="fly-menu">
-			<div class="logo">
-				<img src="${images_folder}/theme/vgr-w400-c.png">	
-			</div>
 			{{#each resources.entries}}
 				{{#if externallink.0.fieldValue}}
 					<a href="{{externallink.0.fieldValue}}" target="_blank" class="list-item js-fly-menu-link">
@@ -411,12 +421,14 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 				</div>
 			</div>
 
+
 			<div class="appbar-menu-back-wrapper js-navigation-button">
 				<div class="appbar-menu-back-button js-appbar-menu-button">
 					<i class="flaticon-left216 icon-4x"></i> 
 			    </div>
 		    	<div class="appbar-menu-back-label mt-small">Tillbaka</div>
 			</div>
+
 
 		</div>
 	</div>

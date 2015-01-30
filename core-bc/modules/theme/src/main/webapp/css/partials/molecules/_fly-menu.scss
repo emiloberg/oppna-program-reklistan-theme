@@ -35,16 +35,13 @@
 		}		
 		@include transform(translate(0, 0));
 	}
+}
 
-	.logo {
-		height: 81px;
-		padding-top: 32px;
-		text-align: center;
+.lt-ie9 .fly-menu-wrapper {
+	display: none;
 
-		img {
-			width: 70%;
-			max-width: 400px;
-		}
+	&.active {
+		display: block;
 	}
 }
 

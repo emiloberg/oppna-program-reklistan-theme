@@ -1,26 +1,18 @@
 // TODO - Remove this temp
-var dataNews = [
-    {
-        slug: 'news1',        
-        title: 'Ny Regional Medicinsk riktlinje: Vitamin B12-brist',
-        content: '<p>Tid: 4 februari kl. 9.15 – 16.00 (registrering och fika från kl. 9.00)</p><p>Plats: Elite Park Avenue Hotel, Kungsportsavenyen 36‐38, Göteborg</p><p>Läkemedelskommittén bjuder in alla förskrivare i den offentliga och privata sjukvården i Västra Götalandsregionen till presentation av REKlistan 2015.  Dagen bjuder på föreläsningar där några av terapigrupperna berättar om de viktigaste nyheterna inom respektive område.<p>Under dagen kommer den nya ”REKappen” att lanseras och det kommer också finnas möjlighet att vid mingelsessioner på för‐och eftermiddag träffa representanter från de regionala terapigrupperna. Mer detaljerat program kommer i mitten av december</p><p><ul><li>Anmälan senast 28 januari 2015, <a href="http://www.vgregion.se/rekdag">www.vgregion.se/rekdag</a></li><li>Anmälan är bindande men platsen kan överlåtas till annan person.</li></ul></p><p>Varmt välkomna!<br>Läkemedelskommittén i Västra Götalandsregionen</p>'
-    },
-    {
-        slug: 'news2',        
-        title: 'Ytterligare preventivmedel subventioneras i VGR',
-        content: '<p>Tid: 4 februari kl. 9.15 – 16.00 (registrering och fika från kl. 9.00)</p><p>Plats: Elite Park Avenue Hotel, Kungsportsavenyen 36‐38, Göteborg</p><p>Läkemedelskommittén bjuder in alla förskrivare i den offentliga och privata sjukvården i Västra Götalandsregionen till presentation av REKlistan 2015.  Dagen bjuder på föreläsningar där några av terapigrupperna berättar om de viktigaste nyheterna inom respektive område.<p>Under dagen kommer den nya ”REKappen” att lanseras och det kommer också finnas möjlighet att vid mingelsessioner på för‐och eftermiddag träffa representanter från de regionala terapigrupperna. Mer detaljerat program kommer i mitten av december</p><p><ul><li>Anmälan senast 28 januari 2015, <a href="http://www.vgregion.se/rekdag">www.vgregion.se/rekdag</a></li><li>Anmälan är bindande men platsen kan överlåtas till annan person.</li></ul></p><p>Varmt välkomna!<br>Läkemedelskommittén i Västra Götalandsregionen</p>'
-    },
-    {
-        slug: 'news3',        
-        title: 'Emselex utesluts ut högkostnadsskydet',
-        content: '<p>Tid: 4 februari kl. 9.15 – 16.00 (registrering och fika från kl. 9.00)</p><p>Plats: Elite Park Avenue Hotel, Kungsportsavenyen 36‐38, Göteborg</p><p>Läkemedelskommittén bjuder in alla förskrivare i den offentliga och privata sjukvården i Västra Götalandsregionen till presentation av REKlistan 2015.  Dagen bjuder på föreläsningar där några av terapigrupperna berättar om de viktigaste nyheterna inom respektive område.<p>Under dagen kommer den nya ”REKappen” att lanseras och det kommer också finnas möjlighet att vid mingelsessioner på för‐och eftermiddag träffa representanter från de regionala terapigrupperna. Mer detaljerat program kommer i mitten av december</p><p><ul><li>Anmälan senast 28 januari 2015, <a href="http://www.vgregion.se/rekdag">www.vgregion.se/rekdag</a></li><li>Anmälan är bindande men platsen kan överlåtas till annan person.</li></ul></p><p>Varmt välkomna!<br>Läkemedelskommittén i Västra Götalandsregionen</p>'
-    },
-    {
-        slug: 'news4',        
-        title: 'Prissänkning på kombinationsläkemedel vid astma och KOL',
-        content: '<p>Tid: 4 februari kl. 9.15 – 16.00 (registrering och fika från kl. 9.00)</p><p>Plats: Elite Park Avenue Hotel, Kungsportsavenyen 36‐38, Göteborg</p><p>Läkemedelskommittén bjuder in alla förskrivare i den offentliga och privata sjukvården i Västra Götalandsregionen till presentation av REKlistan 2015.  Dagen bjuder på föreläsningar där några av terapigrupperna berättar om de viktigaste nyheterna inom respektive område.<p>Under dagen kommer den nya ”REKappen” att lanseras och det kommer också finnas möjlighet att vid mingelsessioner på för‐och eftermiddag träffa representanter från de regionala terapigrupperna. Mer detaljerat program kommer i mitten av december</p><p><ul><li>Anmälan senast 28 januari 2015, <a href="http://www.vgregion.se/rekdag">www.vgregion.se/rekdag</a></li><li>Anmälan är bindande men platsen kan överlåtas till annan person.</li></ul></p><p>Varmt välkomna!<br>Läkemedelskommittén i Västra Götalandsregionen</p>'
-    },
-];
+var dataNews = {
+    entries: [
+        {
+            _entryId: 'news4',
+            _title: 'Nyheter finns på vårdgivarstödets webbplats',
+            content: '',
+            externallink: [
+                {
+                    fieldValue: 'http://epi.vgregion.se/sv/Lakemedel-i-Vastra-Gotalandsregionen/Vardgivarstod/'
+                }
+            ]
+        }
+    ]
+};
 
 
 
@@ -66,8 +58,8 @@ Handlebars.registerHelper('markdownify', function(context) {
     text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="\$2">\$1</a>');
 
     // Convert {{replaceable}} with icon
-    text = text.replace('{{replaceable}}', '<span class="replaceable">&#8860;</span>');
-    text = text.replace('{{child}}', '<i class="flaticon-biology drugs-inline-icon"></i>');
+    text = text.replace(/\{\{replaceable\}\}/g, '<span class="replaceable">&#8860;</span>');
+    text = text.replace(/\{\{child\}\}/g, '<img src="/reklistan-theme/images/theme/child.png" class="child-icon">');
 
     return new Handlebars.SafeString(text);
 });
@@ -78,6 +70,9 @@ Handlebars.registerHelper('markdownify', function(context) {
  * INITIALIZE
  *
 \* ************************************************************************* */
+
+
+
 $(function() {
 	registerEvents();
     initializeRoute();
@@ -86,27 +81,36 @@ $(function() {
     createMenuesAndBigStartPage();
 
     FastClick.attach(document.body);
+    
+    // TODO: Make search work on IE8 and/or 9/10...
+    if($('html').hasClass('lt-ie9') === false) {
+        search.initialize();
+    }
 
-    $('[autofocus]:not(:focus)').eq(0).focus(); // Set focus to element with "autofocus=autofocus" in <IE10;
 });
 
 function initializeRoute() {
     routie({
         '/resource/:newsitem': function(resourceItem) {
+            window.scrollTo(0, 0);
             showGeneric('resource', resourceItem);
         },
         '/news/:newsitem': function(newsItem) {
+            window.scrollTo(0, 0);
             showGeneric('news', newsItem);
         },
         '/:tab/:chapter': function(tab, chapter) {
+            window.scrollTo(0, 0);
             showSubmenu(chapter, '', tab);
         },
         '/:tab/:chapter/:section': function(tab, chapter, section) {
+            window.scrollTo(0, 0);
             showSubmenu(chapter, section, tab);
             showDetails(chapter, section, tab);
 
         },
         '*': function () {
+            window.scrollTo(0, 0);
             backToMainMenu();
         }
     });
@@ -224,11 +228,34 @@ function hideFlyOutMenu() {
 \* ************************************************************************* */
 function createMenuesAndBigStartPage() {
     var nNewsToShow = 3;
+
+    // Sort main menu data
+    mainMenuData = [];
+    for (var i = 0; i < dataDrugs.entries.length; i++) {
+        mainMenuData.push({
+            _title: dataDrugs.entries[i]._title,
+            hasDrugs: (dataDrugs.entries[i].heading[0].fieldValue.length !== 0)
+        });
+    }
+    mainMenuData = mainMenuData.sort(function (a, b) {
+        if (a._title > b._title) {
+            return 1;
+        }
+        if (a._title < b._title) {
+            return -1;
+        }
+        return 0;
+    });
+
+
     var data = {
-        areas: dataDrugs.entries,
-        news: dataNews.slice(0, nNewsToShow),
+        areas: mainMenuData,
+        news: dataNews.entries.slice(0, nNewsToShow),
         resources: dataResources
     };
+
+
+
     printTemplate(data, "#main-menu-template", '#main-menu-placeholder');
     printTemplate(data, "#filler-template", '#details-filler-placeholder');
     printTemplate(data, "#fly-menu-template", '#fly-menu-placeholder');
@@ -247,9 +274,12 @@ function showGeneric(type, clickedItem) {
     // Filter
     if (type === 'news') {
         templateSelector = '#news-template';
-        data = dataNews.filter(function (item) {
-            return item.slug === clickedItem;
+        data = dataNews.entries.filter(function (item) {
+            return item._entryId === clickedItem;
         });
+
+        
+
     } else if (type === 'resource') {
         templateSelector = '#resource-template';
         data = dataResources.entries.filter(function (item) {
@@ -698,10 +728,6 @@ function removeDiacritics (str) {
 \* ************************************************************************* */
 
 
-$(function() {
-    search.initialize();
-});
-
 var search = {
 
     _prevSearch: '',
@@ -838,7 +864,7 @@ var search = {
         $topRow = $table.find('tr').first();
         var columnCount = $topRow.find('td, th').length;
         
-        if (columnCount > settings.minColCount) {
+        if (columnCount > settings.minColCount && $table.hasClass('no-responsive') === false) {
 
             $table.addClass('stacktable-original');
 
