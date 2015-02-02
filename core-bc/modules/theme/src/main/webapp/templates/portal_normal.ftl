@@ -120,11 +120,11 @@
 			</div>
 		</div>
 		{{#each areas}}
-			<div class="list-item js-mainmenu-item item-{{@index}}" data-chapter="{{_title}}" data-drugsdata="{{#eq hasDrugs eq=false}}none{{/eq}}">
+			<a href="#/{{#eq hasDrugs eq=false}}advice{{/eq}}{{#eq hasDrugs eq=true}}drugs{{/eq}}/{{urlencode _title}}" class="list-item js-mainmenu-item item-{{@index}}">
 				<div class="list-item-text">
 					{{_title}}
 				</div>
-			</div>
+			</a>
 		{{/each}}
 	</div>
 </script>
@@ -135,34 +135,34 @@
 			<h2 class="second-bar-title">{{this.0._title}}</h2>
 		</div>
 		<div class="js-submenu-tabs tabs">
-			<a href="#" class="tab js-tab-item js-tab-item-drugs" data-tabtype="submenu" data-tab="drugs">${txtDrugs}</a>
-			<a href="#" class="tab js-tab-item js-tab-item-advice" data-tabtype="submenu" data-tab="advice">${txtAdvice}</a>
+			<a href="#/drugs/{{urlencode this.0._title}}" class="tab js-tab-item js-tab-item-drugs {{this.0.tabClassDrugs}}">${txtDrugs}</a>
+			<a href="#/advice/{{urlencode this.0._title}}" class="tab js-tab-item js-tab-item-advice {{this.0.tabClassAdvice}}">${txtAdvice}</a>
 		</div>
 	</div>
 	{{#each this}}
 		{{#each heading}}
-			<div class="list-item submenu-item item-{{@index}} js-submenu-item" data-chapter="{{../_title}}" data-section="{{fieldValue}}">
+			<a href="#/{{../tab}}/{{urlencode ../_title}}/{{urlencode fieldValue}}" class="list-item submenu-item item-{{@index}} js-submenu-item">
 				{{#eq body.0.type.0.fieldValue eq='physical-exercise'}}
 					<div class="list-item-icon">
 						<i class="flaticon-man460 icon-15x"></i> 
 					</div>
 				{{/eq}}
-
 				<div class="list-item-text submenu-item-text">{{fieldValue}}</div>
-			</div>
+			</a>
 		{{/each}}
 	{{/each}}
 </script>
 
 <script id="details-advice-template" type="text/x-handlebars-template">
-	<div class="view-topper">
+	<div class="view-topper view-topper-details-advice">
 		<div class="second-bar">
 			<h2 class="second-bar-title">{{this.0.fieldValue}}</h2>
 		</div>
-		<div class="js-details-tabs details-tabs tabs">
-			<a href="#" class="tab js-tab-item js-tab-item-drugs" data-tabtype="details" data-tab="drugs">${txtDrugs}</a>
-			<a href="#" class="tab js-tab-item js-tab-item-advice" data-tabtype="details" data-tab="advice">${txtAdvice}</a>
+		<div class="js-submenu-tabs tabs">
+			<a href="#/drugs/{{this.0._urlSafeChapter}}/{{urlencode this.0.fieldValue}}" class="tab js-tab-item js-tab-item-drugs {{this.0.tabClassDrugs}}">${txtDrugs}</a>
+			<a href="#/advice/{{this.0._urlSafeChapter}}/{{urlencode this.0.fieldValue}}" class="tab js-tab-item js-tab-item-advice {{this.0.tabClassAdvice}}">${txtAdvice}</a>
 		</div>
+
 	</div>
 	<div class="section-details section-details-advice">
 	{{#each this}}
@@ -191,13 +191,13 @@
 </script>
 
 <script id="details-drugs-template" type="text/x-handlebars-template">
-	<div class="view-topper">
+	<div class="view-topper view-topper-details-drugs">
 		<div class="second-bar">
-			<h2 class="second-bar-title">{{this.0.fieldValue}}</h2>
+			<h2 class="second-bar-title">{{this.0.fieldValue}} {{this.0.tab}} {{this.0.isDataOnOtherTab}}</h2>
 		</div>
-		<div class="js-details-tabs details-tabs tabs">
-			<a href="#" class="tab js-tab-item js-tab-item-drugs" data-tabtype="details" data-tab="drugs">${txtDrugs}</a>
-			<a href="#" class="tab js-tab-item js-tab-item-advice" data-tabtype="details" data-tab="advice">${txtAdvice}</a>
+		<div class="js-submenu-tabs tabs">
+			<a href="#/drugs/{{this.0._urlSafeChapter}}/{{urlencode this.0.fieldValue}}" class="tab js-tab-item js-tab-item-drugs {{this.0.tabClassDrugs}}">${txtDrugs}</a>
+			<a href="#/advice/{{this.0._urlSafeChapter}}/{{urlencode this.0.fieldValue}}" class="tab js-tab-item js-tab-item-advice {{this.0.tabClassAdvice}}">${txtAdvice}</a>
 		</div>
 	</div>
 	<div class="section-details section-details-drugs">
@@ -357,7 +357,7 @@
 		<div class="appbar">
 
 			<div class="appbar-menu-title-wrapper">
-				<div class="appbar-menu-title"><a class="js-appbar-title" href="#">REK<span class="thin">listan</span></a></div>
+				<div class="appbar-menu-title"><a href="#">REK<span class="thin">listan</span></a></div>
 			</div>
 
 			<div class="appbar-menu-sink-wrapper js-appbar-menu-sink-toggle">
@@ -367,12 +367,12 @@
 			</div>
 
 
-			<div class="appbar-menu-back-wrapper js-navigation-button">
-				<div class="appbar-menu-back-button js-appbar-menu-button">
+			<a class="appbar-menu-back-wrapper js-navigation-button">
+				<div class="appbar-menu-back-button">
 					<i class="flaticon-left216 icon-4x"></i> 
 			    </div>
 		    	<div class="appbar-menu-back-label mt-small">Tillbaka</div>
-			</div>
+			</a>
 
 
 		</div>

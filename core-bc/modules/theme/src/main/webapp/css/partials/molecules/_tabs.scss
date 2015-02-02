@@ -63,7 +63,8 @@
 }
 
 @include medium {
-    .details-tabs {
+    .view-topper-details-advice .tabs,
+    .view-topper-details-drugs .tabs {
         display: none;
     }
 }

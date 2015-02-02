@@ -12,6 +12,13 @@
     padding-bottom: 1px; // As menu items have 1px border, this makes the second-bar line up with the menu items.
 }
 
+@include medium {
+    .view-topper-details-advice .second-bar, 
+    .view-topper-details-drugs .second-bar {
+        min-height: 96px;
+    }
+}
+
 .second-bar-title {
     display: inline-block;
     font-size: 24px;

@@ -23,11 +23,29 @@ var navObj = {
     currentTab: 'drugs',
     currentView: '',
     currentChapter: '',
-    currentDetails: ''
+    currentDetails: '',
+    isMobileView: true
 };
 
 var sizeMedium = 768;
 
+
+/**
+ * Make URL safe URL
+ * 
+ * Usage:
+ * {{urlencode variable}} 
+ *
+ */
+Handlebars.registerHelper('urlencode', function(context) {
+    var ret = context || '';
+    ret = ret.replace(/ /g, '_');
+    ret = removeDiacritics(ret);
+    ret = encodeURIComponent(ret);
+
+    return new Handlebars.SafeString(ret);
+
+});
 
 /**
  * If variabale is equal to value-helper
@@ -52,7 +70,7 @@ Handlebars.registerHelper('eq', function(context, options) {
 
 Handlebars.registerHelper('markdownify', function(context) {
 //    var text = Handlebars.Utils.escapeExpression(context);
-    var text = context;
+    var text = context || '';
 
     // Convert markdown links to html links
     text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="\$2">\$1</a>');
@@ -85,6 +103,12 @@ $(function() {
         search.initialize();
     }
 
+    // Save if we're in mobile view or not (menu is a bit different)
+    navObj.isMobileView = ($(window).width() < sizeMedium);
+    $( window ).resize(function() {
+        navObj.isMobileView = ($(window).width() < sizeMedium);
+    });
+
 });
 
 function initializeRoute() {
@@ -92,19 +116,23 @@ function initializeRoute() {
         '/resource/:newsitem': function(resourceItem) {
             window.scrollTo(0, 0);
             showGeneric('resource', resourceItem);
+            setBackButtonURL('#');
         },
         '/news/:newsitem': function(newsItem) {
             window.scrollTo(0, 0);
             showGeneric('news', newsItem);
+            setBackButtonURL('#');
         },
         '/:tab/:chapter': function(tab, chapter) {
             window.scrollTo(0, 0);
             showSubmenu(chapter, '', tab);
+            setBackButtonURL('#');
         },
         '/:tab/:chapter/:section': function(tab, chapter, section) {
             window.scrollTo(0, 0);
             showSubmenu(chapter, section, tab);
             showDetails(chapter, section, tab);
+            setBackButtonURL('#/' + tab + '/' + chapter);
 
         },
         '*': function () {
@@ -113,6 +141,15 @@ function initializeRoute() {
         }
     });
 }
+
+function setBackButtonURL(url) {
+    if (navObj.isMobileView) {
+        $('.js-navigation-button').attr("href", url);
+    } else {
+        $('.js-navigation-button').attr("href", '#');
+    }
+}
+
 
 
 
@@ -143,28 +180,6 @@ function registerEvents() {
     .on( "click", ".js-fly-menu-link", function(e) {
         hideFlyOutMenu();
     })
-	.on( "click", ".js-mainmenu-item", function(e) {
-        var self = $(this);
-        var chapter = self.data('chapter');
-
-        // By default, when clicking on a main menu item, the _drugs_ submenu will be shown,
-        // However, if the drugs main menu is empty (there are no content in the drugs article)
-        // we show the _advice_ menu instead.
-        var drugsData = self.data('drugsdata');
-        if(navObj.currentTab === 'drugs' && drugsData === 'none') {
-            navObj.currentTab = 'advice';
-        }
-
-        routie('/' + navObj.currentTab + '/' + makeUrlSafe(chapter));
-		e.preventDefault();
-	})
-	.on( "click", ".submenu-item", function(e) {
-        var self = $(this);
-        var chapter = self.data('chapter');
-        var section = self.data('section');
-        routie('/' + navObj.currentTab + '/' + makeUrlSafe(chapter) + '/' + makeUrlSafe(section));
-		e.preventDefault();
-    })
     .on( "click", ".js-appbar-menu-sink-toggle", function(e) {
         var jqMenuFlyout = $('.fly-menu-wrapper');
         var jqBlurrer = $('.js-menu-blurrer');
@@ -175,32 +190,6 @@ function registerEvents() {
 	})
     .on( "click", ".js-menu-blurrer", function(e) {
         hideFlyOutMenu();
-    })
-	.on( "click", ".js-navigation-button", function(e) {
-        if( $(window).width() >= sizeMedium) {
-            routie('');
-        } else if (navObj.currentView === 'details') {
-            routie('/' + navObj.currentTab + '/' + makeUrlSafe(navObj.currentChapter));
-        } else if (navObj.currentView === 'submenu') {
-            routie('');
-        } else if (navObj.currentView === 'generic') {
-            routie('');
-        }
-		e.preventDefault();
-	})
-    .on( "click", ".js-appbar-title", function(e) {
-        routie('');
-        e.preventDefault();
-    })
-    .on( "click", ".js-tab-item", function(e) {
-        var jqSelf = $(this);
-        navObj.currentTab = jqSelf.data('tab');
-        if (jqSelf.data('tabtype') === 'submenu') {
-            routie('/' + navObj.currentTab + '/' + makeUrlSafe(navObj.currentChapter));
-        } else if (jqSelf.data('tabtype') === 'details') {
-            routie('/' + navObj.currentTab + '/' + makeUrlSafe(navObj.currentChapter) + '/' + makeUrlSafe(navObj.currentDetails));
-        }
-        e.preventDefault();
     });
 
 }
@@ -296,6 +285,9 @@ function showGeneric(type, clickedItem) {
 
     // Print
     printTemplate(data, templateSelector, '#details-generic-placeholder');
+
+    // Make responsive tables
+    $('.section-details-generic table').stacktable({minColCount:2}); // Make responsive tables 
 }
 
 /* ************************************************************************* *\
@@ -318,6 +310,34 @@ function showSubmenu(chapter, section, tab) {
         return (makeUrlSafe(entry._title, true) === chapter);
     });
 
+    // Set Current View
+    setCurrentView('submenu', chapter, '');
+
+    // Add type (drugs or advice) to object, to be able to use it in Handlebars
+    // and create links with it.
+    filtered[0].tab = tab;
+
+    // Add information about the other tab to the object, to be able to use in Handlebars
+    // to show/hide/active tabs
+    if (isDataOnOtherTab(chapter, '', tab)) {
+        if (tab === 'advice') {
+            filtered[0].tabClassAdvice = 'selected';
+            filtered[0].tabClassDrugs = '';
+        } else if (tab === 'drugs') {
+            filtered[0].tabClassAdvice = '';
+            filtered[0].tabClassDrugs = 'selected';
+        }
+    } else {
+        if (tab === 'advice') {
+            filtered[0].tabClassAdvice = 'selected single';
+            filtered[0].tabClassDrugs = 'disabled';
+        } else if (tab === 'drugs') {
+            filtered[0].tabClassAdvice = 'disabled';
+            filtered[0].tabClassDrugs = 'selected single';
+        }
+    }
+
+ 
     printTemplate(filtered, "#submenu-template", '#submenu-' + tab + '-placeholder');
 
     // Remove active classes for big screen
@@ -332,32 +352,9 @@ function showSubmenu(chapter, section, tab) {
     }
 
     // Flip Active Classes
-//    jqMainMenu.addClass('anim-slided-left');
     jqMainMenu.removeClass('active');
     jqSubmenu.addClass('active');
     jqSubmenu.addClass('active-submenu');
-
-    //Change Menu Icon
-    // var jqMenuIcon = $('.js-appbar-menu-button i');
-    // jqMenuIcon.removeClass('md-menu');
-    // jqMenuIcon.addClass('md-chevron-left');
-
-    // Set Current View
-    setCurrentView('submenu', chapter, '');
-
-    // Check if tabs should be shown or not
-
-//    var jqTab = $('#submenu-' + tab + ' .js-submenu-tabs');
-    var jqActiveTab = $('#submenu-' + tab + ' .js-tab-item-' + tab);
-    var jqOtherTab = $('#submenu-' + tab + ' .js-tab-item-' + otherTab(tab));
-    if(isDataOnOtherTab(chapter, '', tab)) {
-        jqActiveTab.addClass('selected');
-    } else {
-        jqActiveTab
-            .addClass('selected')
-            .addClass('single');
-        jqOtherTab.addClass('disabled');
-    }
 
     // Remove all previous highlights
     $('.js-submenu-item').removeClass('active-menu-item');
@@ -418,6 +415,33 @@ function showDetails(chapter, details, tab) {
 	} else {
 		// TODO: Add error handling
 	}
+
+
+    // Adding chapter to object, to be able to pick it up from 
+    // handlebars. Used to create tab links.
+    filtered[0]._urlSafeChapter = chapter;
+
+    // Add information about the other tab to the object, to be able to use in Handlebars
+    // to show/hide/active tabs
+    if (isSectionAvailableOnOtherTab(chapter, details, tab)) {
+        if (tab === 'advice') {
+            filtered[0].tabClassAdvice = 'selected';
+            filtered[0].tabClassDrugs = '';
+        } else if (tab === 'drugs') {
+            filtered[0].tabClassAdvice = '';
+            filtered[0].tabClassDrugs = 'selected';
+        }
+    } else {
+        if (tab === 'advice') {
+            filtered[0].tabClassAdvice = 'selected single';
+            filtered[0].tabClassDrugs = 'disabled';
+        } else if (tab === 'drugs') {
+            filtered[0].tabClassAdvice = 'disabled';
+            filtered[0].tabClassDrugs = 'selected single';
+        }
+    }
+
+
 	printTemplate(filtered, '#details-' + tab + '-template', '#details-' + tab + '-placeholder');
 
     // Remove active classes for big screen
@@ -434,15 +458,6 @@ function showDetails(chapter, details, tab) {
 
     // Set Current View
     setCurrentView('details', chapter, details);
-
-    // Check if tabs should be shown or not
-    var jqTab = $('#details-' + tab + ' .js-details-tabs');
-    var jqActiveTab = $('#details-' + tab + ' .js-tab-item-' + tab);
-    if(isSectionAvailableOnOtherTab(chapter, details, tab)) {
-        jqActiveTab.addClass('selected');
-    } else {
-        jqTab.addClass('disabled');
-    }
 
     $('.section-details-advice table').stacktable({minColCount:2}); // Make responsive tables 
     
@@ -478,14 +493,8 @@ function backToMainMenu() {
 
     // Flip Active Classes
     jqMainMenu.addClass('active');
-//    jqSubmenu.addClass('anim-slided-right');
     jqSubmenu.removeClass('active');
     jqSubmenu.removeClass('active-submenu');
-
-    //Change Menu Icon
-    // var jqMenuIcon = $('.js-appbar-menu-button i');
-    // jqMenuIcon.addClass('md-menu');
-    // jqMenuIcon.removeClass('md-chevron-left');
 
     // Reset current tab to default
     navObj.currentTab = 'drugs';
@@ -572,7 +581,7 @@ function printTemplate(data, templateSelector, targetSelector) {
 }
 
 function makeUrlSafe(str, dontURIEncode) {
-    var ret = str;
+    var ret = str || '';
     ret = ret.replace(/ /g, '_');
     ret = removeDiacritics(ret);
 
@@ -913,3 +922,12 @@ var search = {
   };
 
 }(jQuery));
+
+
+
+
+
+
+
+
+
