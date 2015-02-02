@@ -68,6 +68,12 @@
 	color: $details-replaceable-color;
 }
 
+.lt-ie9 {
+	.replaceable {
+		font-family: Lucida Sans Unicode, Arial Unicode MS, Arial;
+	}
+}
+
 
 
 
