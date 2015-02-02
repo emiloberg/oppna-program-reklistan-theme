@@ -77,12 +77,10 @@ $(function() {
 	registerEvents();
     initializeRoute();
 	
-
     createMenuesAndBigStartPage();
 
     FastClick.attach(document.body);
     
-    // TODO: Make search work on IE8 and/or 9/10...
     if($('html').hasClass('lt-ie9') === false) {
         search.initialize();
     }

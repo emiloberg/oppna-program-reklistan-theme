@@ -11,47 +11,8 @@
 <!--[if IE 8]>         <html class="no-js lt-ie9 ${root_css_class}" dir="<@liferay.language key="lang.dir" />" lang="${w3c_language_id}"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js ${root_css_class}" dir="<@liferay.language key="lang.dir" />" lang="${w3c_language_id}"> <!--<![endif]-->
 
-<#-- 
-
-http://purecss.io/
-https://github.com/fians/Waves
-http://fian.my.id/marka/
-
-
-MATERIAL DESIGN TYPOGRAPHY: http://codepen.io/zavoloklom/pen/IkaFL
-
-MATERIAL DESIGN FONTS: http://zavoloklom.github.io/material-design-iconic-font/
-
-MATERIAL DESIGN MORPHING ICONS: http://codepen.io/eredo/pen/kwLAK
-
-
-MATERIAL DESIGN TABS: http://codepen.io/freeatnet/pen/aAzul
-
-
-
-
-
-TODO: 
-POLLYFILL THIS: https://github.com/closingtag/calc-polyfill
-
-
-USE THIS: 
-https://github.com/xoxco/breakpoints
-
-Intressant:
-http://codepen.io/tannerlinsley/pen/vEEZgZ
-
-
-
-
-HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
-
--->
-
 <head>
-	<title>${the_title} - ${company_name}</title>
-
-
+	<title>${the_title}</title>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="description" content="">
@@ -62,35 +23,19 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/respond/dest/respond.min.js" type="text/javascript"></script>
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/es5-shim/es5-shim.min.js" type="text/javascript"></script>
-
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/custom-lib/jquery/jquery-1.11.2.min.js" type="text/javascript"></script>
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/modernizr/modernizr.js" type="text/javascript"></script>
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/handlebars/handlebars.min.js" type="text/javascript"></script>
-
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/svg4everybody/svg4everybody.ie8.min.js" type="text/javascript"></script>
-
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/fastclick/lib/fastclick.js" type="text/javascript"></script>
-
-
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/js/main.js?browserId=${browserId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_local}" type="text/javascript"></script>
-
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/routie/dist/routie.min.js" type="text/javascript"></script>
-
-	
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/lunr.js/lunr.js" type="text/javascript"></script> 
-	
-	<#-- TODO LOAD lunr.MIN -->
-
-
+	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/lunr.js/lunr.min.js" type="text/javascript"></script> 
 
 	<link href='https://fonts.googleapis.com/css?family=Roboto:500,900italic,900,400italic,100,700italic,300,700,500italic,100italic,300italic,400' rel='stylesheet' type='text/css'>
-
-
 </head>
 
 <body class="${css_class}">
-
-<#-- APP -->
 
 <script id="search-results-template" type="text/x-handlebars-template">
 	<div class="search-results-container">
@@ -467,27 +412,8 @@ HÄR ÄR RAMVERKET VI SKA ANVÄNDA: http://codepen.io/emiloberg/pen/MYYLEV
 	</div>
 </div>
 
-<#-- /APP -->
 
-
-
-
-<#--
-<a href="/group/control_panel">log in</a>
--->
-
-        <!-- TODO: Add Google Analytics-->
-        <script>
-        /*
-            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-            e.src='//www.google-analytics.com/analytics.js';
-            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-            ga('create','UA-XXXXX-X');ga('send','pageview');
-            */
-        </script>
-
+		<#-- TODO, does this need to be here? -->
 		<div class="temp-hide">
 		${portletDisplay.recycle()}
 		${portletDisplay.setTitle(the_title)}
