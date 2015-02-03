@@ -5,6 +5,9 @@
 <#assign txtResources="Övrigt" />
 <#assign txtNews="Nyheter" />
 
+<#assign txtFeedback="Tyck till" />
+<#assign txtFeedbackURL="#/resource/Om_REK-Appen" />
+
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7 ${root_css_class}" dir="<@liferay.language key="lang.dir" />" lang="${w3c_language_id}"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8 ${root_css_class}" dir="<@liferay.language key="lang.dir" />" lang="${w3c_language_id}"> <![endif]-->
@@ -169,12 +172,11 @@
 		{{#each body}}
 			<div class="item-{{@index}} advice-{{type.0.fieldValue}} body">
 				{{#if subheading.0.fieldValue}}
-					<h3 class="advice-subheading">{{subheading.0.fieldValue}}</h2>
+					<h2 class="advice-subheading">{{subheading.0.fieldValue}}</h2>
 				{{/if}}
 				{{#eq type.0.fieldValue eq='for-childs'}}
 					<img src="${images_folder}/theme/child.png" class="child-icon">
 				{{/eq}}
-
 				{{{markdownify fieldValue}}}
 				{{#each image}}
 					{{#if fieldValue}}
@@ -184,6 +186,9 @@
 						</div>
 					{{/if}}
 				{{/each}}
+				{{#eq type.0.fieldValue eq='physical-exercise'}}
+					<div class="details-physical-exercise-meta"><p>Se även kapitel <a href="#/advice/Fysisk_aktivitet">Fysisk aktivitet</a></p></div>
+				{{/eq}}				
 			</div>
 		{{/each}}		
 	{{/each}}
@@ -298,8 +303,13 @@
 						{{#if externallink.0.fieldValue}}
 							<li><a href="{{externallink.0.fieldValue}}" target="_blank"><i class="flaticon-external1"></i> {{_title}}</a></li>
 						{{/if}}
+						{{#if internallink.0.fieldValue}}
+							<li><a href="{{internallink.0.fieldValue}}"><i class="flaticon-keyboard53"></i> {{_title}}</a></li>
+						{{/if}}						
 						{{#unless externallink.0.fieldValue}}
-							<li><a href="#/news/{{_entryId}}"><i class="flaticon-keyboard53"></i> {{_title}}</a></li>
+							{{#unless internallink.0.fieldValue}}
+								<li><a href="#/news/{{_entryId}}"><i class="flaticon-keyboard53"></i> {{_title}}</a></li>
+							{{/unless}}
 						{{/unless}}
 					{{/each}}
 				</ul>
@@ -316,7 +326,7 @@
 							<li><a href="{{externallink.0.fieldValue}}" target="_blank"><i class="flaticon-external1"></i> {{_title}}</a></li>
 						{{/if}}
 						{{#unless externallink.0.fieldValue}}
-							<li><a href="#/resource/{{_entryId}}"><i class="flaticon-keyboard53"></i> {{_title}}</a></li>
+							<li><a href="#/resource/{{urlencode _title}}"><i class="flaticon-keyboard53"></i> {{_title}}</a></li>
 						{{/unless}}
 					{{/each}}
 				</ul>
@@ -339,7 +349,7 @@
 					</a>
 				{{/if}}
 				{{#unless externallink.0.fieldValue}}
-					<a href="#/resource/{{_entryId}}" class="list-item js-fly-menu-link">
+					<a href="#/resource/{{urlencode _title}}" class="list-item js-fly-menu-link">
 						<div class="list-item-text">{{_title}}</div>
 					</a>
 				{{/unless}}
@@ -360,12 +370,15 @@
 				<div class="appbar-menu-title"><a href="#">REK<span class="thin">listan</span></a></div>
 			</div>
 
+			<a href="${txtFeedbackURL}" class="appbar-menu-feedback">
+				${txtFeedback}
+			</a>
+
 			<div class="appbar-menu-sink-wrapper js-appbar-menu-sink-toggle">
 				<div class="appbar-menu-sink-button">
 					<span class="flaticon-menu55 icon-4x"></span> 
 				</div>
 			</div>
-
 
 			<a class="appbar-menu-back-wrapper js-navigation-button">
 				<div class="appbar-menu-back-button">
@@ -373,7 +386,6 @@
 			    </div>
 		    	<div class="appbar-menu-back-label mt-small">Tillbaka</div>
 			</a>
-
 
 		</div>
 	</div>
@@ -412,6 +424,21 @@
 	</div>
 </div>
 
+<#-- Tracking -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//piwik.vgregion.se/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', 162]);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><p><img src="//piwik.vgregion.se/piwik.php?idsite=162" style="border:0;" alt="" /></p></noscript>
+<#-- /Tracking -->
 
 		<#-- TODO, does this need to be here? -->
 		<div class="temp-hide">

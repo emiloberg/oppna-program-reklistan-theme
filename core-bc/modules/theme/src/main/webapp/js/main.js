@@ -10,6 +10,16 @@ var dataNews = {
                     fieldValue: 'http://epi.vgregion.se/sv/Lakemedel-i-Vastra-Gotalandsregionen/Vardgivarstod/'
                 }
             ]
+        },
+        {
+            _entryId: 'problem-med-rek-appen',
+            _title: 'Problem med REK-Appen?',
+            content: '',
+            internallink: [
+                {
+                    fieldValue: '#/resource/Om_REK-Appen'
+                }
+            ]
         }
     ]
 };
@@ -44,7 +54,6 @@ Handlebars.registerHelper('urlencode', function(context) {
     ret = encodeURIComponent(ret);
 
     return new Handlebars.SafeString(ret);
-
 });
 
 /**
@@ -92,9 +101,44 @@ Handlebars.registerHelper('markdownify', function(context) {
 
 
 $(function() {
-	registerEvents();
+    checkAppDataReady();
+});
+
+
+/**
+ * As Liferay may start to serve content before all the Asset Publishers are 
+ * done, we need to check if the variables (created by the APs) are available and
+ * if not, try again a second later.
+ *
+ * Remove this when proper JSON requests is in place.
+ *
+ */
+var nRetries = 0;
+function checkAppDataReady() {
+    if (nRetries >= 20) {
+        $('#main-menu-placeholder').html('<div class="error-box"><h1>Något gick snett</h1><p>Tyvärr kunde datan inte hämtas från servern. <b>Försök ladda om sidan.</b></p><p>Fungerar det fortfarande inte? Skicka ett epost till Christer Printz <a href="mailto:christer.printz@vgregion.se">christer.printz@vgregion.se</a></p></div>');
+    } else {
+        if (typeof dataSearchDrugs === 'undefined' ||
+            typeof dataSearchAdvice === 'undefined' ||
+            typeof dataResources === 'undefined' ||
+            typeof dataDrugs === 'undefined' ||
+            typeof dataAdvice === 'undefined')
+        {
+            $('#main-menu-placeholder').html('<div class="loading-box">Datan laddas' + Array(((nRetries % 3)+2)).join(".") + '</div>');
+            setTimeout(function(){
+                nRetries = nRetries + 1;
+                checkAppDataReady();
+            }, 1000);
+        } else {
+            initApp();
+        }
+    }
+}
+
+function initApp() {
+    registerEvents();
     initializeRoute();
-	
+    
     createMenuesAndBigStartPage();
 
     FastClick.attach(document.body);
@@ -108,8 +152,7 @@ $(function() {
     $( window ).resize(function() {
         navObj.isMobileView = ($(window).width() < sizeMedium);
     });
-
-});
+}
 
 function initializeRoute() {
     routie({
@@ -234,14 +277,22 @@ function createMenuesAndBigStartPage() {
         return 0;
     });
 
+    // Sort Resources
+    dataResources.entries = dataResources.entries.sort(function (a, b) {
+        if (a._title > b._title) {
+            return 1;
+        }
+        if (a._title < b._title) {
+            return -1;
+        }
+        return 0;
+    });
 
     var data = {
         areas: mainMenuData,
         news: dataNews.entries.slice(0, nNewsToShow),
         resources: dataResources
     };
-
-
 
     printTemplate(data, "#main-menu-template", '#main-menu-placeholder');
     printTemplate(data, "#filler-template", '#details-filler-placeholder');
@@ -270,7 +321,7 @@ function showGeneric(type, clickedItem) {
     } else if (type === 'resource') {
         templateSelector = '#resource-template';
         data = dataResources.entries.filter(function (item) {
-            return item._entryId == clickedItem;
+            return makeUrlSafe(item._title) === clickedItem;
         });
     }
 
@@ -870,7 +921,7 @@ var search = {
         $table = $(this);
         $topRow = $table.find('tr').first();
         var columnCount = $topRow.find('td, th').length;
-        
+
         if (columnCount > settings.minColCount && $table.hasClass('no-responsive') === false) {
 
             $table.addClass('stacktable-original');
