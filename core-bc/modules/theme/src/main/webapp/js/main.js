@@ -107,31 +107,22 @@ $(function() {
 
 /**
  * As Liferay may start to serve content before all the Asset Publishers are 
- * done, we need to check if the variables (created by the APs) are available and
- * if not, try again a second later.
+ * done, we need to check if the variables (created by the APs) are available.
+ * If not, there's not much we can do then tell the user.
  *
  * Remove this when proper JSON requests is in place.
  *
  */
-var nRetries = 0;
 function checkAppDataReady() {
-    if (nRetries >= 20) {
+    if (typeof dataSearchDrugs === 'undefined' ||
+        typeof dataSearchAdvice === 'undefined' ||
+        typeof dataResources === 'undefined' ||
+        typeof dataDrugs === 'undefined' ||
+        typeof dataAdvice === 'undefined')
+    {
         $('#main-menu-placeholder').html('<div class="error-box"><h1>Något gick snett</h1><p>Tyvärr kunde datan inte hämtas från servern. <b>Försök ladda om sidan.</b></p><p>Fungerar det fortfarande inte? Skicka ett epost till Christer Printz <a href="mailto:christer.printz@vgregion.se">christer.printz@vgregion.se</a></p></div>');
     } else {
-        if (typeof dataSearchDrugs === 'undefined' ||
-            typeof dataSearchAdvice === 'undefined' ||
-            typeof dataResources === 'undefined' ||
-            typeof dataDrugs === 'undefined' ||
-            typeof dataAdvice === 'undefined')
-        {
-            $('#main-menu-placeholder').html('<div class="loading-box">Datan laddas' + Array(((nRetries % 3)+2)).join(".") + '</div>');
-            setTimeout(function(){
-                nRetries = nRetries + 1;
-                checkAppDataReady();
-            }, 1000);
-        } else {
-            initApp();
-        }
+        initApp();
     }
 }
 
