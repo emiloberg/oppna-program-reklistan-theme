@@ -1,0 +1,19 @@
+.preview-menu {
+    width: 200px;
+    float: left;
+    margin: 1em;
+
+    ul {
+        list-style-type: none;
+        margin: 0;
+    }
+}
+
+.preview-single-entry {
+    float: left;
+    display: none;
+}
+
+.preview-single-entry:first-child {
+    display: block;
+}

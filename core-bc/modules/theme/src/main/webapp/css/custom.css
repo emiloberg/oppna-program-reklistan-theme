@@ -40,7 +40,9 @@ body {
 @import 'partials/molecules/main-menu-news';
 @import 'partials/molecules/search';
 @import 'partials/molecules/logo';
+@import 'partials/molecules/article-preview';
 
 @import 'partials/utilities/breakpoints-content';
 
 @import 'partials/shame';
+
