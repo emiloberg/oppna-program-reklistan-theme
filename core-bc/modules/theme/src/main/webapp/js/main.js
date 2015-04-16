@@ -1,3 +1,5 @@
+'use strict';
+
 // TODO - Remove this temp
 var dataNews = {
     entries: [
@@ -25,10 +27,10 @@ var dataNews = {
 };
 
 
-
-
+/**
+ * Global variables
+ */
 // TODO: Add checks to see if the current view is already loaded, if so, only show the view, don't load the data
-
 var navObj = {
     currentTab: 'drugs',
     currentView: '',
@@ -38,6 +40,12 @@ var navObj = {
 };
 
 var sizeMedium = 768;
+
+var dataSearchDrugs = [];
+var dataSearchAdvice = [];
+var dataResources = [];
+var dataDrugs = [];
+var dataAdvice = [];
 
 
 /**
@@ -56,6 +64,7 @@ Handlebars.registerHelper('urlencode', function(context) {
     return new Handlebars.SafeString(ret);
 });
 
+
 /**
  * If variabale is equal to value-helper
  *
@@ -70,15 +79,14 @@ Handlebars.registerHelper('eq', function(context, options) {
     }
 });
 
+
 /**
  * Parse the text and do some replacing
  *
  * Usage:
  * {{markdownify variable}}
  */
-
 Handlebars.registerHelper('markdownify', function(context) {
-//    var text = Handlebars.Utils.escapeExpression(context);
     var text = context || '';
 
     // Convert markdown links to html links
@@ -140,7 +148,7 @@ function initApp() {
 
     // Save if we're in mobile view or not (menu is a bit different)
     navObj.isMobileView = ($(window).width() < sizeMedium);
-    $( window ).resize(function() {
+    $(window).resize(function() {
         navObj.isMobileView = ($(window).width() < sizeMedium);
     });
 }
@@ -186,10 +194,9 @@ function setBackButtonURL(url) {
 
 
 
-
 /* ************************************************************************* *\
  * 
- * REGISTER EVENTS
+ * EVENT LISTENERS
  *
 \* ************************************************************************* */
 function registerEvents() {
@@ -201,20 +208,20 @@ function registerEvents() {
         routie('/news/' + item);
         e.preventDefault();
     })
-    .on( "click", ".js-search-clear", function(e) {
+    .on( "click", ".js-search-clear", function() {
         $('.search-input').val('');
         search.search('');
     })
-    .on("keyup", ".js-search-input", function(e) {
+    .on("keyup", ".js-search-input", function() {
         search.search($.trim($('.js-search-input').val()));
     })
-    .on("change", ".js-search-input", function(e) {
+    .on("change", ".js-search-input", function() {
         search.search($.trim($('.js-search-input').val()));
     })
-    .on( "click", ".js-fly-menu-link", function(e) {
+    .on( "click", ".js-fly-menu-link", function() {
         hideFlyOutMenu();
     })
-    .on( "click", ".js-appbar-menu-sink-toggle", function(e) {
+    .on( "click", ".js-appbar-menu-sink-toggle", function() {
         var jqMenuFlyout = $('.fly-menu-wrapper');
         var jqBlurrer = $('.js-menu-blurrer');
         var jqBody = $('body');
@@ -222,17 +229,13 @@ function registerEvents() {
         jqMenuFlyout.addClass('active');
         jqBlurrer.fadeIn(250);
 	})
-    .on( "click", ".js-menu-blurrer", function(e) {
+    .on( "click", ".js-menu-blurrer", function() {
         hideFlyOutMenu();
     });
 
 }
 
-/* ************************************************************************* *\
- * 
- * HIDE FLY OUT MENU
- *
-\* ************************************************************************* */
+// Hide fly out menu
 function hideFlyOutMenu() {
     var jqMenuFlyout = $('.fly-menu-wrapper');
     var jqBlurrer = $('.js-menu-blurrer');
@@ -241,6 +244,7 @@ function hideFlyOutMenu() {
     jqMenuFlyout.removeClass('active');
     jqBlurrer.fadeOut(250);
 }
+
 
 /* ************************************************************************* *\
  * 
@@ -251,7 +255,7 @@ function createMenuesAndBigStartPage() {
     var nNewsToShow = 3;
 
     // Sort main menu data
-    mainMenuData = [];
+    var mainMenuData = [];
     for (var i = 0; i < dataDrugs.entries.length; i++) {
         mainMenuData.push({
             _title: dataDrugs.entries[i]._title,
@@ -289,6 +293,7 @@ function createMenuesAndBigStartPage() {
     printTemplate(data, "#filler-template", '#details-filler-placeholder');
     printTemplate(data, "#fly-menu-template", '#fly-menu-placeholder');
 }
+
 
 /* ************************************************************************* *\
  * 
@@ -331,6 +336,7 @@ function showGeneric(type, clickedItem) {
     // Make responsive tables
     $('.section-details-generic table').stacktable({minColCount:2}); // Make responsive tables 
 }
+
 
 /* ************************************************************************* *\
  * 
@@ -431,6 +437,7 @@ function setCurrentView(currentView, chapter, details) {
         .addClass('showing-' + currentView);
 }
 
+
 /* ************************************************************************* *\
  * 
  * SHOW SECTION
@@ -494,7 +501,6 @@ function showDetails(chapter, details, tab) {
     }
 
     // Flip Active Classes
-//    jqSubmenu.addClass('anim-slided-left');
     jqSubmenu.removeClass('active');
     jqDetails.addClass('active');
 
@@ -521,8 +527,6 @@ function backToSubmenu() {
         // Flip Active Classes
         jqSubmenu.addClass('active');
         jqSubmenu.addClass('active-submenu');
-//        jqSubmenu.removeClass('anim-slided-right');
-//        jqSubmenu.removeClass('anim-slided-left');
         jqDetails.removeClass('active');
     }
 }
@@ -548,10 +552,6 @@ function backToMainMenu() {
 }
 
 
-
-
-
-
 /* ************************************************************************* *\
  * 
  * HELPERS
@@ -574,14 +574,10 @@ function isSectionAvailableOnOtherTab(chapter, details, tab) {
         }
     }
 
-    if (filtered.length > 0) {
-        return true;
-    } else {
-        return false;
-    }
+
+    return (filtered.length > 0);
 
 }
-
 
 
 /**
@@ -597,11 +593,7 @@ function isDataOnOtherTab(chapter, details, tab) {
     });
 
     if (filtered.length > 0 ) {
-        if(filtered[0].heading[0].fieldValue.length > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return (filtered[0].heading[0].fieldValue.length > 0);
     } else {
         return false;
     }
@@ -611,7 +603,7 @@ function isDataOnOtherTab(chapter, details, tab) {
  /**
  * Mangle data + template and create output
  *
- * @param {string} data JSON-data
+ * @param {*} data JSON-data
  * @param {string} templateSelector Selector for the element holding the template
  * @param {string} targetSelector Selector for the element where finished DOM should be placed.
  */
@@ -647,14 +639,6 @@ function getNoneActiveTabData(tab) {
         return dataAdvice;
     } else if (tab === 'advice') {
         return dataDrugs;
-    }
-}
-
-function otherTab(tab) {
-    if (tab === 'drugs' ) {
-        return 'advice';
-    } else if (tab === 'advice') {
-        return 'drugs';
     }
 }
 
@@ -775,8 +759,6 @@ function removeDiacritics (str) {
  * SEARCH
  *
 \* ************************************************************************* */
-
-
 var search = {
 
     _prevSearch: '',
@@ -822,10 +804,6 @@ var search = {
         var jqClearButton = $('.js-search-clear');
         var jqSearchResultsHeader = $('.jq-search-results-heading');
 
-        var jqMainMenuItems = $('.js-mainmenu-items');
-        var jqMainMenuNewsContainer = $('.js-main-menu-news-container');
-        var jqSearchResultsContainer = $('.js-search-results');
-
         if (searchFor.length > 0) {
             jqClearButton.fadeIn(250);
 
@@ -863,20 +841,6 @@ var search = {
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * THIS IS A MODIFIER VERSION OF STACKTABLE.JS
  *
@@ -909,8 +873,8 @@ var search = {
 
     return $tables.each(function() {
 
-        $table = $(this);
-        $topRow = $table.find('tr').first();
+        var $table = $(this);
+        var $topRow = $table.find('tr').first();
         var columnCount = $topRow.find('td, th').length;
 
         if (columnCount > settings.minColCount && $table.hasClass('no-responsive') === false) {
@@ -921,7 +885,7 @@ var search = {
             if (typeof settings.myClass !== undefined) $stacktable.addClass(settings.myClass);
             var markup = '';
 
-            $table.find('tr').each(function(index,value) {
+            $table.find('tr').each(function(index) {
             markup += '<tr>';
             // for the first row, top left table cell is the head of the table
             if (index===0) {
@@ -930,7 +894,7 @@ var search = {
             // for the other rows, put the left table cell as the head for that row
             // then iterate through the key/values
             else {
-              $(this).find('td').each(function(index,value) {
+              $(this).find('td').each(function(index) {
                 if (index===0) {
 
                   if ($(this).html().replace('&nbsp;', '').trim().length > 0) {
@@ -964,12 +928,3 @@ var search = {
   };
 
 }(jQuery));
-
-
-
-
-
-
-
-
-
