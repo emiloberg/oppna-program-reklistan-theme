@@ -603,7 +603,7 @@ function isDataOnOtherTab(chapter, details, tab) {
  /**
  * Mangle data + template and create output
  *
- * @param {*} data JSON-data
+ * @param {Object} data JSON-data
  * @param {string} templateSelector Selector for the element holding the template
  * @param {string} targetSelector Selector for the element where finished DOM should be placed.
  */
