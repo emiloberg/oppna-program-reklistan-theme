@@ -9,10 +9,11 @@
         color: rgb(255, 0, 0);
     }
 
-    h3 {
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 0;
+    .preview-title {
+        background-color: #ccc;
+        padding: 0.5em;
     }
+
 
     .replaceable,
     .section-details-generic h2,
@@ -102,5 +103,9 @@ p.no-diffs {
         margin-top: 1em;
         border-top: 1px solid black;
         border-bottom: 1px solid black;
+    }
+
+    .preview-title {
+        padding: 0;
     }
 }
