@@ -1,75 +1,74 @@
-function init(articlePublished, articleDraft, hbsTemplate) {
+(function() {
 
-    $('.open-self-new-window').attr('href', window.location.href);
+  var renderDiffPreviews = function(articlePublished, articleDraft, hbsTemplate) {
 
-    registerHandlebarHelpers();
-    Swag.registerHelpers(Handlebars);
+      $('.open-self-new-window').attr('href', window.location.href);
 
-    printTemplate(articleDraft, '#title-template', '#title-target');
-    printTemplate(articleDraft, '', '#draft-target', hbsTemplate);
-    printTemplate(articlePublished, '', '#published-target', hbsTemplate);
+      registerHandlebarHelpers();
+      Swag.registerHelpers(Handlebars);
 
-    var htmlPublished = $('#published-target').html();
-    var htmlDraft= $('#draft-target').html();
-    var articleDiff;
+      printHbsTemplate(articleDraft, '#title-template', '#title-target');
+      printHbsTemplate(articleDraft, '', '#draft-target', hbsTemplate);
+      printHbsTemplate(articlePublished, '', '#published-target', hbsTemplate);
 
-    if (htmlDraft === htmlPublished) {
-      articleDiff = '<p class="no-diffs">Inga ändringar från publicerad version</p>'
-    } else {
-      articleDiff = htmldiff(htmlPublished, htmlDraft);
-    }
-    $('#diff-target').html(articleDiff);
+      var htmlPublished = $('#published-target').html();
+      var htmlDraft= $('#draft-target').html();
+      var articleDiff;
 
-    // Show and hide the previews
-    $('.toggle-show-published').click(function (event) {
-      event.preventDefault();
-      $('.preview-box-draft').addClass('hide-me');
-      $('.preview-box-published').removeClass('hide-me');
-    });
-
-    $('.toggle-show-draft').click(function (event) {
-        event.preventDefault();
-        $('.preview-box-published').addClass('hide-me');
-        $('.preview-box-draft').removeClass('hide-me');
-    });
-
-    $('.checkbox-show-preview-published-draft').change(function () {
-        if (this.checked) {
-            $('.preview-box-published').addClass('hide-me');
-            $('.preview-box-draft').removeClass('hide-me');
-        } else {
-            $('.preview-box-published').addClass('hide-me');
-            $('.preview-box-draft').addClass('hide-me');
-        }
-        setSinglePreviewClass();
-    });
-
-    $('.checkbox-show-preview-diff').change(function () {
-        if (this.checked) {
-            $('.preview-box-diff').removeClass('hide-me');
-        } else {
-            $('.preview-box-diff').addClass('hide-me');
-        }
-        setSinglePreviewClass();
-    });
-
-    function setSinglePreviewClass() {
-      var numberOfChecks = $('.chekbox-show-preview:checked').length;
-      if (numberOfChecks === 2 || numberOfChecks === 0) {
-        $('.single-preview-box').removeClass('single-preview-box');
-      } else if (numberOfChecks === 1) {
-        $('.preview-box').addClass('single-preview-box');
+      if (htmlDraft === htmlPublished) {
+        articleDiff = '<p class="no-diffs">Inga ändringar från publicerad version</p>';
+      } else {
+        articleDiff = htmldiff(htmlPublished, htmlDraft);
       }
-    }
+      $('#diff-target').html(articleDiff);
 
+      // Show and hide the previews
+      $('.toggle-show-published').click(function (event) {
+        event.preventDefault();
+        $('.preview-box-draft').addClass('hide-me');
+        $('.preview-box-published').removeClass('hide-me');
+      });
 
+      $('.toggle-show-draft').click(function (event) {
+          event.preventDefault();
+          $('.preview-box-published').addClass('hide-me');
+          $('.preview-box-draft').removeClass('hide-me');
+      });
 
+      $('.checkbox-show-preview-published-draft').change(function () {
+          if (this.checked) {
+              $('.preview-box-published').addClass('hide-me');
+              $('.preview-box-draft').removeClass('hide-me');
+          } else {
+              $('.preview-box-published').addClass('hide-me');
+              $('.preview-box-draft').addClass('hide-me');
+          }
+          setSinglePreviewClass();
+      });
 
+      $('.checkbox-show-preview-diff').change(function () {
+          if (this.checked) {
+              $('.preview-box-diff').removeClass('hide-me');
+          } else {
+              $('.preview-box-diff').addClass('hide-me');
+          }
+          setSinglePreviewClass();
+      });
 
-    
-}
+      function setSinglePreviewClass() {
+        var numberOfChecks = $('.chekbox-show-preview:checked').length;
+        if (numberOfChecks === 2 || numberOfChecks === 0) {
+          $('.single-preview-box').removeClass('single-preview-box');
+        } else if (numberOfChecks === 1) {
+          $('.preview-box').addClass('single-preview-box');
+        }
+      }
 
+  };
 
+  this.renderDiffPreviews = renderDiffPreviews;
+
+}).call(this);
 
 function registerHandlebarHelpers() {
   /**
@@ -101,7 +100,7 @@ function registerHandlebarHelpers() {
  * @param {string} targetSelector Selector for the element where finished DOM should be placed.
  * *@param {string} hbsTemplate Passing in a handlebars template instead of using the templateSelcetor
  */
-function printTemplate(data, templateSelector, targetSelector, hbsTemplate) {
+function printHbsTemplate(data, templateSelector, targetSelector, hbsTemplate) {
     var templateHTML;
     if (hbsTemplate) {
       templateHTML = hbsTemplate;
