@@ -34,6 +34,7 @@
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/js/main.js?browserId=${browserId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_local}" type="text/javascript"></script>
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/routie/dist/routie.min.js" type="text/javascript"></script>
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/lunr.js/lunr.min.js" type="text/javascript"></script> 
+	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/custom-lib/swag/swag.min.js" type="text/javascript"></script>
 
 	<link href='https://fonts.googleapis.com/css?family=Roboto:500,900italic,900,400italic,100,700italic,300,700,500italic,100italic,300italic,400' rel='stylesheet' type='text/css'>
 </head>
@@ -135,24 +136,22 @@
 <script id="submenu-template" type="text/x-handlebars-template">
 	<div class="view-topper">
 		<div class="second-bar">
-			<h2 class="second-bar-title">{{this.0._title}}</h2>
+			<h2 class="second-bar-title">{{title}}</h2>
 		</div>
 		<div class="js-submenu-tabs tabs">
-			<a href="#/drugs/{{urlencode this.0._title}}" class="tab js-tab-item js-tab-item-drugs {{this.0.tabClassDrugs}}">${txtDrugs}</a>
-			<a href="#/advice/{{urlencode this.0._title}}" class="tab js-tab-item js-tab-item-advice {{this.0.tabClassAdvice}}">${txtAdvice}</a>
+			<a href="#/drugs/{{urlencode title}}" class="tab js-tab-item js-tab-item-drugs {{tabClassDrugs}}">${txtDrugs}</a>
+			<a href="#/advice/{{urlencode title}}" class="tab js-tab-item js-tab-item-advice {{tabClassAdvice}}">${txtAdvice}</a>
 		</div>
 	</div>
-	{{#each this}}
-		{{#each heading}}
-			<a href="#/{{../tab}}/{{urlencode ../_title}}/{{urlencode fieldValue}}" class="list-item submenu-item item-{{@index}} js-submenu-item">
-				{{#eq body.0.type.0.fieldValue eq='physical-exercise'}}
-					<div class="list-item-icon">
-						<i class="flaticon-man460 icon-15x"></i> 
-					</div>
-				{{/eq}}
-				<div class="list-item-text submenu-item-text">{{fieldValue}}</div>
-			</a>
-		{{/each}}
+	{{#each fields}}
+		<a href="#/{{@root/tab}}/{{urlencode @root/title}}/{{urlencode value}}" class="list-item submenu-item item-{{@index}} js-submenu-item">
+			{{#is children.0.children.0.value 'physical-exercise'}}
+				<div class="list-item-icon">
+					<i class="flaticon-man460 icon-15x"></i>
+				</div>
+			{{/is}}
+			<div class="list-item-text submenu-item-text">{{value}}</div>
+		</a>
 	{{/each}}
 </script>
 
