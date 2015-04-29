@@ -21,7 +21,7 @@
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
-	<link href="http://localhost:6080/reklistan-theme/images/favicon.ico" rel="Shortcut Icon">
+	<link href="/reklistan-theme/images/favicon.ico" rel="Shortcut Icon">
 	<link class="lfr-css-file" href="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/css/custom.css?browserId=${browserId}&themeId=${themeDisplay.themeId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_local}" rel="stylesheet" type="text/css">
 
 	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/respond/dest/respond.min.js" type="text/javascript"></script>
@@ -41,16 +41,18 @@
 
 <body class="${css_class}">
 
+
+<#-- HBS SEARCH RESULTS -->
 <script id="search-results-template" type="text/x-handlebars-template">
 	<div class="search-results-container">
 		{{#each this}}
 			<a href="#/{{link}}" class="list-item js-search-results-item item-{{@index}}">
 
-				{{#eq type eq='drugs'}}
+				{{#is type 'drugs'}}
 					<div class="list-item-icon">
 						<span class="icomoon-drug icomoon-list-icon icon-15x"></span>
 					</div>
-				{{/eq}}
+				{{/is}}
 
 				<div class="list-item-text">
 					{{section}} <span class="search-chapter">({{chapter}})</span>
@@ -68,9 +70,10 @@
 	</div>
 </script>
 
-<script id="main-menu-template" type="text/x-handlebars-template">
 
-	<div class="search-wrapper view-topper">
+<#-- HBS MAIN MENU -->
+<script id="main-menu-template" type="text/x-handlebars-template">
+	<div class="search-wrapper view-topper js-search-wrapper">
 		<div class="second-bar">
 			<div class="search-input-container">
 				<input type="text" class="search-input js-search-input" placeholder="Sök" autocorrect="off">
@@ -84,14 +87,10 @@
 			</div>
 		</div>
 	</div>
-
 	<div id="search-results-placeholder"></div>
-
 	<div class="main-menu-logo">
 		<img src="${images_folder}/theme/vgr-w400-c.png">
-	</div>	
-
-
+	</div>
 	{{#if news}}
 		<div class="main-menu-news-container js-main-menu-news-container lt-medium">
 			<div class="list-item list-item-heading">
@@ -104,7 +103,7 @@
 					<a href="{{externallink.0.fieldValue}}" target="_blank" class="list-item item-{{@index}}">
 					<div class="list-item-icon">
 						<i class="flaticon-external1"></i>
-					</div>				
+					</div>
 				{{/if}}
 				{{#unless externallink.0.fieldValue}}
 					<a href="#/news/{{_entryId}}" class="list-item item-{{@index}}">
@@ -116,7 +115,6 @@
 			{{/each}}
 		</div>
 	{{/if}}
-
 	<div class="mainmenu-area-items">
 		<div class="list-item list-item-heading lt-medium">
 			<div class="list-item-text">
@@ -124,7 +122,7 @@
 			</div>
 		</div>
 		{{#each areas}}
-			<a href="#/{{#eq hasDrugs eq=false}}advice{{/eq}}{{#eq hasDrugs eq=true}}drugs{{/eq}}/{{urlencode _title}}" class="list-item js-mainmenu-item item-{{@index}}">
+			<a href="#/{{#isnt hasDrugs true}}advice{{/isnt}}{{#is hasDrugs true}}drugs{{/is}}/{{urlencode _title}}" class="list-item js-mainmenu-item item-{{@index}}">
 				<div class="list-item-text">
 					{{_title}}
 				</div>
@@ -133,6 +131,8 @@
 	</div>
 </script>
 
+
+<#-- HBS SUBMENU -->
 <script id="submenu-template" type="text/x-handlebars-template">
 	<div class="view-topper">
 		<div class="second-bar">
@@ -155,112 +155,8 @@
 	{{/each}}
 </script>
 
-<script id="details-advice-template" type="text/x-handlebars-template">
-	<div class="view-topper view-topper-details-advice">
-		<div class="second-bar">
-			<h2 class="second-bar-title">{{this.0.fieldValue}}</h2>
-		</div>
-		<div class="js-submenu-tabs tabs">
-			<a href="#/drugs/{{this.0._urlSafeChapter}}/{{urlencode this.0.fieldValue}}" class="tab js-tab-item js-tab-item-drugs {{this.0.tabClassDrugs}}">${txtDrugs}</a>
-			<a href="#/advice/{{this.0._urlSafeChapter}}/{{urlencode this.0.fieldValue}}" class="tab js-tab-item js-tab-item-advice {{this.0.tabClassAdvice}}">${txtAdvice}</a>
-		</div>
 
-	</div>
-	<div class="section-details section-details-advice">
-	{{#each this}}
-		{{#each body}}
-			<div class="item-{{@index}} advice-{{type.0.fieldValue}} body">
-				{{#if subheading.0.fieldValue}}
-					<h2 class="advice-subheading">{{subheading.0.fieldValue}}</h2>
-				{{/if}}
-				{{#eq type.0.fieldValue eq='for-childs'}}
-					<img src="${images_folder}/theme/child.png" class="child-icon">
-				{{/eq}}
-				{{{markdownify fieldValue}}}
-				{{#each image}}
-					{{#if fieldValue}}
-						<div class="details-image">
-							<a href="{{{fieldValue}}}" target="_blank"><img src="{{{fieldValue}}}" alt=""></a>
-							<a href="{{{fieldValue}}}" target="_blank" class="fullscreen-link">Visa bild i fullskärm</a>
-						</div>
-					{{/if}}
-				{{/each}}
-				{{#eq type.0.fieldValue eq='physical-exercise'}}
-					<div class="details-physical-exercise-meta"><p>Se även kapitel <a href="#/advice/Fysisk_aktivitet">Fysisk aktivitet</a></p></div>
-				{{/eq}}				
-			</div>
-		{{/each}}		
-	{{/each}}
-	</div>
-</script>
-
-<script id="details-drugs-template" type="text/x-handlebars-template">
-	<div class="view-topper view-topper-details-drugs">
-		<div class="second-bar">
-			<h2 class="second-bar-title">{{this.0.fieldValue}} {{this.0.tab}} {{this.0.isDataOnOtherTab}}</h2>
-		</div>
-		<div class="js-submenu-tabs tabs">
-			<a href="#/drugs/{{this.0._urlSafeChapter}}/{{urlencode this.0.fieldValue}}" class="tab js-tab-item js-tab-item-drugs {{this.0.tabClassDrugs}}">${txtDrugs}</a>
-			<a href="#/advice/{{this.0._urlSafeChapter}}/{{urlencode this.0.fieldValue}}" class="tab js-tab-item js-tab-item-advice {{this.0.tabClassAdvice}}">${txtAdvice}</a>
-		</div>
-	</div>
-	<div class="section-details section-details-drugs">
-	{{#each this}}
-		{{#each subheading1}}
-			{{#if fieldValue}}<div class="item-{{@index}} subheading">{{markdownify fieldValue}}</div>{{/if}}
-			{{#each subheading2}}
-				{{#if fieldValue}}<div class="item-{{@index}} subheading-2">{{markdownify fieldValue}}</div>{{/if}}
-				{{#each area}}
-					{{#if fieldValue}}<div class="item-{{@index}} area">{{markdownify fieldValue}}</div>{{/if}}
-					{{#each recommendedFor}}
-						{{#if fieldValue}}<div class="item-{{@index}} recommended-for">{{markdownify fieldValue}}</div>{{/if}}
-						{{#each substance}}
-							{{#if fieldValue}}
-								<div class="item-{{@index}} substance">
-									{{markdownify fieldValue}}
-									{{#if replaceableSubstance.0.fieldValue}}
-										<span class="replaceable">&#8860;</span>
-									{{/if}}
-								</div>
-							{{/if}}
-							{{#each drug}}
-								{{#if fieldValue}}
-									<div class="item-{{@index}} drug">
-										{{markdownify fieldValue}}
-										{{#if replaceableDrug.0.fieldValue}}
-											<span class="replaceable">&#8860;</span>
-										{{/if}}
-									</div>
-								{{/if}}
-								{{#each infoboxDrug}}
-									{{#if fieldValue}}
-										<div class="item-{{@index}} infobox infobox-drug">
-											{{markdownify fieldValue}}
-										</div>
-									{{/if}}
-								{{/each}}
-							{{/each}}					
-						{{/each}}
-
-					{{/each}}
-				{{/each}}				
-			{{/each}}
-		{{/each}}
-		{{#each infoboxHeading}}
-			{{#if fieldValue}}
-				<div class="item-{{@index}} infobox infobox-heading">
-					{{#if infoboxHeadingHeading.0.fieldValue}}
-						<h3>{{infoboxHeadingHeading.0.fieldValue}}</h3>
-					{{/if}}
-					{{markdownify fieldValue}}
-				</div>
-			{{/if}}
-		{{/each}}
-	{{/each}}
-	</div>
-</script>
-
-
+<#-- HBS NEWS -->
 <script id="news-template" type="text/x-handlebars-template">
 	{{#each this}}
 		<div class="view-topper">
@@ -274,26 +170,13 @@
 	{{/each}}
 </script>
 
-<script id="resource-template" type="text/x-handlebars-template">
-	{{#each this}}
-		<div class="view-topper">
-			<div class="second-bar">
-				<h2 class="second-bar-title">{{_title}}</h2>
-			</div>
-		</div>
-		<div class="section-details section-details-generic">
-			{{{markdownify body.0.fieldValue}}}
-		</div>
-	{{/each}}
-</script>
 
+<#-- HBS FILLER -->
 <script id="filler-template" type="text/x-handlebars-template">
 	<div class="details-inner">
-
 		<div class="vgr-logo">
 			<img src="${images_folder}/theme/vgr-w400-c.png">
 		</div>
-
 		{{#if news}}
 			<div class="link-list">
 				<h2>${txtNews}</h2>
@@ -315,17 +198,16 @@
 
 			</div>
 		{{/if}}
-
 		{{#if resources}}
 			<div class="link-list">
 				<h2>${txtResources}</h2>
 				<ul>
-					{{#each resources.entries}}
-						{{#if externallink.0.fieldValue}}
-							<li><a href="{{externallink.0.fieldValue}}" target="_blank"><i class="flaticon-external1"></i> {{_title}}</a></li>
+					{{#each resources}}
+						{{#if fields.1.value}}
+							<li><a href="{{fields.1.value}}" target="_blank"><i class="flaticon-external1"></i> {{title}}</a></li>
 						{{/if}}
-						{{#unless externallink.0.fieldValue}}
-							<li><a href="#/resource/{{urlencode _title}}"><i class="flaticon-keyboard53"></i> {{_title}}</a></li>
+						{{#unless fields.1.value}}
+							<li><a href="#/resource/{{urlencode title}}"><i class="flaticon-keyboard53"></i> {{title}}</a></li>
 						{{/unless}}
 					{{/each}}
 				</ul>
@@ -335,21 +217,23 @@
 	</div>
 </script>
 
+
+<#-- HBS FLY OUT MENU -->
 <script id="fly-menu-template" type="text/x-handlebars-template">
 	<div class="fly-menu-wrapper">
 		<div class="fly-menu">
-			{{#each resources.entries}}
-				{{#if externallink.0.fieldValue}}
-					<a href="{{externallink.0.fieldValue}}" target="_blank" class="list-item js-fly-menu-link">
+			{{#each resources}}
+				{{#if fields.1.value}}
+					<a href="{{fields.1.value}}" target="_blank" class="list-item js-fly-menu-link">
 						<div class="list-item-icon">
 							<i class="flaticon-external1 icon-15x"></i>
 						</div>
-						<div class="list-item-text">{{_title}}</div>
+						<div class="list-item-text">{{title}}</div>
 					</a>
 				{{/if}}
-				{{#unless externallink.0.fieldValue}}
-					<a href="#/resource/{{urlencode _title}}" class="list-item js-fly-menu-link">
-						<div class="list-item-text">{{_title}}</div>
+				{{#unless fields.1.value}}
+					<a href="#/resource/{{urlencode title}}" class="list-item js-fly-menu-link">
+						<div class="list-item-text">{{title}}</div>
 					</a>
 				{{/unless}}
 			{{/each}}
@@ -357,69 +241,55 @@
 	</div>
 </script>
 
+
+
+<#-- HTML -->
 <div id="app-wrapper">
 	<div class="blurrer js-menu-blurrer"></div>
-
 	<div id="fly-menu-placeholder"></div>
-
 	<div id="topbar">
 		<div class="appbar">
-
 			<div class="appbar-menu-title-wrapper">
 				<div class="appbar-menu-title"><a href="#">REK<span class="thin">listan</span></a></div>
 			</div>
-
 			<a href="${txtFeedbackURL}" class="appbar-menu-feedback">
 				${txtFeedback}
 			</a>
-
 			<div class="appbar-menu-sink-wrapper js-appbar-menu-sink-toggle">
 				<div class="appbar-menu-sink-button">
 					<span class="flaticon-menu55 icon-4x"></span> 
 				</div>
 			</div>
-
 			<a class="appbar-menu-back-wrapper js-navigation-button">
 				<div class="appbar-menu-back-button">
 					<i class="flaticon-left216 icon-4x"></i> 
 			    </div>
 		    	<div class="appbar-menu-back-label mt-small">Tillbaka</div>
 			</a>
-
 		</div>
 	</div>
-
-
 	<div class="app-body">
-
 		<div id="mainmenu" class="screen active">
 			<div id="main-menu-placeholder"></div>
 		</div>
-
 		<div id="submenu-drugs" class="screen">
 			<div id="submenu-drugs-placeholder" class="submenu"></div>
 		</div>
-
 		<div id="submenu-advice" class="screen">
 			<div id="submenu-advice-placeholder" class="submenu"></div>
-		</div>    
-
+		</div>
 		<div id="details-drugs" class="screen">
 			<div id="details-drugs-placeholder" class="section"></div>
 		</div>
-
 		<div id="details-advice" class="screen">
 			<div id="details-advice-placeholder" class="section"></div>
 		</div>
-
 		<div id="details-generic" class="screen">
 			<div id="details-generic-placeholder"></div>
 		</div>
-
 		<div id="details-filler" class="screen">
 			<div id="details-filler-placeholder"></div>
 		</div>
-
 	</div>
 </div>
 

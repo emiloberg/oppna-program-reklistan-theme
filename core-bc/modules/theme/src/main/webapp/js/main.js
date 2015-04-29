@@ -5,6 +5,7 @@ var skinnyJsonProperties = {
     groupName: 'Guest',
     drugsStructureId: 11571,
     adviceStructureId: 12602,
+    resourcesStructureId: 14304,
     locale: 'sv_SE'
 };
 
@@ -27,7 +28,7 @@ var globalDataNews = {
             content: '',
             internallink: [
                 {
-                    fieldValue: '#/resource/Om_REK-Appen'
+                    fieldValue: '#/resource/Tyck_till_om_REK-Appen'
                 }
             ]
         }
@@ -51,66 +52,16 @@ var sizeMedium = 768;
 
 var dataSearchDrugs = [];
 var dataSearchAdvice = [];
-var dataResources = [];
-var dataDrugs = [];
-var dataAdvice = [];
-
 
 var rekData = {
+    mainMenuData: [],
+    dataDrugs: [],
+    dataAdvice: [],
+    dataResources: [],
     hbsDrugs: '',
-    hbsAdvice: ''
+    hbsAdvice: '',
+    hbsResources: ''
 };
-
-/**
- * Make URL safe URL
- * 
- * Usage:
- * {{urlencode variable}} 
- *
- */
-Handlebars.registerHelper('urlencode', function(context) {
-    var ret = context || '';
-    ret = ret.replace(/ /g, '_');
-    ret = removeDiacritics(ret);
-    ret = encodeURIComponent(ret);
-
-    return new Handlebars.SafeString(ret);
-});
-
-
-/**
- * If variabale is equal to value-helper
- *
- * Usage:
- * {{#eq variable eq='hello'}}Print this{{/#if}}
- */
-Handlebars.registerHelper('eq', function(context, options) {
-    if (context === options.hash.eq) {
-        return options.fn(context);
-    } else {
-        return '';
-    }
-});
-
-
-/**
- * Parse the text and do some replacing
- *
- * Usage:
- * {{markdownify variable}}
- */
-Handlebars.registerHelper('markdownify', function(context) {
-    var text = context || '';
-
-    // Convert markdown links to html links
-    text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="\$2">\$1</a>');
-
-    // Convert {{replaceable}} with icon
-    text = text.replace(/\{\{replaceable\}\}/g, '<span class="replaceable">&#8860;</span>');
-    text = text.replace(/\{\{child\}\}/g, '<img src="/reklistan-theme/images/theme/child.png" class="child-icon">');
-
-    return new Handlebars.SafeString(text);
-});
 
 
 /* ************************************************************************* *\
@@ -141,55 +92,63 @@ function getArticles(){
         '/ddm-structure-id/' + skinnyJsonProperties.adviceStructureId +
         '/locale/' + skinnyJsonProperties.locale,
 
+        resources: '/api/jsonws/skinny-web.skinny/get-skinny-journal-articles/' +
+        'company-id/' + skinnyJsonProperties.companyId +
+        '/group-name/' + skinnyJsonProperties.groupName +
+        '/ddm-structure-id/' + skinnyJsonProperties.resourcesStructureId +
+        '/locale/' + skinnyJsonProperties.locale,        
+        
         hbsDrugs: '/reklistan-theme/handlebars/details-drugs.hbs',
-        hbsAdvice: '/reklistan-theme/handlebars/details-advice.hbs'
+        hbsAdvice: '/reklistan-theme/handlebars/details-advice.hbs',
+        hbsResources: '/reklistan-theme/handlebars/resources.hbs'
     };
 
     $.when(
         $.ajax(urls.drugs),
         $.ajax(urls.advice),
+        $.ajax(urls.resources),
         $.ajax(urls.hbsDrugs),
-        $.ajax(urls.hbsAdvice)
+        $.ajax(urls.hbsAdvice),
+        $.ajax(urls.hbsResources)
     )
-    .then(function(drugs, advice, hbsDrugs, hbsAdvice) {
-        window.dataDrugs = drugs[0];
-        window.dataAdvice = advice[0];
+    .then(function(drugs, advice, resources, hbsDrugs, hbsAdvice, hbsResources) {
+        rekData.dataDrugs = drugs[0];
+        rekData.dataAdvice = advice[0];
 
         rekData.hbsDrugs = hbsDrugs[0];
         rekData.hbsAdvice = hbsAdvice[0];
+        rekData.hbsResources = hbsResources[0];
 
         // Create and sort main menu data
-        var dataMainMenu = dataDrugs.map(function (entry) {
+        rekData.mainMenuData = drugs[0].map(function (entry) {
             return {
                 _title: entry.title,
                 hasDrugs: (entry.fields[0].value.length !== 0),
                 tempDrugs: entry.fields[0].value
             };
-        });
-        dataMainMenu = dataMainMenu.sort(function (a, b) {
-            if (a._title > b._title) {
+        })
+        .sort(function (a, b) {
+            if (a.title > b.title) {
                 return 1;
             }
-            if (a._title < b._title) {
+            if (a.title < b.title) {
                 return -1;
             }
             return 0;
         });
 
 
-        // TODO, This is not used right now
-        // Sort Resources
-        //dataResources.entries = dataResources.entries.sort(function (a, b) {
-        //    if (a._title > b._title) {
-        //        return 1;
-        //    }
-        //    if (a._title < b._title) {
-        //        return -1;
-        //    }
-        //    return 0;
-        //});
+        rekData.dataResources = resources[0].sort(function (a, b) {
+            if (a.title > b.title) {
+                return 1;
+            }
+            if (a.title < b.title) {
+                return -1;
+            }
+            return 0;
+        });
 
-        initApp(dataMainMenu, dataResources, globalDataNews);
+        initApp(rekData.mainMenuData, rekData.dataResources, globalDataNews);
     })
     .fail(function(err) {
         alert('Could not load all resources needed\n\n' + JSON.stringify(err));
@@ -201,7 +160,34 @@ function getArticles(){
 // TODO Put this back to somewhere good. Also add timeout
 //$('#main-menu-placeholder').html('<div class="error-box"><h1>Något gick snett</h1><p>Tyvärr kunde datan inte hämtas från servern. <b>Försök ladda om sidan.</b></p><p>Fungerar det fortfarande inte? Skicka ett epost till Christer Printz <a href="mailto:christer.printz@vgregion.se">christer.printz@vgregion.se</a></p></div>');
 
+
+function wwMangleSearchData(dataDrugs, dataAdvice){
+
+    // Only working in >IE10
+    if($('html').hasClass('lt-ie10') === true) {
+        return;
+    }
+
+    // Check if webworker is available.
+    if(!window.Worker) {
+        return;
+    }
+
+    var worker = new Worker("/reklistan-theme/js/webworker-searchdata.js");
+    worker.postMessage(JSON.stringify({
+        dataDrugs: dataDrugs,
+        dataAdvice: dataAdvice
+    }));
+
+    worker.onmessage = function(event) {
+        var data = (JSON.parse(event.data));
+        search.initialize(data.drugs, data.advice);
+    };
+
+}
+
 function initApp(dataMainMenu, dataResources, dataNews) {
+    registerHandlebarHelpers();
     Swag.registerHelpers(Handlebars);
     registerEvents();
     initializeRoute();
@@ -212,9 +198,7 @@ function initApp(dataMainMenu, dataResources, dataNews) {
     FastClick.attach(document.body);
     
     // Initialize search
-    if($('html').hasClass('lt-ie9') === false) {
-        search.initialize();
-    }
+    wwMangleSearchData(rekData.dataDrugs, rekData.dataAdvice);
 
     // Save if we're in mobile view or not (menu is a bit different)
     navObj.isMobileView = ($(window).width() < sizeMedium);
@@ -261,8 +245,6 @@ function setBackButtonURL(url) {
         $('.js-navigation-button').attr("href", '#');
     }
 }
-
-
 
 /* ************************************************************************* *\
  * 
@@ -321,7 +303,7 @@ function hideFlyOutMenu() {
  * CREATE MAIN MENU
  *
 \* ************************************************************************* */
-function createMenuesAndBigStartPage(mainMenuData, dataResources, dataNews) {;
+function createMenuesAndBigStartPage(mainMenuData, dataResources, dataNews) {
     var nNewsToShow = 3;
 
     var data = {
@@ -329,6 +311,8 @@ function createMenuesAndBigStartPage(mainMenuData, dataResources, dataNews) {;
         news: dataNews.entries.slice(0, nNewsToShow),
         resources: dataResources
     };
+
+
 
     printTemplate(data, "#main-menu-template", '#main-menu-placeholder');
     printTemplate(data, "#filler-template", '#details-filler-placeholder');
@@ -345,7 +329,9 @@ function showGeneric(type, clickedItem) {
 
     var data = {};
     var templateSelector = '';
+    var templateStr;
 
+    // TODO FIX THIS, WE'VE REMOVED THE DOM TEMPLATES AND PUT THEM INTO HBS FILES
     // Filter
     if (type === 'news') {
         templateSelector = '#news-template';
@@ -353,12 +339,11 @@ function showGeneric(type, clickedItem) {
             return item._entryId === clickedItem;
         });
 
-        
 
     } else if (type === 'resource') {
-        templateSelector = '#resource-template';
-        data = dataResources.entries.filter(function (item) {
-            return makeUrlSafe(item._title) === clickedItem;
+        templateStr = rekData.hbsResources;
+        data = rekData.dataResources.filter(function (item) {
+            return makeUrlSafe(item.title) === clickedItem;
         });
     }
 
@@ -372,7 +357,7 @@ function showGeneric(type, clickedItem) {
     jqDetailsGeneric.addClass('active');
 
     // Print
-    printTemplate(data, templateSelector, '#details-generic-placeholder');
+    printTemplate(data, templateSelector, '#details-generic-placeholder', templateStr);
 
     // Make responsive tables
     $('.section-details-generic table').stacktable({minColCount:2}); // Make responsive tables 
@@ -427,7 +412,7 @@ function showSubmenu(chapter, section, tab) {
             filtered.tabClassDrugs = 'selected single';
         }
     }
-    console.dir(filtered);
+
     printTemplate(filtered, "#submenu-template", '#submenu-' + tab + '-placeholder');
 
     // Remove active classes for big screen
@@ -608,6 +593,43 @@ function backToMainMenu() {
  *
 \* ************************************************************************* */
 
+function registerHandlebarHelpers() {
+    /**
+     * Make URL safe URL
+     *
+     * Usage:
+     * {{urlencode variable}}
+     *
+     */
+    Handlebars.registerHelper('urlencode', function(context) {
+        var ret = context || '';
+        ret = ret.replace(/ /g, '_');
+        ret = removeDiacritics(ret);
+        ret = encodeURIComponent(ret);
+
+        return new Handlebars.SafeString(ret);
+    });
+
+    /**
+     * Parse the text and do some replacing
+     *
+     * Usage:
+     * {{markdownify variable}}
+     */
+    Handlebars.registerHelper('markdownify', function(context) {
+        var text = context || '';
+
+        // Convert markdown links to html links
+        text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="\$2">\$1</a>');
+
+        // Convert {{replaceable}} with icon
+        text = text.replace(/\{\{replaceable\}\}/g, '<span class="replaceable">&#8860;</span>');
+        text = text.replace(/\{\{child\}\}/g, '<img src="/reklistan-theme/images/theme/child.png" class="child-icon">');
+
+        return new Handlebars.SafeString(text);
+    });
+}
+
 function isSectionAvailableOnOtherTab(chapter, details, tab) {
     var filtered = getNoneActiveTabData(tab).filter(function (entry) {
         return (makeUrlSafe(entry.title, true) === chapter);
@@ -682,17 +704,17 @@ function makeUrlSafe(str, dontURIEncode) {
 
 function getActiveTabData(tab) {
     if (tab === 'drugs' ) {
-        return dataDrugs;
+        return rekData.dataDrugs;
     } else if (tab === 'advice') {
-        return dataAdvice;
+        return rekData.dataAdvice;
     }
 }
 
 function getNoneActiveTabData(tab) {
     if (tab === 'drugs' ) {
-        return dataAdvice;
+        return rekData.dataAdvice;
     } else if (tab === 'advice') {
-        return dataDrugs;
+        return rekData.dataDrugs;
     }
 }
 
@@ -818,18 +840,19 @@ var search = {
     _prevSearch: '',
     _splitter: '|',
 
-    initialize: function () {
+    initialize: function(searchDataDrugs, searchDataAdvice) {
         search.index = lunr(function () {
             this.field('chapter', { boost: 20 });
             this.field('section', { boost: 10 });
             this.field('body');
             this.ref('id');
         });
-        search.createIndex();
+        search.createIndex(searchDataDrugs, searchDataAdvice);
+        $('.js-search-wrapper').addClass('on');
     },
 
-    createIndex: function () {
-        dataSearchDrugs.forEach(function (item) {
+    createIndex: function(searchDataDrugs, searchDataAdvice) {
+        searchDataDrugs.forEach(function (item) {
             search.index.add({
                 id: 'drugs' + search._splitter + item.chapter + search._splitter + item.section,
                 chapter: item.chapter,
@@ -839,8 +862,7 @@ var search = {
         });
 
         // TODO, STRIP HTML TAGS FROM dataSearchAdvie and "true" strings from dataSearchDrugs.
-
-        dataSearchAdvice.forEach(function (item) {
+        searchDataAdvice.forEach(function (item) {
             search.index.add({
                 id: 'advice' + search._splitter + item.chapter + search._splitter + item.section,
                 chapter: item.chapter,
