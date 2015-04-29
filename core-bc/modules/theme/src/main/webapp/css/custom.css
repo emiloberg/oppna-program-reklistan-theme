@@ -30,6 +30,7 @@ body {
 @import 'partials/atoms/headings';
 @import 'partials/atoms/lists';
 @import 'partials/atoms/callouts';
+@import 'partials/atoms/spinners';
 
 @import 'partials/molecules/tabs';
 @import 'partials/molecules/secondbar';

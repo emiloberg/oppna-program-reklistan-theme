@@ -73,9 +73,9 @@
 
 <#-- HBS MAIN MENU -->
 <script id="main-menu-template" type="text/x-handlebars-template">
-	<div class="search-wrapper view-topper js-search-wrapper">
+	<div class="search-wrapper view-topper">
 		<div class="second-bar">
-			<div class="search-input-container">
+			<div class="search-input-container js-search-input-container">
 				<input type="text" class="search-input js-search-input" placeholder="Sök" autocorrect="off">
 				<a href="#" class="search-clear js-search-clear">Rensa <i class="flaticon-close47"></i></a>
 			</div>
@@ -246,6 +246,14 @@
 <#-- HTML -->
 <div id="app-wrapper">
 	<div class="blurrer js-menu-blurrer"></div>
+	<div class="loading-indicator js-loading-indicator">
+		<div class="loading-indicator-inner">
+			<div id="details-filler-placeholder">
+				<div class="spinner"></div>
+				<div class="spinner-text">Ett ögonblick, laddar all data</div>
+			</div>
+		</div>
+	</div>
 	<div id="fly-menu-placeholder"></div>
 	<div id="topbar">
 		<div class="appbar">

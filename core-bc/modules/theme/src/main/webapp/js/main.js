@@ -50,9 +50,6 @@ var navObj = {
 
 var sizeMedium = 768;
 
-var dataSearchDrugs = [];
-var dataSearchAdvice = [];
-
 var rekData = {
     mainMenuData: [],
     dataDrugs: [],
@@ -148,7 +145,7 @@ function getArticles(){
             return 0;
         });
 
-        initApp(rekData.mainMenuData, rekData.dataResources, globalDataNews);
+        initApp(rekData.mainMenuData, rekData.dataResources, globalDataNews, rekData.dataDrugs, rekData.dataAdvice);
     })
     .fail(function(err) {
         alert('Could not load all resources needed\n\n' + JSON.stringify(err));
@@ -160,33 +157,7 @@ function getArticles(){
 // TODO Put this back to somewhere good. Also add timeout
 //$('#main-menu-placeholder').html('<div class="error-box"><h1>Något gick snett</h1><p>Tyvärr kunde datan inte hämtas från servern. <b>Försök ladda om sidan.</b></p><p>Fungerar det fortfarande inte? Skicka ett epost till Christer Printz <a href="mailto:christer.printz@vgregion.se">christer.printz@vgregion.se</a></p></div>');
 
-
-function wwMangleSearchData(dataDrugs, dataAdvice){
-
-    // Only working in >IE10
-    if($('html').hasClass('lt-ie10') === true) {
-        return;
-    }
-
-    // Check if webworker is available.
-    if(!window.Worker) {
-        return;
-    }
-
-    var worker = new Worker("/reklistan-theme/js/webworker-searchdata.js");
-    worker.postMessage(JSON.stringify({
-        dataDrugs: dataDrugs,
-        dataAdvice: dataAdvice
-    }));
-
-    worker.onmessage = function(event) {
-        var data = (JSON.parse(event.data));
-        search.initialize(data.drugs, data.advice);
-    };
-
-}
-
-function initApp(dataMainMenu, dataResources, dataNews) {
+function initApp(dataMainMenu, dataResources, dataNews, dataDrugs, dataAdvice) {
     registerHandlebarHelpers();
     Swag.registerHelpers(Handlebars);
     registerEvents();
@@ -198,7 +169,7 @@ function initApp(dataMainMenu, dataResources, dataNews) {
     FastClick.attach(document.body);
     
     // Initialize search
-    wwMangleSearchData(rekData.dataDrugs, rekData.dataAdvice);
+    wwMangleSearchData(dataDrugs, dataAdvice);
 
     // Save if we're in mobile view or not (menu is a bit different)
     navObj.isMobileView = ($(window).width() < sizeMedium);
@@ -312,11 +283,11 @@ function createMenuesAndBigStartPage(mainMenuData, dataResources, dataNews) {
         resources: dataResources
     };
 
-
-
     printTemplate(data, "#main-menu-template", '#main-menu-placeholder');
     printTemplate(data, "#filler-template", '#details-filler-placeholder');
     printTemplate(data, "#fly-menu-template", '#fly-menu-placeholder');
+
+    $('.js-loading-indicator').remove();
 }
 
 
@@ -593,6 +564,34 @@ function backToMainMenu() {
  *
 \* ************************************************************************* */
 
+/**
+ * Spawn a web worker which takes dataDrugs and dataAdvice and mangle the data
+ * and turns the objects into two arrays ready to be feeded into lunr.js
+ * search engine.
+ *
+ * @param dataDrugs
+ * @param dataAdvice
+ */
+function wwMangleSearchData(dataDrugs, dataAdvice){
+    // Only working in >IE10
+    if($('html').hasClass('lt-ie10') === true) {
+        return;
+    }
+    // Check if webworker is available.
+    if(!window.Worker) {
+        return;
+    }
+    var worker = new Worker("/reklistan-theme/js/webworker-searchdata.js");
+    worker.postMessage(JSON.stringify({
+        dataDrugs: dataDrugs,
+        dataAdvice: dataAdvice
+    }));
+    worker.onmessage = function(event) {
+        var data = (JSON.parse(event.data));
+        search.initialize(data.drugs, data.advice);
+    };
+}
+
 function registerHandlebarHelpers() {
     /**
      * Make URL safe URL
@@ -848,7 +847,7 @@ var search = {
             this.ref('id');
         });
         search.createIndex(searchDataDrugs, searchDataAdvice);
-        $('.js-search-wrapper').addClass('on');
+        $('.js-search-input-container').addClass('on');
     },
 
     createIndex: function(searchDataDrugs, searchDataAdvice) {
