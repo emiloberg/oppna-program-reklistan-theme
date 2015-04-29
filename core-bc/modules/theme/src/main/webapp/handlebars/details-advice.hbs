@@ -1,6 +1,21 @@
-<div class="section-details section-details-advice">
-	{{#each fields}}
-	    <h3 class="preview-title">{{value}}</h3>
+{{#each fields}}
+	{{#is @root/isPreview true}}
+		<h3 class="preview-title">{{value}}</h3>
+	{{/is}}
+
+	{{#is @root/isWeb true}}
+		<div class="view-topper view-topper-details-drugs">
+			<div class="second-bar">
+				<h2 class="second-bar-title">{{value}}</h2>
+			</div>
+			<div class="js-submenu-tabs tabs">
+				<a href="#/drugs/{{_urlSafeChapter}}/{{urlencode value}}" class="tab js-tab-item js-tab-item-drugs {{tabClassDrugs}}">Rek. läkemedel</a>
+				<a href="#/advice/{{_urlSafeChapter}}/{{urlencode value}}" class="tab js-tab-item js-tab-item-advice {{tabClassAdvice}}">Terapiråd</a>
+			</div>
+		</div>
+	{{/is}}
+
+	<div class="section-details section-details-advice">
 		{{#each children}}
 			<div class="item-{{@index}} advice-{{children.0.value}} body">
 				{{#if children.1.value}}
@@ -25,5 +40,5 @@
 				{{/is}}			
 			</div>
 		{{/each}}
-	{{/each}}
-</div>
+    </div>
+{{/each}}
