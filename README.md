@@ -18,3 +18,22 @@ Every user who's going to be logged in assigned workflow tasks needs to get acce
 3. Expand _Site Administration_ > _Content_ > _Web Content_.
 4. Tick `Access in Site Administration`
 5. Save
+
+## Building
+### Javascript
+The Javascript files in `/lib` and `/custom-lib` are all minified and merged into `/js/libs.min.js`. This is done with a gulp script.
+
+First time - install build dependencies. Make sure you have [node.js](https://nodejs.org/) installed (run `node -v` to get version number), then run:
+
+```
+cd core-bc/modules/theme/src/main/webapp
+npm install
+```
+
+To rebuild the `libs.min.js` from the source files:
+
+```
+cd core-bc/modules/theme/src/main/webapp
+gulp buildjs
+```
+

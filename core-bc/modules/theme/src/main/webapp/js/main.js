@@ -69,9 +69,9 @@ var rekData = {
 
 
 
-$(function() {
+//$(function() {
     getArticles();
-});
+//});
 
 
 function getArticles(){

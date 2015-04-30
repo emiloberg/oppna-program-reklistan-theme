@@ -20,23 +20,12 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-
-	<link href="/reklistan-theme/images/favicon.ico" rel="Shortcut Icon">
-	<link class="lfr-css-file" href="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/css/custom.css?browserId=${browserId}&themeId=${themeDisplay.themeId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_local}" rel="stylesheet" type="text/css">
-
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/respond/dest/respond.min.js" type="text/javascript"></script>
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/es5-shim/es5-shim.min.js" type="text/javascript"></script>
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/custom-lib/jquery/jquery-1.11.2.min.js" type="text/javascript"></script>
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/modernizr/modernizr.js" type="text/javascript"></script>
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/handlebars/handlebars.min.js" type="text/javascript"></script>
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/svg4everybody/svg4everybody.ie8.min.js" type="text/javascript"></script>
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/fastclick/lib/fastclick.js" type="text/javascript"></script>
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/js/main.js?browserId=${browserId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_local}" type="text/javascript"></script>
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/routie/dist/routie.min.js" type="text/javascript"></script>
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/lib/lunr.js/lunr.min.js" type="text/javascript"></script> 
-	<script src="${themeDisplay.portalURL}${themeDisplay.pathThemeRoot}/custom-lib/swag/swag.min.js" type="text/javascript"></script>
-
+	<link href="${themeDisplay.pathThemeRoot}/images/favicon.ico" rel="Shortcut Icon">
 	<link href='https://fonts.googleapis.com/css?family=Roboto:500,900italic,900,400italic,100,700italic,300,700,500italic,100italic,300italic,400' rel='stylesheet' type='text/css'>
+	<link class="lfr-css-file" href="${themeDisplay.pathThemeRoot}/css/custom.css?browserId=${browserId}&themeId=${themeDisplay.themeId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}" rel="stylesheet" type="text/css">
+	<#-- Removed timestamp from css link above. Might need to readd it: &t=${.now?datetime?iso_local} -->
+	<script src="${themeDisplay.pathThemeRoot}/js/libs.min.js" type="text/javascript"></script>
+	<script src="${themeDisplay.pathThemeRoot}/js/main.js?browserId=${browserId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_local}" type="text/javascript"></script>
 </head>
 
 <body class="${css_class}">
