@@ -57,7 +57,7 @@ var rekData = {
         adviceStructureId: 12602,
         resourcesStructureId: 14304,
         locale: 'sv_SE',
-        secondsCacheData: 200000000
+        secondsCacheData: 20000
     }
 };
 
@@ -72,10 +72,11 @@ $(function() {
     initApp();
 });
 
+/**
+ * Init app by determine if we need to load data over json or if we can grab
+ * cached data from local storage
+ */
 function initApp() {
-
-    // Determine if we need to load data over json or if we can grab
-    // cached data from local storage
     var timestampLastDl = storage.get('rekDataLastSaved');
     if (timestampLastDl === undefined) {
         downloadResources();
@@ -106,9 +107,13 @@ function initApp() {
 }
 
 
+/**
+ * Download all articles as JSON from skinny-json,
+ * also download all handlebar templates.
+ */
 function downloadResources(){
-
     // Only show loading indicator after X ms.
+    // This way it doesn't flicker on fast connections.
     setTimeout(function () {
         $('.js-loading-indicator').addClass('on');
     }, 500);
@@ -171,7 +176,7 @@ function downloadResources(){
             return 0;
         });
 
-
+        // Create and sort resources articles.
         rekData.dataResources = resources[0].sort(function (a, b) {
             if (a.title > b.title) {
                 return 1;
@@ -185,27 +190,36 @@ function downloadResources(){
         startApp(true, rekData.mainMenuData, rekData.dataResources, globalDataNews, rekData.dataDrugs, rekData.dataAdvice);
     })
     .fail(function(err) {
-        alert('Could not load all resources needed\n\n' + JSON.stringify(err));
+        alert('Could not load all resources needed');
         // TODO Better error msg.
+        // TODO Put this back to somewhere good. Also add timeout
+        //$('#main-menu-placeholder').html('<div class="error-box"><h1>Något gick snett</h1><p>Tyvärr kunde datan inte hämtas från servern. <b>Försök ladda om sidan.</b></p><p>Fungerar det fortfarande inte? Skicka ett epost till Christer Printz <a href="mailto:christer.printz@vgregion.se">christer.printz@vgregion.se</a></p></div>');
     });
-
 }
 
-// TODO Put this back to somewhere good. Also add timeout
-//$('#main-menu-placeholder').html('<div class="error-box"><h1>Något gick snett</h1><p>Tyvärr kunde datan inte hämtas från servern. <b>Försök ladda om sidan.</b></p><p>Fungerar det fortfarande inte? Skicka ett epost till Christer Printz <a href="mailto:christer.printz@vgregion.se">christer.printz@vgregion.se</a></p></div>');
 
+/**
+ * Start the App
+ *
+ * @param isFreshDataDownload
+ * @param dataMainMenu
+ * @param dataResources
+ * @param dataNews
+ * @param dataDrugs
+ * @param dataAdvice
+ */
 function startApp(isFreshDataDownload, dataMainMenu, dataResources, dataNews, dataDrugs, dataAdvice) {
     registerHandlebarHelpers();
     Swag.registerHelpers(Handlebars);
     registerEvents();
     initializeRoute();
-    
     createMenuesAndBigStartPage(dataMainMenu, dataResources, dataNews);
 
     // Initialize FastClick to make it snappier on mobile browsers.
     FastClick.attach(document.body);
     
-    // Create Search Index if it's a fresh set of data.
+    // Create Search Index if it's a fresh set of data,
+    // else load the existing searchIndex from local storage.
     if (isFreshDataDownload) {
         wwMangleSearchData(dataDrugs, dataAdvice);
     } else {
@@ -283,7 +297,6 @@ function setBackButtonURL(url) {
  *
 \* ************************************************************************* */
 function registerEvents() {
-
 	$('body')
     .on( "click", ".news-item", function(e) {
         var jqSelf = $(this);
@@ -318,7 +331,9 @@ function registerEvents() {
 
 }
 
-// Hide fly out menu
+/**
+ * Hide fly out menu
+ */
 function hideFlyOutMenu() {
     var jqMenuFlyout = $('.fly-menu-wrapper');
     var jqBlurrer = $('.js-menu-blurrer');
@@ -336,20 +351,16 @@ function hideFlyOutMenu() {
 \* ************************************************************************* */
 function createMenuesAndBigStartPage(mainMenuData, dataResources, dataNews) {
     var nNewsToShow = 3;
-
     var data = {
         areas: mainMenuData,
         news: dataNews.entries.slice(0, nNewsToShow),
         resources: dataResources
     };
-
     printTemplate(data, "#main-menu-template", '#main-menu-placeholder');
     printTemplate(data, "#filler-template", '#details-filler-placeholder');
     printTemplate(data, "#fly-menu-template", '#fly-menu-placeholder');
-
     $('#main-menu-placeholder').addClass('on');
     $('#details-filler-placeholder').addClass('on');
-
     $('.js-loading-indicator').remove();
 }
 
@@ -360,7 +371,6 @@ function createMenuesAndBigStartPage(mainMenuData, dataResources, dataNews) {
  *
 \* ************************************************************************* */
 function showGeneric(type, clickedItem) {
-
     var data = {};
     var templateSelector = '';
     var templateStr;
@@ -372,8 +382,6 @@ function showGeneric(type, clickedItem) {
         data = globalDataNews.entries.filter(function (item) {
             return item._entryId === clickedItem;
         });
-
-
     } else if (type === 'resource') {
         templateStr = rekData.hbsResources;
         data = rekData.dataResources.filter(function (item) {
@@ -404,10 +412,9 @@ function showGeneric(type, clickedItem) {
  *
 \* ************************************************************************* */
 function showSubmenu(chapter, section, tab) {
+    // TODO - Add error handling to see if chapter exist
 
     backToSubmenu();
-
-    // TODO - Add error handling to see if chapter exist
 
     // Elements
     var jqMainMenu = $('#mainmenu');
@@ -417,7 +424,6 @@ function showSubmenu(chapter, section, tab) {
     var filteredArr = getActiveTabData(tab).filter(function (entry) {
         return (makeUrlSafe(entry.title, true) === chapter);
     });
-
     var filtered = filteredArr[0];
 
     // Set Current View
@@ -616,8 +622,6 @@ function backToMainMenu() {
 
     // Set currentView
     setCurrentView('mainmenu', '', '');
-
-
 }
 
 
@@ -655,6 +659,9 @@ function wwMangleSearchData(dataDrugs, dataAdvice){
     };
 }
 
+/**
+ * Handlebar helpers
+ */
 function registerHandlebarHelpers() {
     /**
      * Make URL safe URL
@@ -692,6 +699,16 @@ function registerHandlebarHelpers() {
     });
 }
 
+/**
+ * Determine if section is available on the other tab.
+ * E.g. if on advice/Blod/Trombos, determine if there's a
+ * drugs/Blod/Trombos available.
+ *
+ * @param chapter
+ * @param details
+ * @param tab
+ * @returns {boolean}
+ */
 function isSectionAvailableOnOtherTab(chapter, details, tab) {
     var filtered = getNoneActiveTabData(tab).filter(function (entry) {
         return (makeUrlSafe(entry.title, true) === chapter);
@@ -731,14 +748,13 @@ function isDataOnOtherTab(chapter, tab) {
 
 
  /**
- * Mangle data + template and create output
+ * Print Handlebars template
  *
  * @param {Object} data JSON-data
  * @param {string} templateSelector Selector for the element holding the template
  * @param {string} targetSelector Selector for the element where finished DOM should be placed.
  * *@param {string} templateStr Template as HTML, use instead of templateSelector.
  */
-
 function printTemplate(data, templateSelector, targetSelector, templateStr) {
     var templateHTML = '';
     if (templateStr) {
@@ -752,6 +768,13 @@ function printTemplate(data, templateSelector, targetSelector, templateStr) {
     target.html(template(data));
 }
 
+/**
+ * Removes all HTML "unsafe" characters from a string.
+ *
+ * @param str
+ * @param dontURIEncode
+ * @returns {*|string}
+ */
 function makeUrlSafe(str, dontURIEncode) {
     var ret = str || '';
     ret = ret.replace(/ /g, '_');
@@ -890,8 +913,6 @@ function removeDiacritics (str) {
 }
 
 
-
-
 /* ************************************************************************* *\
  * 
  * SEARCH
@@ -928,7 +949,6 @@ var search = {
             });
         });
 
-        // TODO, STRIP HTML TAGS FROM dataSearchAdvie
         searchDataAdvice.forEach(function (item) {
             search.index.add({
                 id: 'advice' + search._splitter + item.chapter + search._splitter + item.section,
@@ -986,8 +1006,9 @@ var search = {
     }
 };
 
-
-/**
+/* ************************************************************************* *\
+ *
+ * SEARCH
  * THIS IS A MODIFIER VERSION OF STACKTABLE.JS
  *
  * - Only prints content if there's an actual content, else print a divider
@@ -1004,8 +1025,8 @@ var search = {
  *
  * jQuery plugin for stacking tables on small screens
  *
- */
-;(function($) {
+ \* ************************************************************************* */
+(function($) {
 
   $.fn.stacktable = function(options) {
     var $tables = this,
