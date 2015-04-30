@@ -290,7 +290,7 @@
 	</div>
 </div>
 
-<#-- Tracking -->
+
 <script type="text/javascript">
   var _paq = _paq || [];
   _paq.push(['trackPageView']);
@@ -304,7 +304,8 @@
   })();
 </script>
 <noscript><p><img src="//piwik.vgregion.se/piwik.php?idsite=162" style="border:0;" alt="" /></p></noscript>
-<#-- /Tracking -->
+
+
 
 		<#-- TODO, does this need to be here? -->
 		<div class="temp-hide">

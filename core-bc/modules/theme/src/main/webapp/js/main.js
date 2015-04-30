@@ -57,7 +57,7 @@ var rekData = {
         adviceStructureId: 12602,
         resourcesStructureId: 14304,
         locale: 'sv_SE',
-        saveDataMaxSeconds:20
+        secondsCacheData: 200000000
     }
 };
 
@@ -81,7 +81,7 @@ function initApp() {
         downloadResources();
     } else {
         var timestampDiff = (new Date().getTime() - timestampLastDl) / 1000;
-        if (timestampDiff > rekData.properties.saveDataMaxSeconds) {
+        if (timestampDiff > rekData.properties.secondsCacheData) {
             downloadResources();
         } else {
             rekData = storage.get([
@@ -205,8 +205,12 @@ function startApp(isFreshDataDownload, dataMainMenu, dataResources, dataNews, da
     // Initialize FastClick to make it snappier on mobile browsers.
     FastClick.attach(document.body);
     
-    // Initialize search
-    wwMangleSearchData(dataDrugs, dataAdvice);
+    // Create Search Index if it's a fresh set of data.
+    if (isFreshDataDownload) {
+        wwMangleSearchData(dataDrugs, dataAdvice);
+    } else {
+        search.loadIndex(storage.get('searchIndex'));
+    }
 
     // Save if we're in mobile view or not (menu is a bit different)
     navObj.isMobileView = ($(window).width() < sizeMedium);
@@ -263,9 +267,13 @@ function initializeRoute() {
 
 function setBackButtonURL(url) {
     if (navObj.isMobileView) {
-        $('.js-navigation-button').attr("href", url);
+        $('.js-navigation-button')
+            .attr("href", url)
+            .addClass('on');
     } else {
-        $('.js-navigation-button').attr("href", '#');
+        $('.js-navigation-button')
+            .attr("href", '#')
+            .addClass('on');
     }
 }
 
@@ -905,6 +913,11 @@ var search = {
         $('.js-search-input-container').addClass('on');
     },
 
+    loadIndex: function(searchIndex) {
+        search.index = lunr.Index.load(searchIndex);
+        $('.js-search-input-container').addClass('on');
+    },
+
     createIndex: function(searchDataDrugs, searchDataAdvice) {
         searchDataDrugs.forEach(function (item) {
             search.index.add({
@@ -915,7 +928,7 @@ var search = {
             });
         });
 
-        // TODO, STRIP HTML TAGS FROM dataSearchAdvie and "true" strings from dataSearchDrugs.
+        // TODO, STRIP HTML TAGS FROM dataSearchAdvie
         searchDataAdvice.forEach(function (item) {
             search.index.add({
                 id: 'advice' + search._splitter + item.chapter + search._splitter + item.section,
@@ -925,6 +938,9 @@ var search = {
             });
         });
 
+        storage.set({
+            searchIndex: search.index
+        });
 
     },
 
