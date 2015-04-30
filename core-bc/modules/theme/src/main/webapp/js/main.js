@@ -692,6 +692,8 @@ function printTemplate(data, templateSelector, targetSelector, templateStr) {
     var target = $(targetSelector);
     var template = Handlebars.compile(templateHTML);
     target.html(template(data));
+
+     $(targetSelector).addClass('on');
 }
 
 function makeUrlSafe(str, dontURIEncode) {
