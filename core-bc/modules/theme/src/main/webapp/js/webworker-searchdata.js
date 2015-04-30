@@ -40,10 +40,14 @@ function concatenateChildren(node, isFirst, tokens) {
 	}
 
 	if (node.value && node.value !== 'true' && isFirst !== true) {
-		tokens.push(node.value);
+		tokens.push(cleanHTML(node.value));
 	}
 	node.children.forEach(function(child) {
 		concatenateChildren(child, false, tokens);
 	});
 	return tokens;
+}
+
+function cleanHTML(str) {
+	return str.replace(/(<([^>]+)>)/ig, '');
 }
