@@ -1,14 +1,5 @@
 'use strict';
 
-var skinnyJsonProperties = {
-    companyId: 10155,
-    groupName: 'Guest',
-    drugsStructureId: 11571,
-    adviceStructureId: 12602,
-    resourcesStructureId: 14304,
-    locale: 'sv_SE'
-};
-
 // TODO - Remove this temp
 var globalDataNews = {
     entries: [
@@ -55,9 +46,19 @@ var rekData = {
     dataDrugs: [],
     dataAdvice: [],
     dataResources: [],
+    dataNews: {},
     hbsDrugs: '',
     hbsAdvice: '',
-    hbsResources: ''
+    hbsResources: '',
+    properties: {
+        companyId: 10155,
+        groupName: 'Guest',
+        drugsStructureId: 11571,
+        adviceStructureId: 12602,
+        resourcesStructureId: 14304,
+        locale: 'sv_SE',
+        saveDataMaxSeconds:20
+    }
 };
 
 
@@ -67,38 +68,69 @@ var rekData = {
  *
 \* ************************************************************************* */
 
+$(function() {
+    initApp();
+});
+
+function initApp() {
+
+    // Determine if we need to load data over json or if we can grab
+    // cached data from local storage
+    var timestampLastDl = storage.get('rekDataLastSaved');
+    if (timestampLastDl === undefined) {
+        downloadResources();
+    } else {
+        var timestampDiff = (new Date().getTime() - timestampLastDl) / 1000;
+        if (timestampDiff > rekData.properties.saveDataMaxSeconds) {
+            downloadResources();
+        } else {
+            rekData = storage.get([
+                'dataDrugs',
+                'dataAdvice',
+                'dataResources',
+                'mainMenuData',
+                'dataNews',
+                'hbsDrugs',
+                'hbsAdvice',
+                'hbsResources'
+            ]);
+            startApp(false,
+                rekData.mainMenuData,
+                rekData.dataResources,
+                rekData.dataNews,
+                rekData.dataDrugs,
+                rekData.dataAdvice
+            );
+        }
+    }
+}
 
 
-//$(function() {
-    getArticles();
-//});
+function downloadResources(){
 
-
-function getArticles(){
-    
-    
+    // Only show loading indicator after X ms.
     setTimeout(function () {
         $('.js-loading-indicator').addClass('on');
     }, 500);
     
     var urls = {
         drugs: '/api/jsonws/skinny-web.skinny/get-skinny-journal-articles/' +
-        'company-id/' + skinnyJsonProperties.companyId +
-        '/group-name/' + skinnyJsonProperties.groupName +
-        '/ddm-structure-id/' + skinnyJsonProperties.drugsStructureId +
-        '/locale/' + skinnyJsonProperties.locale,
+        'company-id/' + rekData.properties.companyId +
+        '/group-name/' + rekData.properties.groupName +
+        '/ddm-structure-id/' + rekData.properties.drugsStructureId +
+        '/locale/' + rekData.properties.locale,
 
         advice: '/api/jsonws/skinny-web.skinny/get-skinny-journal-articles/' +
-        'company-id/' + skinnyJsonProperties.companyId +
-        '/group-name/' + skinnyJsonProperties.groupName +
-        '/ddm-structure-id/' + skinnyJsonProperties.adviceStructureId +
-        '/locale/' + skinnyJsonProperties.locale,
+        'company-id/' + rekData.properties.companyId +
+        '/group-name/' + rekData.properties.groupName +
+        '/ddm-structure-id/' + rekData.properties.adviceStructureId +
+        '/locale/' + rekData.properties.locale,
 
         resources: '/api/jsonws/skinny-web.skinny/get-skinny-journal-articles/' +
-        'company-id/' + skinnyJsonProperties.companyId +
-        '/group-name/' + skinnyJsonProperties.groupName +
-        '/ddm-structure-id/' + skinnyJsonProperties.resourcesStructureId +
-        '/locale/' + skinnyJsonProperties.locale,        
+        'company-id/' + rekData.properties.companyId +
+        '/group-name/' + rekData.properties.groupName +
+        '/ddm-structure-id/' + rekData.properties.resourcesStructureId +
+        '/locale/' + rekData.properties.locale,
         
         hbsDrugs: '/reklistan-theme/handlebars/details-drugs.hbs',
         hbsAdvice: '/reklistan-theme/handlebars/details-advice.hbs',
@@ -150,7 +182,7 @@ function getArticles(){
             return 0;
         });
 
-        initApp(rekData.mainMenuData, rekData.dataResources, globalDataNews, rekData.dataDrugs, rekData.dataAdvice);
+        startApp(true, rekData.mainMenuData, rekData.dataResources, globalDataNews, rekData.dataDrugs, rekData.dataAdvice);
     })
     .fail(function(err) {
         alert('Could not load all resources needed\n\n' + JSON.stringify(err));
@@ -162,7 +194,7 @@ function getArticles(){
 // TODO Put this back to somewhere good. Also add timeout
 //$('#main-menu-placeholder').html('<div class="error-box"><h1>Något gick snett</h1><p>Tyvärr kunde datan inte hämtas från servern. <b>Försök ladda om sidan.</b></p><p>Fungerar det fortfarande inte? Skicka ett epost till Christer Printz <a href="mailto:christer.printz@vgregion.se">christer.printz@vgregion.se</a></p></div>');
 
-function initApp(dataMainMenu, dataResources, dataNews, dataDrugs, dataAdvice) {
+function startApp(isFreshDataDownload, dataMainMenu, dataResources, dataNews, dataDrugs, dataAdvice) {
     registerHandlebarHelpers();
     Swag.registerHelpers(Handlebars);
     registerEvents();
@@ -181,6 +213,21 @@ function initApp(dataMainMenu, dataResources, dataNews, dataDrugs, dataAdvice) {
     $(window).resize(function() {
         navObj.isMobileView = ($(window).width() < sizeMedium);
     });
+
+    // Save all data to local storage
+    if(isFreshDataDownload) {
+        storage.set({
+            dataDrugs: dataDrugs,
+            dataAdvice: dataAdvice,
+            dataResources: dataResources,
+            mainMenuData: dataMainMenu,
+            dataNews: dataNews,
+            hbsDrugs: rekData.hbsDrugs,
+            hbsAdvice: rekData.hbsAdvice,
+            hbsResources: rekData.hbsResources,
+            rekDataLastSaved: new Date().getTime()
+        });
+    }
 }
 
 function initializeRoute() {
@@ -291,6 +338,9 @@ function createMenuesAndBigStartPage(mainMenuData, dataResources, dataNews) {
     printTemplate(data, "#main-menu-template", '#main-menu-placeholder');
     printTemplate(data, "#filler-template", '#details-filler-placeholder');
     printTemplate(data, "#fly-menu-template", '#fly-menu-placeholder');
+
+    $('#main-menu-placeholder').addClass('on');
+    $('#details-filler-placeholder').addClass('on');
 
     $('.js-loading-indicator').remove();
 }
@@ -692,8 +742,6 @@ function printTemplate(data, templateSelector, targetSelector, templateStr) {
     var target = $(targetSelector);
     var template = Handlebars.compile(templateHTML);
     target.html(template(data));
-
-     $(targetSelector).addClass('on');
 }
 
 function makeUrlSafe(str, dontURIEncode) {

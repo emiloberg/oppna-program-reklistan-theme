@@ -12,7 +12,8 @@ var jsFiles = [
 	'./lib/fastclick/lib/fastclick.js',
 	'./lib/routie/dist/routie.min.js',
 	'./lib/lunr.js/lunr.min.js',
-	'./custom-lib/swag/swag.min.js'
+	'./custom-lib/swag/swag.min.js',
+	'./custom-lib/loStorage.js/loStorage.js'
 ];
  
 gulp.task('buildjs', function() {

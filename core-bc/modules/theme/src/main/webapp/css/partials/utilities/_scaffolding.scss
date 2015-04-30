@@ -141,14 +141,6 @@
 
 }
 
-//#main-menu-container {
-//    @include single-transition(opacity, 1250ms);
-//    opacity: 0;
-//    &.on {
-//        opacity: 1;
-//    }
-//}
-
 #details-filler-placeholder,
 #main-menu-placeholder {
     @include single-transition(opacity, 350ms);
