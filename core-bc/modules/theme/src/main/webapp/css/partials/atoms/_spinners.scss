@@ -12,13 +12,19 @@ $spinner-nonactive-color: lighten($color-gray-temp1, 30);
     @include small {
         top: $full-row-height * 2;
     }
+
+    display: none;
+    &.on {
+        display: block;
+    }
 }
 
 .loading-indicator-inner {
     margin: 0 16px;
     padding: $full-row-height 0;
     border: 1px solid $color-gray-temp4;
-    background-color: $color-gray-temp;
+    background-color: $color-white;
+
 
     @include small {
         padding: $full-row-height 0;

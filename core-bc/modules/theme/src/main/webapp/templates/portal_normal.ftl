@@ -246,14 +246,14 @@
 <#-- HTML -->
 <div id="app-wrapper">
 	<div class="blurrer js-menu-blurrer"></div>
+
 	<div class="loading-indicator js-loading-indicator">
 		<div class="loading-indicator-inner">
-			<div id="details-filler-placeholder">
-				<div class="spinner"></div>
-				<div class="spinner-text">Ett ögonblick, laddar all data</div>
-			</div>
+			<div class="spinner"></div>
+			<div class="spinner-text">Ett ögonblick, laddar all data</div>
 		</div>
 	</div>
+
 	<div id="fly-menu-placeholder"></div>
 	<div id="topbar">
 		<div class="appbar">

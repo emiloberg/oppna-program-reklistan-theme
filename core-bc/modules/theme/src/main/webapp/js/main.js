@@ -70,12 +70,17 @@ var rekData = {
 
 
 $(function() {
-    //initApp();
     getArticles();
 });
 
 
 function getArticles(){
+    
+    
+    setTimeout(function () {
+        $('.js-loading-indicator').addClass('on');
+    }, 500);
+    
     var urls = {
         drugs: '/api/jsonws/skinny-web.skinny/get-skinny-journal-articles/' +
         'company-id/' + skinnyJsonProperties.companyId +
