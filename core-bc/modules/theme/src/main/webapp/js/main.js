@@ -51,13 +51,13 @@ var rekData = {
     hbsAdvice: '',
     hbsResources: '',
     properties: {
-        companyId: 10155,
+        companyId: 1674701, //10155,
         groupName: 'Guest',
-        drugsStructureId: 11571,
-        adviceStructureId: 12602,
-        resourcesStructureId: 14304,
+        drugsStructureId: 1728835, //11571,
+        adviceStructureId: 1728833, //12602,
+        resourcesStructureId: 1728837, //14304,
         locale: 'sv_SE',
-        secondsCacheData: 20000
+        secondsCacheData: 3600 //604800 == 1 week.
     }
 };
 
