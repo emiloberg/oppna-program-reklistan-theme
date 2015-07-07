@@ -6,7 +6,7 @@
 <#assign txtNews="Nyheter" />
 
 <#assign txtFeedback="Tyck till" />
-<#assign txtFeedbackURL="#/resource/Tyck_till_om_REK-Appen" />
+<#assign txtFeedbackURL="#/resource/Tyck_till_om_digitala_REKlistan" />
 
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7 ${root_css_class}" dir="<@liferay.language key="lang.dir" />" lang="${w3c_language_id}"> <![endif]-->

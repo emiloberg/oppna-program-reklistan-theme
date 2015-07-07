@@ -10,17 +10,17 @@ var dataNews = {
                     fieldValue: 'http://epi.vgregion.se/sv/Lakemedel-i-Vastra-Gotalandsregionen/Vardgivarstod/'
                 }
             ]
-        },
-        {
-            _entryId: 'problem-med-rek-appen',
-            _title: 'Problem med REK-Appen?',
-            content: '',
-            internallink: [
-                {
-                    fieldValue: '#/resource/Om_REK-Appen'
-                }
-            ]
         }
+        // {
+        //     _entryId: 'problem-med-rek-appen',
+        //     _title: 'Problem med REK-Appen?',
+        //     content: '',
+        //     internallink: [
+        //         {
+        //             fieldValue: '#/resource/Om_REK-Appen'
+        //         }
+        //     ]
+        // }
     ]
 };
 
