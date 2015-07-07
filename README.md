@@ -37,3 +37,40 @@ cd core-bc/modules/theme/src/main/webapp
 gulp buildjs
 ```
 
+## Settings
+
+For now, the settings are hardcoded in the `js/main.js` file.
+
+```
+properties: {
+	companyId: 11111
+	groupName: 'Guest',
+	drugsStructureId: 22222
+	adviceStructureId: 33333
+	resourcesStructureId: 44444
+}
+```
+
+The structure IDs you get by navigating to the control panel > content > articles > structures. 
+
+To get the companyId and groupName, go to a page on the public front end of the site which has the default theme (as oposed to the REK-theme). All environments should have a `/admin` page set up.
+
+To get the `companyId`, open your browser console and run
+
+```
+themeDisplay.getCompanyId()
+```
+
+The `groupName` you'll get by running:
+
+```
+Liferay.Service(
+  '/group/get-group',
+  {
+    groupId: Liferay.ThemeDisplay.getSiteGroupId()
+  },
+  function(obj) {
+    console.log(obj.name);
+  }
+);
+```
