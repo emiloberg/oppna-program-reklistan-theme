@@ -51,13 +51,13 @@ var rekData = {
     hbsAdvice: '',
     hbsResources: '',
     properties: {
-        companyId: 1674701, //10155,
+        companyId: 10155, //1674701, //
         groupName: 'Guest',
-        drugsStructureId: 1728835, //11571,
-        adviceStructureId: 1728833, //12602,
-        resourcesStructureId: 1728837, //14304,
+        drugsStructureId: 11571, //1728835, //
+        adviceStructureId: 12602, //1728833, //
+        resourcesStructureId: 14304, // 1728837, //
         locale: 'sv_SE',
-        secondsCacheData: 3600 //604800 == 1 week.
+        secondsCacheData: 0 //604800 == 1 week.
     }
 };
 
@@ -177,11 +177,23 @@ function downloadResources(){
         });
 
         // Create and sort resources articles.
+        // Make sure all resources have a sort order property.
+        var workingResources = resources[0].map(function (resource) {
+            if (resource.fields.length === 2) {
+                resource.fields.push({
+                    children: [],
+                    name: 'sortOrder',
+                    value: '0'
+                })
+            }
+            return resource;    
+        });
+            
         rekData.dataResources = resources[0].sort(function (a, b) {
-            if (a.title > b.title) {
+            if (a.fields[2].value > b.fields[2].value) {
                 return 1;
             }
-            if (a.title < b.title) {
+            if (a.fields[2].value < b.fields[2].value) {
                 return -1;
             }
             return 0;
