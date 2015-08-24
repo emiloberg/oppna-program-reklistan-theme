@@ -31,7 +31,7 @@ var rekData = {
         resourcesStructureId: 14304, // 1728837, //
         newsStructureId: 19302,
         locale: 'sv_SE',
-        secondsCacheData: 0 //604800 == 1 week.
+        secondsCacheData: 604800 //604800 == 1 week.
     }
 };
 
@@ -80,6 +80,7 @@ function initApp() {
     }
 }
 
+var temp;
 
 /**
  * Download all articles as JSON from skinny-json,
@@ -132,15 +133,29 @@ function downloadResources(){
         $.ajax(urls.news)
     )
     .then(function(drugs, advice, resources, hbsDrugs, hbsAdvice, hbsResources, news) {
+
         rekData.dataDrugs = drugs[0];
         rekData.dataAdvice = advice[0];
+        rekData.dataNews = news[0];
+        rekData.dataResources = resources[0];
 
         rekData.hbsDrugs = hbsDrugs[0];
         rekData.hbsAdvice = hbsAdvice[0];
         rekData.hbsResources = hbsResources[0];
+
+
+
+        // Old IE versions gives data as string and not as an object...
+        if(typeof drugs[0] === 'string') {
+            rekData.dataDrugs = jQuery.parseJSON(rekData.dataDrugs);
+            rekData.dataAdvice = jQuery.parseJSON(rekData.dataAdvice);
+            rekData.dataNews = jQuery.parseJSON(rekData.dataNews);
+            rekData.dataResources = jQuery.parseJSON(rekData.dataResources);
+        }
+
             
         // Create and sort main menu data
-        rekData.mainMenuData = drugs[0].map(function (entry) {
+        rekData.mainMenuData = rekData.dataDrugs.map(function (entry) {
             return {
                 _title: entry.title,
                 hasDrugs: (entry.fields[0].value.length !== 0),
@@ -159,7 +174,7 @@ function downloadResources(){
 
         // Create and sort resources articles.
         // Make sure all resources have a sort order property.
-        var workingResources = resources[0].map(function (resource) {
+        var workingResources = rekData.dataResources.map(function (resource) {
             if (resource.fields.length === 2) {
                 resource.fields.push({
                     children: [],
@@ -170,7 +185,7 @@ function downloadResources(){
             return resource;    
         });
             
-        rekData.dataResources = resources[0].sort(function (a, b) {
+        rekData.dataResources = workingResources.sort(function (a, b) {
             if (a.fields[2].value > b.fields[2].value) {
                 return 1;
             }
@@ -182,7 +197,7 @@ function downloadResources(){
             
             
         // Mangle News
-        var newsArticles = news[0].map(function(article) {
+        var newsArticles = rekData.dataNews.map(function(article) {
             var fieldOut = {
                 uuid: article.uuid,
                 title: article.title,
@@ -253,10 +268,14 @@ function startApp(isFreshDataDownload, dataMainMenu, dataResources, dataNews, da
     
     // Create Search Index if it's a fresh set of data,
     // else load the existing searchIndex from local storage.
-    if (isFreshDataDownload) {
-        wwMangleSearchData(dataDrugs, dataAdvice);
-    } else {
-        search.loadIndex(storage.get('searchIndex'));
+    // Only working in >IE10
+    if(!($('html').hasClass('lt-ie10') || $('html').hasClass('lt-ie9') || $('html').hasClass('lt-ie8'))) {
+        if (isFreshDataDownload) {
+            wwMangleSearchData(dataDrugs, dataAdvice);
+        } else {
+
+            search.loadIndex(storage.get('searchIndex'));
+        }
     }
 
     // Save if we're in mobile view or not (menu is a bit different)
@@ -383,9 +402,6 @@ function hideFlyOutMenu() {
  *
 \* ************************************************************************* */
 function createMenuesAndBigStartPage(mainMenuData, dataResources, dataNews) {
-    
-    console.dir(dataNews);
-    
     var nNewsToShow = 3;
     var data = {
         areas: mainMenuData,
@@ -676,10 +692,6 @@ function backToMainMenu() {
  * @param dataAdvice
  */
 function wwMangleSearchData(dataDrugs, dataAdvice){
-    // Only working in >IE10
-    if($('html').hasClass('lt-ie10') === true) {
-        return;
-    }
     // Check if webworker is available.
     if(!window.Worker) {
         return;

@@ -29,10 +29,9 @@
 
 // Hide until search is loaded
 .search-input-container {
-	@include single-transition(opacity, 250ms);
-	opacity: 0;
+	display: none;
 	&.on {
-		opacity: 1;
+		display: block;
 	}
 }
 
