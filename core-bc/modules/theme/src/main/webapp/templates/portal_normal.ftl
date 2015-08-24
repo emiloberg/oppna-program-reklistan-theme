@@ -6,7 +6,7 @@
 <#assign txtNews="Nyheter" />
 
 <#assign txtFeedback="Tyck till" />
-<#assign txtFeedbackURL="#/resource/Tyck_till_om_REK-Appen" />
+<#assign txtFeedbackURL="#/resource/Tyck_till_om_digitala_REKlistan" />
 
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7 ${root_css_class}" dir="<@liferay.language key="lang.dir" />" lang="${w3c_language_id}"> <![endif]-->
@@ -89,17 +89,17 @@
 				</div>
 			</div>
 			{{#each news}}
-				{{#if externallink.0.fieldValue}}
-					<a href="{{externallink.0.fieldValue}}" target="_blank" class="list-item item-{{@index}}">
+				{{#if externallink}}
+					<a href="{{externallink}}" target="_blank" class="list-item item-{{@index}}">
 					<div class="list-item-icon">
 						<i class="flaticon-external1"></i>
 					</div>
 				{{/if}}
-				{{#unless externallink.0.fieldValue}}
-					<a href="#/news/{{_entryId}}" class="list-item item-{{@index}}">
+				{{#unless externallink}}
+					<a href="#/news/{{id}}" class="list-item item-{{@index}}">
 				{{/unless}}
 				<div class="list-item-text">
-					{{_title}}
+					{{title}}
 				</div>
 				</a>
 			{{/each}}
@@ -155,7 +155,7 @@
 			</div>
 		</div>
 		<div class="section-details">
-			{{{content}}}
+			{{{body}}}
 		</div>
 	{{/each}}
 </script>
@@ -172,16 +172,11 @@
 				<h2>${txtNews}</h2>
 				<ul>
 					{{#each news}}
-						{{#if externallink.0.fieldValue}}
-							<li><a href="{{externallink.0.fieldValue}}" target="_blank"><i class="flaticon-external1"></i> {{_title}}</a></li>
+						{{#if externallink}}
+							<li><a href="{{externallink}}" target="_blank"><i class="flaticon-external1"></i> {{title}}</a></li>
 						{{/if}}
-						{{#if internallink.0.fieldValue}}
-							<li><a href="{{internallink.0.fieldValue}}"><i class="flaticon-keyboard53"></i> {{_title}}</a></li>
-						{{/if}}						
-						{{#unless externallink.0.fieldValue}}
-							{{#unless internallink.0.fieldValue}}
-								<li><a href="#/news/{{_entryId}}"><i class="flaticon-keyboard53"></i> {{_title}}</a></li>
-							{{/unless}}
+						{{#unless externallink}}
+							<li><a href="#/news/{{id}}"><i class="flaticon-keyboard53"></i> {{title}}</a></li>
 						{{/unless}}
 					{{/each}}
 				</ul>

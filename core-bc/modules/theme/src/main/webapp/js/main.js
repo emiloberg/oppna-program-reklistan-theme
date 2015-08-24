@@ -1,32 +1,5 @@
 'use strict';
 
-// TODO - Remove this temp
-var globalDataNews = {
-    entries: [
-        {
-            _entryId: 'news4',
-            _title: 'Nyheter finns på vårdgivarstödets webbplats',
-            content: '',
-            externallink: [
-                {
-                    fieldValue: 'http://epi.vgregion.se/sv/Lakemedel-i-Vastra-Gotalandsregionen/Vardgivarstod/'
-                }
-            ]
-        },
-        {
-            _entryId: 'problem-med-rek-appen',
-            _title: 'Problem med REK-Appen?',
-            content: '',
-            internallink: [
-                {
-                    fieldValue: '#/resource/Tyck_till_om_REK-Appen'
-                }
-            ]
-        }
-    ]
-};
-
-
 /**
  * Global variables
  */
@@ -46,7 +19,7 @@ var rekData = {
     dataDrugs: [],
     dataAdvice: [],
     dataResources: [],
-    dataNews: {},
+    dataNews: [],
     hbsDrugs: '',
     hbsAdvice: '',
     hbsResources: '',
@@ -56,6 +29,7 @@ var rekData = {
         drugsStructureId: 11571, //1728835, //
         adviceStructureId: 12602, //1728833, //
         resourcesStructureId: 14304, // 1728837, //
+        newsStructureId: 19302,
         locale: 'sv_SE',
         secondsCacheData: 0 //604800 == 1 week.
     }
@@ -136,6 +110,12 @@ function downloadResources(){
         '/group-name/' + rekData.properties.groupName +
         '/ddm-structure-id/' + rekData.properties.resourcesStructureId +
         '/locale/' + rekData.properties.locale,
+
+        news: '/api/jsonws/skinny-web.skinny/get-skinny-journal-articles/' +
+        'company-id/' + rekData.properties.companyId +
+        '/group-name/' + rekData.properties.groupName +
+        '/ddm-structure-id/' + rekData.properties.newsStructureId +
+        '/locale/' + rekData.properties.locale,
         
         hbsDrugs: '/reklistan-theme/handlebars/details-drugs.hbs',
         hbsAdvice: '/reklistan-theme/handlebars/details-advice.hbs',
@@ -148,16 +128,17 @@ function downloadResources(){
         $.ajax(urls.resources),
         $.ajax(urls.hbsDrugs),
         $.ajax(urls.hbsAdvice),
-        $.ajax(urls.hbsResources)
+        $.ajax(urls.hbsResources),
+        $.ajax(urls.news)
     )
-    .then(function(drugs, advice, resources, hbsDrugs, hbsAdvice, hbsResources) {
+    .then(function(drugs, advice, resources, hbsDrugs, hbsAdvice, hbsResources, news) {
         rekData.dataDrugs = drugs[0];
         rekData.dataAdvice = advice[0];
 
         rekData.hbsDrugs = hbsDrugs[0];
         rekData.hbsAdvice = hbsAdvice[0];
         rekData.hbsResources = hbsResources[0];
-
+            
         // Create and sort main menu data
         rekData.mainMenuData = drugs[0].map(function (entry) {
             return {
@@ -198,8 +179,48 @@ function downloadResources(){
             }
             return 0;
         });
+            
+            
+        // Mangle News
+        var newsArticles = news[0].map(function(article) {
+            var fieldOut = {
+                uuid: article.uuid,
+                title: article.title,
+                body: '',
+                externallink: '',
+                medium: '',
+                lead: '',
+                date: '2010-01-01',
+                id: makeUrlSafe(article.title)
+            };
+            article.fields.forEach(function (field) {
+                fieldOut[field.name] = field.value;
+            });
 
-        startApp(true, rekData.mainMenuData, rekData.dataResources, globalDataNews, rekData.dataDrugs, rekData.dataAdvice);
+            if (fieldOut.medium.indexOf('both') > 0 || fieldOut.medium.indexOf('web') > 0) { // Only include news targeted to mobile.
+                return fieldOut;
+            } else {
+                return undefined;
+            }
+
+        });
+
+        newsArticles = cleanArray(newsArticles);
+
+
+        newsArticles = newsArticles.sort(function (a, b) {
+            if (a.date > b.date) {
+                return 1;
+            }
+            if (a.date < b.date) {
+                return -1;
+            }
+            return 0;
+        });
+            
+        rekData.dataNews = newsArticles;
+
+        startApp(true, rekData.mainMenuData, rekData.dataResources, rekData.dataNews, rekData.dataDrugs, rekData.dataAdvice);
     })
     .fail(function(err) {
         alert('Could not load all resources needed');
@@ -362,10 +383,13 @@ function hideFlyOutMenu() {
  *
 \* ************************************************************************* */
 function createMenuesAndBigStartPage(mainMenuData, dataResources, dataNews) {
+    
+    console.dir(dataNews);
+    
     var nNewsToShow = 3;
     var data = {
         areas: mainMenuData,
-        news: dataNews.entries.slice(0, nNewsToShow),
+        news: dataNews.slice(0, nNewsToShow),
         resources: dataResources
     };
     printTemplate(data, "#main-menu-template", '#main-menu-placeholder');
@@ -391,8 +415,8 @@ function showGeneric(type, clickedItem) {
     // Filter
     if (type === 'news') {
         templateSelector = '#news-template';
-        data = globalDataNews.entries.filter(function (item) {
-            return item._entryId === clickedItem;
+        data = rekData.dataNews.filter(function (item) {
+            return item.id === clickedItem;
         });
     } else if (type === 'resource') {
         templateStr = rekData.hbsResources;
@@ -813,6 +837,16 @@ function getNoneActiveTabData(tab) {
     } else if (tab === 'advice') {
         return rekData.dataDrugs;
     }
+}
+
+function cleanArray(actual){
+    var newArray = [];
+    for(var i = 0; i<actual.length; i++){
+        if (actual[i]){
+            newArray.push(actual[i]);
+        }
+    }
+    return newArray;
 }
 
 
