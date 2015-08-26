@@ -26,18 +26,18 @@ var rekData = {
     properties: {
 
         // Stage
-        //companyId: 1674701,
-        //drugsStructureId: 1728835,
-        //adviceStructureId: 1728833,
-        //resourcesStructureId: 1728837,
-        //newsStructureId: 1770002,
+        companyId: 1674701,
+        drugsStructureId: 1728835,
+        adviceStructureId: 1728833,
+        resourcesStructureId: 1728837,
+        newsStructureId: 1770002,
 
         // Local Dev
-        companyId: 10155,
-        drugsStructureId: 11571,
-        adviceStructureId: 12602,
-        resourcesStructureId: 14304,
-        newsStructureId: 19302,
+        //companyId: 10155,
+        //drugsStructureId: 11571,
+        //adviceStructureId: 12602,
+        //resourcesStructureId: 14304,
+        //newsStructureId: 19302,
 
         groupName: 'Guest',
         locale: 'sv_SE',
