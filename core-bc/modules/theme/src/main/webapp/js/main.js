@@ -24,12 +24,22 @@ var rekData = {
     hbsAdvice: '',
     hbsResources: '',
     properties: {
-        companyId: 10155, //1674701, //
-        groupName: 'Guest',
-        drugsStructureId: 11571, //1728835, //
-        adviceStructureId: 12602, //1728833, //
-        resourcesStructureId: 14304, // 1728837, //
+
+        // Stage
+        //companyId: 1674701,
+        //drugsStructureId: 1728835,
+        //adviceStructureId: 1728833,
+        //resourcesStructureId: 1728837,
+        //newsStructureId: 1770002,
+
+        // Local Dev
+        companyId: 10155,
+        drugsStructureId: 11571,
+        adviceStructureId: 12602,
+        resourcesStructureId: 14304,
         newsStructureId: 19302,
+
+        groupName: 'Guest',
         locale: 'sv_SE',
         secondsCacheData: 604800 //604800 == 1 week.
     }
@@ -172,28 +182,41 @@ function downloadResources(){
             return 0;
         });
 
-        // Create and sort resources articles.
-        // Make sure all resources have a sort order property.
-        var workingResources = rekData.dataResources.map(function (resource) {
-            if (resource.fields.length === 2) {
-                resource.fields.push({
-                    children: [],
-                    name: 'sortOrder',
-                    value: '0'
-                })
+        var workingResources = rekData.dataResources.map(function(article) {
+            var fieldOut = {
+                uuid: article.uuid,
+                title: article.title,
+                body: '',
+                externallink: '',
+                medium: 'web',
+                sortOrder: '0',
+                id: makeUrlSafe(article.title)
+            };
+            article.fields.forEach(function (field) {
+                fieldOut[field.name] = field.value;
+            });
+
+            if (fieldOut.medium.indexOf('both') > 0 || fieldOut.medium.indexOf('web') > 0) { // Only include news targeted to mobile.
+                return fieldOut;
+            } else {
+                return undefined;
             }
-            return resource;    
+
         });
-            
+
+        workingResources = cleanArray(workingResources);
+
         rekData.dataResources = workingResources.sort(function (a, b) {
-            if (a.fields[2].value > b.fields[2].value) {
+            if (a.sortOrder.value > b.sortOrder.value) {
                 return 1;
             }
-            if (a.fields[2].value < b.fields[2].value) {
+            if (a.sortOrder.value < b.sortOrder.value) {
                 return -1;
             }
             return 0;
         });
+            
+        console.dir(rekData.dataResources);
             
             
         // Mangle News
@@ -405,7 +428,7 @@ function createMenuesAndBigStartPage(mainMenuData, dataResources, dataNews) {
     var nNewsToShow = 3;
     var data = {
         areas: mainMenuData,
-        news: dataNews.slice(0, nNewsToShow),
+        news: dataNews ? dataNews.slice(0, nNewsToShow) : [],
         resources: dataResources
     };
     printTemplate(data, "#main-menu-template", '#main-menu-placeholder');

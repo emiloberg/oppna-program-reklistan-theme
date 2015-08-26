@@ -187,10 +187,10 @@
 				<h2>${txtResources}</h2>
 				<ul>
 					{{#each resources}}
-						{{#if fields.1.value}}
-							<li><a href="{{fields.1.value}}" target="_blank"><i class="flaticon-external1"></i> {{title}}</a></li>
+						{{#if externallink}}
+							<li><a href="{{externallink}}" target="_blank"><i class="flaticon-external1"></i> {{title}}</a></li>
 						{{/if}}
-						{{#unless fields.1.value}}
+						{{#unless externallink}}
 							<li><a href="#/resource/{{urlencode title}}"><i class="flaticon-keyboard53"></i> {{title}}</a></li>
 						{{/unless}}
 					{{/each}}
@@ -207,15 +207,15 @@
 	<div class="fly-menu-wrapper">
 		<div class="fly-menu">
 			{{#each resources}}
-				{{#if fields.1.value}}
-					<a href="{{fields.1.value}}" target="_blank" class="list-item js-fly-menu-link">
+				{{#if externallink}}
+					<a href="{{externallink}}" target="_blank" class="list-item js-fly-menu-link">
 						<div class="list-item-icon">
 							<i class="flaticon-external1 icon-15x"></i>
 						</div>
 						<div class="list-item-text">{{title}}</div>
 					</a>
 				{{/if}}
-				{{#unless fields.1.value}}
+				{{#unless externallink}}
 					<a href="#/resource/{{urlencode title}}" class="list-item js-fly-menu-link">
 						<div class="list-item-text">{{title}}</div>
 					</a>
