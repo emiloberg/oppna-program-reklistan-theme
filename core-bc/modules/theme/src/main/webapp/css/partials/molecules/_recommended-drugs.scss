@@ -188,6 +188,17 @@
  * Tables
  *
  */
+.is-mobile-small {
+	table.stacktable-original {
+		display: none;
+	}
+
+	table.stacktable {
+		display: table;
+	}
+}
+
+
 .section-details-generic,
 .section-details-advice {
 	table {
