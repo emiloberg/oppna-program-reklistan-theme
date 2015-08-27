@@ -41,7 +41,7 @@ var rekData = {
 
         groupName: 'Guest',
         locale: 'sv_SE',
-        secondsCacheData: 604800 //604800 == 1 week.
+        secondsCacheData: 3600 //3600 == 1h.
     }
 };
 
