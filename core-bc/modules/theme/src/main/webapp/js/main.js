@@ -764,6 +764,9 @@ function registerHandlebarHelpers() {
         text = text.replace(/\{\{replaceable\}\}/g, '<span class="replaceable">&#8860;</span>');
         text = text.replace(/\{\{child\}\}/g, '<img src="/reklistan-theme/images/theme/child.png" class="child-icon">');
 
+        // Make sure external links open in new tab/window
+        text = text.replace(/href=[\"\'](http[s]?\:\/\/[^\"\']+)[\"\']/gi, 'href="$1" target="_blank"');
+
         return new Handlebars.SafeString(text);
     });
 }
