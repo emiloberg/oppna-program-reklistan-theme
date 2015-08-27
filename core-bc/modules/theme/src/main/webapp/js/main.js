@@ -173,10 +173,10 @@ function downloadResources(){
             };
         })
         .sort(function (a, b) {
-            if (a.title > b.title) {
+            if (a._title > b._title) {
                 return 1;
             }
-            if (a.title < b.title) {
+            if (a._title < b._title) {
                 return -1;
             }
             return 0;
