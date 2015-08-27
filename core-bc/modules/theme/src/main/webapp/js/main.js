@@ -215,9 +215,7 @@ function downloadResources(){
             }
             return 0;
         });
-            
-        console.dir(rekData.dataResources);
-            
+
             
         // Mangle News
         var newsArticles = rekData.dataNews.map(function(article) {
