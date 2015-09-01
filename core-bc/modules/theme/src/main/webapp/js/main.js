@@ -345,6 +345,22 @@ function initializeRoute() {
             setBackButtonURL('#/' + tab + '/' + chapter);
 
         },
+        '/refresh': function() {
+            console.log('CLEARING');
+            storage
+                .remove('searchIndex')
+                .remove('rekDataLastSaved')
+                .remove('dataDrugs')
+                .remove('dataAdvice')
+                .remove('dataResources')
+                .remove('mainMenuData')
+                .remove('dataNews')
+                .remove('hbsDrugs')
+                .remove('hbsAdvice')
+                .remove('hbsResources');
+            location.hash = '';
+            location.reload(true);
+        },
         '*': function () {
             window.scrollTo(0, 0);
             backToMainMenu();
