@@ -525,7 +525,7 @@ function showSubmenu(chapter, section, tab) {
             filtered.tabClassDrugs = 'selected single';
         }
     }
-
+    
     printTemplate(filtered, "#submenu-template", '#submenu-' + tab + '-placeholder');
 
     // Remove active classes for big screen
@@ -574,6 +574,34 @@ function setCurrentView(currentView, chapter, details) {
         .addClass('showing-' + currentView);
 }
 
+/**
+ * Given a details object, returns an 'URL' if the article is a link to
+ * another article or false if not,
+ *
+ * @param {object} content
+ * @returns {string|boolean}
+ */
+function findLinkToArticle(content) {
+    var foundLinkToArticle;
+    var hasLinkToArticle = content.children.some(function (field) {
+        if (field.name) {
+            if (field.name === 'linktoarticle') {
+                if (field.value.length > 0) {
+                    foundLinkToArticle = field.value;
+                    return true;
+                }
+            }
+        }
+        return false;
+    });
+
+    if (hasLinkToArticle) {
+        return foundLinkToArticle;
+    } else {
+        return false;
+    }
+}
+
 
 /* ************************************************************************* *\
  * 
@@ -602,6 +630,14 @@ function showDetails(chapter, details, tab) {
 	}
 
     filtered = filtered[0];
+
+    // Figure out if this article is a link to another article break
+    // and redirect the user there if that's the case.
+    var linkToArticle = findLinkToArticle(filtered);
+    if(linkToArticle) {
+        routie('/' + cleanInternalURL(linkToArticle));
+        return;
+    }
 
     // Adding chapter to object, to be able to pick it up from 
     // handlebars. Used to create tab links.
@@ -703,6 +739,17 @@ function backToMainMenu() {
  * HELPERS
  *
 \* ************************************************************************* */
+
+/**
+ * Clean user input of #/ and anything before that.
+ * @param {string} url
+ */
+function cleanInternalURL(url) {
+    if (url.indexOf('#/') > -1) {
+        url = url.substring(url.indexOf('#/') + 2);
+    }
+    return url;
+}
 
 /**
  * Spawn a web worker which takes dataDrugs and dataAdvice and mangle the data
