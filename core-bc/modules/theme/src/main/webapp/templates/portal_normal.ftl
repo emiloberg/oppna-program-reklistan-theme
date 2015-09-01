@@ -128,8 +128,8 @@
 			<h2 class="second-bar-title">{{title}}</h2>
 		</div>
 		<div class="js-submenu-tabs tabs">
-			<a href="#/drugs/{{urlencode title}}" class="tab js-tab-item js-tab-item-drugs {{tabClassDrugs}}">${txtDrugs}</a>
-			<a href="#/advice/{{urlencode title}}" class="tab js-tab-item js-tab-item-advice {{tabClassAdvice}}">${txtAdvice}</a>
+			<a href="#/drugs/{{urlencode title}}{{#if sameSectionOnOtherTab}}/{{sameSectionOnOtherTab}}{{/if}}" class="tab js-tab-item js-tab-item-drugs {{tabClassDrugs}}">${txtDrugs}</a>
+			<a href="#/advice/{{urlencode title}}{{#if sameSectionOnOtherTab}}/{{sameSectionOnOtherTab}}{{/if}}" class="tab js-tab-item js-tab-item-advice {{tabClassAdvice}}">${txtAdvice}</a>
 		</div>
 	</div>
 	{{#each fields}}

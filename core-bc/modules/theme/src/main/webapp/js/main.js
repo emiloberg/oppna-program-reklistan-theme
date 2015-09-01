@@ -525,6 +525,16 @@ function showSubmenu(chapter, section, tab) {
             filtered.tabClassDrugs = 'selected single';
         }
     }
+
+    // If the same section is available on both tabs then we re-write the tab links
+    // so that a click on a tab takes the user directly to the same section but on the
+    // other tab.
+    filtered.sameSectionOnOtherTab = false;
+    if (section.length > 0 ) {
+        if (isSectionAvailableOnOtherTab(chapter, section, tab)) {
+            filtered.sameSectionOnOtherTab = section;
+        }
+    }
     
     printTemplate(filtered, "#submenu-template", '#submenu-' + tab + '-placeholder');
 
