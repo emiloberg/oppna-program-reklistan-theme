@@ -86,26 +86,62 @@ p.no-diffs {
     }
 }
 
+.only-print {
+    display: none;
+}
+
 @media print {
-    .preview-box {
-        float: none;
-        width: 100%;
-        padding: 0;
-        border: 0;
-    }
+    .preview-wrapper {
+        .only-print {
+            display: block;
+        }
 
-    .no-print,
-    .preview-settings {
-        display: none;
-    }
+        .preview-printed-date {
+            text-align: center;
+            font-size: 1.2em;
+        }
 
-    .preview-box-heading {
-        margin-top: 1em;
-        border-top: 1px solid black;
-        border-bottom: 1px solid black;
-    }
+        .preview-box {
+            float: none;
+            width: 100%;
+            padding: 0;
+            border: 0;
+            margin: 0;
+        }
 
-    .preview-title {
-        padding: 0;
+        .no-print,
+        .preview-settings {
+            display: none;
+        }
+
+        .preview-box-heading {
+            margin-top: 1em;
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+        }
+
+        .preview-title {
+            padding: 0;
+            border-bottom: 1px solid #ccc;
+            font-weight: 200;
+            font-size: 1.4em;
+        }
+
+        ins {
+            color: rgb(35, 137, 35) !important; /* needed because of stupid rule-them-all aui print classes */
+        }
+
+        del {
+            color: rgb(255, 0, 0) !important; /* needed because of stupid rule-them-all aui print classes */
+        }
+
+        .replaceable,
+        .section-details-generic h2,
+        .section-details-advice h2,
+        .subheading-2,
+        .subheading,
+        .infobox-heading h3 {
+            color: $color-vgr-blue !important; /* needed because of stupid rule-them-all aui print classes */
+        }
     }
 }
