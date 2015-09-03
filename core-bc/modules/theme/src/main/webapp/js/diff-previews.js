@@ -7,7 +7,12 @@
       registerHandlebarHelpers();
       Swag.registerHelpers(Handlebars);
 
-      printHbsTemplate(articleDraft, '#title-template', '#title-target');
+      var metaData = {
+          title: articleDraft.title,
+          date: getDate()
+      };
+
+      printHbsTemplate(metaData, '#title-template', '#title-target');
       printHbsTemplate(articleDraft, '', '#draft-target', hbsTemplate);
       printHbsTemplate(articlePublished, '', '#published-target', hbsTemplate);
 
@@ -62,6 +67,22 @@
         } else if (numberOfChecks === 1) {
           $('.preview-box').addClass('single-preview-box');
         }
+      }
+
+      function pad(number) {
+          if (number < 10) {
+              return '0' + number;
+          }
+          return number;
+      }
+
+      function getDate() {
+          var now = new Date();
+          return now.getFullYear() +
+              '-' + pad(now.getMonth() + 1) +
+              '-' + pad(now.getDate()) +
+              ' ' + pad(now.getHours()) +
+              ':' + pad(now.getMinutes());
       }
 
   };
