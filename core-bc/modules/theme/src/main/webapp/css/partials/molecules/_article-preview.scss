@@ -10,8 +10,9 @@
     }
 
     .preview-title {
-        background-color: #ccc;
+        background-color: #dedede;
         padding: 0.5em;
+        margin: 0.5em 0;
     }
 
 
@@ -91,6 +92,11 @@ p.no-diffs {
 }
 
 @media print {
+
+    body {
+        background-color: #ffffff;
+    }
+
     .preview-wrapper {
         .only-print {
             display: block;
@@ -121,10 +127,11 @@ p.no-diffs {
         }
 
         .preview-title {
-            padding: 0;
             border-bottom: 1px solid #ccc;
             font-weight: 200;
             font-size: 1.4em;
+            margin: 0.5em 0;
+            padding: 0.2em 0;
         }
 
         ins {
