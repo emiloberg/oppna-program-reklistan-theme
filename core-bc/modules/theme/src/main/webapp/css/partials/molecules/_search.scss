@@ -27,9 +27,12 @@
 // 	}
 // }
 
-/* TODO: Need to readd this */
-.lt-ie9 .search-wrapper {
+// Hide until search is loaded
+.search-input-container {
 	display: none;
+	&.on {
+		display: block;
+	}
 }
 
 .search-input-container {

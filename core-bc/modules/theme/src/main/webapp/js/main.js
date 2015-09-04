@@ -1,34 +1,9 @@
-// TODO - Remove this temp
-var dataNews = {
-    entries: [
-        {
-            _entryId: 'news4',
-            _title: 'Nyheter finns på vårdgivarstödets webbplats',
-            content: '',
-            externallink: [
-                {
-                    fieldValue: 'http://epi.vgregion.se/sv/Lakemedel-i-Vastra-Gotalandsregionen/Vardgivarstod/'
-                }
-            ]
-        }
-        // {
-        //     _entryId: 'problem-med-rek-appen',
-        //     _title: 'Problem med REK-Appen?',
-        //     content: '',
-        //     internallink: [
-        //         {
-        //             fieldValue: '#/resource/Om_REK-Appen'
-        //         }
-        //     ]
-        // }
-    ]
-};
+'use strict';
 
-
-
-
+/**
+ * Global variables
+ */
 // TODO: Add checks to see if the current view is already loaded, if so, only show the view, don't load the data
-
 var navObj = {
     currentTab: 'drugs',
     currentView: '',
@@ -39,57 +14,43 @@ var navObj = {
 
 var sizeMedium = 768;
 
+var rekData = {
+    mainMenuData: [],
+    dataDrugs: [],
+    dataAdvice: [],
+    dataResources: [],
+    dataNews: [],
+    hbsDrugs: '',
+    hbsAdvice: '',
+    hbsResources: '',
+    properties: {
 
-/**
- * Make URL safe URL
- * 
- * Usage:
- * {{urlencode variable}} 
- *
- */
-Handlebars.registerHelper('urlencode', function(context) {
-    var ret = context || '';
-    ret = ret.replace(/ /g, '_');
-    ret = removeDiacritics(ret);
-    ret = encodeURIComponent(ret);
+        // Stage
+        //companyId: 1674701,
+        //drugsStructureId: 1728835,
+        //adviceStructureId: 1728833,
+        //resourcesStructureId: 1728837,
+        //newsStructureId: 1770002,
 
-    return new Handlebars.SafeString(ret);
-});
+        // Local Dev
+        //companyId: 10155,
+        //drugsStructureId: 11571,
+        //adviceStructureId: 12602,
+        //resourcesStructureId: 14304,
+        //newsStructureId: 19302,
 
-/**
- * If variabale is equal to value-helper
- *
- * Usage:
- * {{#eq variable eq='hello'}}Print this{{/#if}}
- */
-Handlebars.registerHelper('eq', function(context, options) {
-    if (context === options.hash.eq) {
-        return options.fn(context);
-    } else {
-        return '';
+        // Live:
+        companyId: 1712101,
+        drugsStructureId: 1715233,
+        adviceStructureId: 1715235,
+        resourcesStructureId: 1715238,
+        newsStructureId: 2080202,
+
+        groupName: 'Guest',
+        locale: 'sv_SE',
+        secondsCacheData: 3600 //3600 == 1h.
     }
-});
-
-/**
- * Parse the text and do some replacing
- *
- * Usage:
- * {{markdownify variable}}
- */
-
-Handlebars.registerHelper('markdownify', function(context) {
-//    var text = Handlebars.Utils.escapeExpression(context);
-    var text = context || '';
-
-    // Convert markdown links to html links
-    text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="\$2">\$1</a>');
-
-    // Convert {{replaceable}} with icon
-    text = text.replace(/\{\{replaceable\}\}/g, '<span class="replaceable">&#8860;</span>');
-    text = text.replace(/\{\{child\}\}/g, '<img src="/reklistan-theme/images/theme/child.png" class="child-icon">');
-
-    return new Handlebars.SafeString(text);
-});
+};
 
 
 /* ************************************************************************* *\
@@ -98,51 +59,273 @@ Handlebars.registerHelper('markdownify', function(context) {
  *
 \* ************************************************************************* */
 
-
-
 $(function() {
-    checkAppDataReady();
+    initApp();
 });
 
-
 /**
- * As Liferay may start to serve content before all the Asset Publishers are 
- * done, we need to check if the variables (created by the APs) are available.
- * If not, there's not much we can do then tell the user.
- *
- * Remove this when proper JSON requests is in place.
- *
+ * Init app by determine if we need to load data over json or if we can grab
+ * cached data from local storage
  */
-function checkAppDataReady() {
-    if (typeof dataSearchDrugs === 'undefined' ||
-        typeof dataSearchAdvice === 'undefined' ||
-        typeof dataResources === 'undefined' ||
-        typeof dataDrugs === 'undefined' ||
-        typeof dataAdvice === 'undefined')
-    {
-        $('#main-menu-placeholder').html('<div class="error-box"><h1>Något gick snett</h1><p>Tyvärr kunde datan inte hämtas från servern. <b>Försök ladda om sidan.</b></p><p>Fungerar det fortfarande inte? Skicka ett epost till Christer Printz <a href="mailto:christer.printz@vgregion.se">christer.printz@vgregion.se</a></p></div>');
+function initApp() {
+    var timestampLastDl = storage.get('rekDataLastSaved');
+    if (timestampLastDl === undefined) {
+        downloadResources();
     } else {
-        initApp();
+        var timestampDiff = (new Date().getTime() - timestampLastDl) / 1000;
+        if (timestampDiff > rekData.properties.secondsCacheData) {
+            downloadResources();
+        } else {
+            rekData = storage.get([
+                'dataDrugs',
+                'dataAdvice',
+                'dataResources',
+                'mainMenuData',
+                'dataNews',
+                'hbsDrugs',
+                'hbsAdvice',
+                'hbsResources'
+            ]);
+            startApp(false,
+                rekData.mainMenuData,
+                rekData.dataResources,
+                rekData.dataNews,
+                rekData.dataDrugs,
+                rekData.dataAdvice
+            );
+        }
     }
 }
 
-function initApp() {
+var temp;
+
+/**
+ * Download all articles as JSON from skinny-json,
+ * also download all handlebar templates.
+ */
+function downloadResources(){
+    // Only show loading indicator after X ms.
+    // This way it doesn't flicker on fast connections.
+    setTimeout(function () {
+        $('.js-loading-indicator').addClass('on');
+    }, 500);
+    
+    var urls = {
+        drugs: '/api/jsonws/skinny-web.skinny/get-skinny-journal-articles/' +
+        'company-id/' + rekData.properties.companyId +
+        '/group-name/' + rekData.properties.groupName +
+        '/ddm-structure-id/' + rekData.properties.drugsStructureId +
+        '/locale/' + rekData.properties.locale,
+
+        advice: '/api/jsonws/skinny-web.skinny/get-skinny-journal-articles/' +
+        'company-id/' + rekData.properties.companyId +
+        '/group-name/' + rekData.properties.groupName +
+        '/ddm-structure-id/' + rekData.properties.adviceStructureId +
+        '/locale/' + rekData.properties.locale,
+
+        resources: '/api/jsonws/skinny-web.skinny/get-skinny-journal-articles/' +
+        'company-id/' + rekData.properties.companyId +
+        '/group-name/' + rekData.properties.groupName +
+        '/ddm-structure-id/' + rekData.properties.resourcesStructureId +
+        '/locale/' + rekData.properties.locale,
+
+        news: '/api/jsonws/skinny-web.skinny/get-skinny-journal-articles/' +
+        'company-id/' + rekData.properties.companyId +
+        '/group-name/' + rekData.properties.groupName +
+        '/ddm-structure-id/' + rekData.properties.newsStructureId +
+        '/locale/' + rekData.properties.locale,
+        
+        hbsDrugs: '/reklistan-theme/handlebars/details-drugs.hbs',
+        hbsAdvice: '/reklistan-theme/handlebars/details-advice.hbs',
+        hbsResources: '/reklistan-theme/handlebars/resources.hbs'
+    };
+
+    $.when(
+        $.ajax(urls.drugs),
+        $.ajax(urls.advice),
+        $.ajax(urls.resources),
+        $.ajax(urls.hbsDrugs),
+        $.ajax(urls.hbsAdvice),
+        $.ajax(urls.hbsResources),
+        $.ajax(urls.news)
+    )
+    .then(function(drugs, advice, resources, hbsDrugs, hbsAdvice, hbsResources, news) {
+
+        rekData.dataDrugs = drugs[0];
+        rekData.dataAdvice = advice[0];
+        rekData.dataNews = news[0];
+        rekData.dataResources = resources[0];
+
+        rekData.hbsDrugs = hbsDrugs[0];
+        rekData.hbsAdvice = hbsAdvice[0];
+        rekData.hbsResources = hbsResources[0];
+
+
+
+        // Old IE versions gives data as string and not as an object...
+        if(typeof drugs[0] === 'string') {
+            rekData.dataDrugs = jQuery.parseJSON(rekData.dataDrugs);
+            rekData.dataAdvice = jQuery.parseJSON(rekData.dataAdvice);
+            rekData.dataNews = jQuery.parseJSON(rekData.dataNews);
+            rekData.dataResources = jQuery.parseJSON(rekData.dataResources);
+        }
+
+            
+        // Create and sort main menu data
+        rekData.mainMenuData = rekData.dataDrugs.map(function (entry) {
+            return {
+                _title: entry.title,
+                hasDrugs: (entry.fields[0].value.length !== 0),
+                tempDrugs: entry.fields[0].value
+            };
+        })
+        .sort(function (a, b) {
+            if (a._title > b._title) {
+                return 1;
+            }
+            if (a._title < b._title) {
+                return -1;
+            }
+            return 0;
+        });
+
+        var workingResources = rekData.dataResources.map(function(article) {
+            var fieldOut = {
+                uuid: article.uuid,
+                title: article.title,
+                body: '',
+                externallink: '',
+                medium: 'web',
+                sortOrder: '0',
+                id: makeUrlSafe(article.title)
+            };
+            article.fields.forEach(function (field) {
+                fieldOut[field.name] = field.value;
+            });
+
+            if (fieldOut.medium.indexOf('both') > 0 || fieldOut.medium.indexOf('web') > 0) { // Only include news targeted to mobile.
+                return fieldOut;
+            } else {
+                return undefined;
+            }
+
+        });
+
+        workingResources = cleanArray(workingResources);
+
+        rekData.dataResources = workingResources.sort(function (a, b) {
+            if (a.sortOrder.value > b.sortOrder.value) {
+                return 1;
+            }
+            if (a.sortOrder.value < b.sortOrder.value) {
+                return -1;
+            }
+            return 0;
+        });
+
+            
+        // Mangle News
+        var newsArticles = rekData.dataNews.map(function(article) {
+            var fieldOut = {
+                uuid: article.uuid,
+                title: article.title,
+                body: '',
+                externallink: '',
+                medium: '',
+                lead: '',
+                date: '2010-01-01',
+                id: makeUrlSafe(article.title)
+            };
+            article.fields.forEach(function (field) {
+                fieldOut[field.name] = field.value;
+            });
+
+            if (fieldOut.medium.indexOf('both') > 0 || fieldOut.medium.indexOf('web') > 0) { // Only include news targeted to mobile.
+                return fieldOut;
+            } else {
+                return undefined;
+            }
+
+        });
+
+        newsArticles = cleanArray(newsArticles);
+
+
+        newsArticles = newsArticles.sort(function (a, b) {
+            if (a.date > b.date) {
+                return 1;
+            }
+            if (a.date < b.date) {
+                return -1;
+            }
+            return 0;
+        });
+            
+        rekData.dataNews = newsArticles;
+
+        startApp(true, rekData.mainMenuData, rekData.dataResources, rekData.dataNews, rekData.dataDrugs, rekData.dataAdvice);
+    })
+    .fail(function(err) {
+        alert('Could not load all resources needed');
+        // TODO Better error msg.
+        // TODO Put this back to somewhere good. Also add timeout
+        //$('#main-menu-placeholder').html('<div class="error-box"><h1>Något gick snett</h1><p>Tyvärr kunde datan inte hämtas från servern. <b>Försök ladda om sidan.</b></p><p>Fungerar det fortfarande inte? Skicka ett epost till Christer Printz <a href="mailto:christer.printz@vgregion.se">christer.printz@vgregion.se</a></p></div>');
+    });
+}
+
+
+/**
+ * Start the App
+ *
+ * @param isFreshDataDownload
+ * @param dataMainMenu
+ * @param dataResources
+ * @param dataNews
+ * @param dataDrugs
+ * @param dataAdvice
+ */
+function startApp(isFreshDataDownload, dataMainMenu, dataResources, dataNews, dataDrugs, dataAdvice) {
+    registerHandlebarHelpers();
+    Swag.registerHelpers(Handlebars);
     registerEvents();
     initializeRoute();
-    
-    createMenuesAndBigStartPage();
+    createMenuesAndBigStartPage(dataMainMenu, dataResources, dataNews);
 
+    // Initialize FastClick to make it snappier on mobile browsers.
     FastClick.attach(document.body);
     
-    if($('html').hasClass('lt-ie9') === false) {
-        search.initialize();
+    // Create Search Index if it's a fresh set of data,
+    // else load the existing searchIndex from local storage.
+    // Only working in >IE10
+    if(!($('html').hasClass('lt-ie10') || $('html').hasClass('lt-ie9') || $('html').hasClass('lt-ie8'))) {
+        if (isFreshDataDownload) {
+            wwMangleSearchData(dataDrugs, dataAdvice);
+        } else {
+
+            search.loadIndex(storage.get('searchIndex'));
+        }
     }
 
     // Save if we're in mobile view or not (menu is a bit different)
     navObj.isMobileView = ($(window).width() < sizeMedium);
-    $( window ).resize(function() {
+    $(window).resize(function() {
         navObj.isMobileView = ($(window).width() < sizeMedium);
     });
+
+    // Save all data to local storage
+    if(isFreshDataDownload) {
+        storage.set({
+            dataDrugs: dataDrugs,
+            dataAdvice: dataAdvice,
+            dataResources: dataResources,
+            mainMenuData: dataMainMenu,
+            dataNews: dataNews,
+            hbsDrugs: rekData.hbsDrugs,
+            hbsAdvice: rekData.hbsAdvice,
+            hbsResources: rekData.hbsResources,
+            rekDataLastSaved: new Date().getTime()
+        });
+    }
 }
 
 function initializeRoute() {
@@ -169,6 +352,22 @@ function initializeRoute() {
             setBackButtonURL('#/' + tab + '/' + chapter);
 
         },
+        '/refresh': function() {
+            console.log('CLEARING');
+            storage
+                .remove('searchIndex')
+                .remove('rekDataLastSaved')
+                .remove('dataDrugs')
+                .remove('dataAdvice')
+                .remove('dataResources')
+                .remove('mainMenuData')
+                .remove('dataNews')
+                .remove('hbsDrugs')
+                .remove('hbsAdvice')
+                .remove('hbsResources');
+            location.hash = '';
+            location.reload(true);
+        },
         '*': function () {
             window.scrollTo(0, 0);
             backToMainMenu();
@@ -178,22 +377,22 @@ function initializeRoute() {
 
 function setBackButtonURL(url) {
     if (navObj.isMobileView) {
-        $('.js-navigation-button').attr("href", url);
+        $('.js-navigation-button')
+            .attr("href", url)
+            .addClass('on');
     } else {
-        $('.js-navigation-button').attr("href", '#');
+        $('.js-navigation-button')
+            .attr("href", '#')
+            .addClass('on');
     }
 }
 
-
-
-
 /* ************************************************************************* *\
  * 
- * REGISTER EVENTS
+ * EVENT LISTENERS
  *
 \* ************************************************************************* */
 function registerEvents() {
-
 	$('body')
     .on( "click", ".news-item", function(e) {
         var jqSelf = $(this);
@@ -201,20 +400,20 @@ function registerEvents() {
         routie('/news/' + item);
         e.preventDefault();
     })
-    .on( "click", ".js-search-clear", function(e) {
+    .on( "click", ".js-search-clear", function() {
         $('.search-input').val('');
         search.search('');
     })
-    .on("keyup", ".js-search-input", function(e) {
+    .on("keyup", ".js-search-input", function() {
         search.search($.trim($('.js-search-input').val()));
     })
-    .on("change", ".js-search-input", function(e) {
+    .on("change", ".js-search-input", function() {
         search.search($.trim($('.js-search-input').val()));
     })
-    .on( "click", ".js-fly-menu-link", function(e) {
+    .on( "click", ".js-fly-menu-link", function() {
         hideFlyOutMenu();
     })
-    .on( "click", ".js-appbar-menu-sink-toggle", function(e) {
+    .on( "click", ".js-appbar-menu-sink-toggle", function() {
         var jqMenuFlyout = $('.fly-menu-wrapper');
         var jqBlurrer = $('.js-menu-blurrer');
         var jqBody = $('body');
@@ -222,17 +421,15 @@ function registerEvents() {
         jqMenuFlyout.addClass('active');
         jqBlurrer.fadeIn(250);
 	})
-    .on( "click", ".js-menu-blurrer", function(e) {
+    .on( "click", ".js-menu-blurrer", function() {
         hideFlyOutMenu();
     });
 
 }
 
-/* ************************************************************************* *\
- * 
- * HIDE FLY OUT MENU
- *
-\* ************************************************************************* */
+/**
+ * Hide fly out menu
+ */
 function hideFlyOutMenu() {
     var jqMenuFlyout = $('.fly-menu-wrapper');
     var jqBlurrer = $('.js-menu-blurrer');
@@ -242,53 +439,27 @@ function hideFlyOutMenu() {
     jqBlurrer.fadeOut(250);
 }
 
+
 /* ************************************************************************* *\
  * 
  * CREATE MAIN MENU
  *
 \* ************************************************************************* */
-function createMenuesAndBigStartPage() {
+function createMenuesAndBigStartPage(mainMenuData, dataResources, dataNews) {
     var nNewsToShow = 3;
-
-    // Sort main menu data
-    mainMenuData = [];
-    for (var i = 0; i < dataDrugs.entries.length; i++) {
-        mainMenuData.push({
-            _title: dataDrugs.entries[i]._title,
-            hasDrugs: (dataDrugs.entries[i].heading[0].fieldValue.length !== 0)
-        });
-    }
-    mainMenuData = mainMenuData.sort(function (a, b) {
-        if (a._title > b._title) {
-            return 1;
-        }
-        if (a._title < b._title) {
-            return -1;
-        }
-        return 0;
-    });
-
-    // Sort Resources
-    dataResources.entries = dataResources.entries.sort(function (a, b) {
-        if (a._title > b._title) {
-            return 1;
-        }
-        if (a._title < b._title) {
-            return -1;
-        }
-        return 0;
-    });
-
     var data = {
         areas: mainMenuData,
-        news: dataNews.entries.slice(0, nNewsToShow),
+        news: dataNews ? dataNews.slice(0, nNewsToShow) : [],
         resources: dataResources
     };
-
     printTemplate(data, "#main-menu-template", '#main-menu-placeholder');
     printTemplate(data, "#filler-template", '#details-filler-placeholder');
     printTemplate(data, "#fly-menu-template", '#fly-menu-placeholder');
+    $('#main-menu-placeholder').addClass('on');
+    $('#details-filler-placeholder').addClass('on');
+    $('.js-loading-indicator').remove();
 }
+
 
 /* ************************************************************************* *\
  * 
@@ -296,23 +467,21 @@ function createMenuesAndBigStartPage() {
  *
 \* ************************************************************************* */
 function showGeneric(type, clickedItem) {
-
     var data = {};
     var templateSelector = '';
+    var templateStr;
 
+    // TODO FIX THIS, WE'VE REMOVED THE DOM TEMPLATES AND PUT THEM INTO HBS FILES
     // Filter
     if (type === 'news') {
         templateSelector = '#news-template';
-        data = dataNews.entries.filter(function (item) {
-            return item._entryId === clickedItem;
+        data = rekData.dataNews.filter(function (item) {
+            return item.id === clickedItem;
         });
-
-        
-
     } else if (type === 'resource') {
-        templateSelector = '#resource-template';
-        data = dataResources.entries.filter(function (item) {
-            return makeUrlSafe(item._title) === clickedItem;
+        templateStr = rekData.hbsResources;
+        data = rekData.dataResources.filter(function (item) {
+            return makeUrlSafe(item.title) === clickedItem;
         });
     }
 
@@ -326,11 +495,12 @@ function showGeneric(type, clickedItem) {
     jqDetailsGeneric.addClass('active');
 
     // Print
-    printTemplate(data, templateSelector, '#details-generic-placeholder');
+    printTemplate(data, templateSelector, '#details-generic-placeholder', templateStr);
 
     // Make responsive tables
     $('.section-details-generic table').stacktable({minColCount:2}); // Make responsive tables 
 }
+
 
 /* ************************************************************************* *\
  * 
@@ -338,48 +508,57 @@ function showGeneric(type, clickedItem) {
  *
 \* ************************************************************************* */
 function showSubmenu(chapter, section, tab) {
+    // TODO - Add error handling to see if chapter exist
 
     backToSubmenu();
-
-    // TODO - Add error handling to see if chapter exist
 
     // Elements
     var jqMainMenu = $('#mainmenu');
     var jqSubmenu = $('#submenu-' + tab);
 
     // Filter big fat data array to only show current chapter and print template
-    var filtered = getActiveTabData(tab).entries.filter(function (entry) {
-        return (makeUrlSafe(entry._title, true) === chapter);
+    var filteredArr = getActiveTabData(tab).filter(function (entry) {
+        return (makeUrlSafe(entry.title, true) === chapter);
     });
+    var filtered = filteredArr[0];
 
     // Set Current View
     setCurrentView('submenu', chapter, '');
 
     // Add type (drugs or advice) to object, to be able to use it in Handlebars
     // and create links with it.
-    filtered[0].tab = tab;
+    filtered.tab = tab;
 
     // Add information about the other tab to the object, to be able to use in Handlebars
     // to show/hide/active tabs
-    if (isDataOnOtherTab(chapter, '', tab)) {
+    if (isDataOnOtherTab(chapter, tab)) {
         if (tab === 'advice') {
-            filtered[0].tabClassAdvice = 'selected';
-            filtered[0].tabClassDrugs = '';
+            filtered.tabClassAdvice = 'selected';
+            filtered.tabClassDrugs = '';
         } else if (tab === 'drugs') {
-            filtered[0].tabClassAdvice = '';
-            filtered[0].tabClassDrugs = 'selected';
+            filtered.tabClassAdvice = '';
+            filtered.tabClassDrugs = 'selected';
         }
     } else {
         if (tab === 'advice') {
-            filtered[0].tabClassAdvice = 'selected single';
-            filtered[0].tabClassDrugs = 'disabled';
+            filtered.tabClassAdvice = 'selected single';
+            filtered.tabClassDrugs = 'disabled';
         } else if (tab === 'drugs') {
-            filtered[0].tabClassAdvice = 'disabled';
-            filtered[0].tabClassDrugs = 'selected single';
+            filtered.tabClassAdvice = 'disabled';
+            filtered.tabClassDrugs = 'selected single';
         }
     }
 
- 
+    // If the same section is available on both tabs then we re-write the tab links
+    // so that a click on a tab takes the user directly to the same section but on the
+    // other tab.
+    filtered.sameSectionOnOtherTab = false;
+    if (section.length > 0 ) {
+        if (isSectionAvailableOnOtherTab(chapter, section, tab)) {
+            filtered.sameSectionOnOtherTab = section;
+        }
+    }
+    
     printTemplate(filtered, "#submenu-template", '#submenu-' + tab + '-placeholder');
 
     // Remove active classes for big screen
@@ -401,10 +580,8 @@ function showSubmenu(chapter, section, tab) {
     // Remove all previous highlights
     $('.js-submenu-item').removeClass('active-menu-item');
 
-
-    // If there's a section showing aswell
+    // If there's a section showing as well
     if (section.length > 0 ) {
-
         // Set Highlight on current section if there is one.
         jqSubmenu.find('.js-submenu-item').each(function () {
             var jqSelf = $(this);
@@ -418,7 +595,6 @@ function showSubmenu(chapter, section, tab) {
 
 
 function setCurrentView(currentView, chapter, details) {
-
     navObj.currentView = currentView;
     navObj.currentChapter = chapter;
     navObj.currentDetails = details;
@@ -431,60 +607,108 @@ function setCurrentView(currentView, chapter, details) {
         .addClass('showing-' + currentView);
 }
 
+/**
+ * Given a details object, returns an 'URL' if the article is a link to
+ * another article or false if not,
+ *
+ * @param {object} content
+ * @returns {string|boolean}
+ */
+function findLinkToArticle(content) {
+    var foundLinkToArticle;
+    var hasLinkToArticle = content.children.some(function (field) {
+        if (field.name) {
+            if (field.name === 'linktoarticle') {
+                if (field.value.length > 0) {
+                    foundLinkToArticle = field.value;
+                    return true;
+                }
+            }
+        }
+        return false;
+    });
+
+    if (hasLinkToArticle) {
+        return foundLinkToArticle;
+    } else {
+        return false;
+    }
+}
+
+
 /* ************************************************************************* *\
  * 
  * SHOW SECTION
  *
 \* ************************************************************************* */
 function showDetails(chapter, details, tab) {
-    
+
     // TODO - Add error handling to see if chapter and details exist
 
     // Elements
     var jqDetails = $('#details-' + tab);
     var jqSubmenu = $('#submenu-' + tab);
-
-
+    
     // Filter big fat data array to only show current details and print template
-	var filtered = getActiveTabData(tab).entries.filter(function (entry) {
-		return (makeUrlSafe(entry._title, true) === chapter);
+	var filtered = getActiveTabData(tab).filter(function (entry) {
+		return (makeUrlSafe(entry.title, true) === chapter);
 	});
-	
+
 	if (filtered.length === 1 ) {
-		filtered = filtered[0].heading.filter(function (entry) {
-			return (makeUrlSafe(entry.fieldValue, true) === details);
+		filtered = filtered[0].fields.filter(function (entry) {
+			return (makeUrlSafe(entry.value, true) === details);
 		});
 	} else {
 		// TODO: Add error handling
 	}
 
+    filtered = filtered[0];
+
+    // Figure out if this article is a link to another article break
+    // and redirect the user there if that's the case.
+    var linkToArticle = findLinkToArticle(filtered);
+    if(linkToArticle) {
+        routie('/' + cleanInternalURL(linkToArticle));
+        return;
+    }
 
     // Adding chapter to object, to be able to pick it up from 
     // handlebars. Used to create tab links.
-    filtered[0]._urlSafeChapter = chapter;
+    filtered._urlSafeChapter = chapter;
 
     // Add information about the other tab to the object, to be able to use in Handlebars
     // to show/hide/active tabs
     if (isSectionAvailableOnOtherTab(chapter, details, tab)) {
         if (tab === 'advice') {
-            filtered[0].tabClassAdvice = 'selected';
-            filtered[0].tabClassDrugs = '';
+            filtered.tabClassAdvice = 'selected';
+            filtered.tabClassDrugs = '';
         } else if (tab === 'drugs') {
-            filtered[0].tabClassAdvice = '';
-            filtered[0].tabClassDrugs = 'selected';
+            filtered.tabClassAdvice = '';
+            filtered.tabClassDrugs = 'selected';
         }
     } else {
         if (tab === 'advice') {
-            filtered[0].tabClassAdvice = 'selected single';
-            filtered[0].tabClassDrugs = 'disabled';
+            filtered.tabClassAdvice = 'selected single';
+            filtered.tabClassDrugs = 'disabled';
         } else if (tab === 'drugs') {
-            filtered[0].tabClassAdvice = 'disabled';
-            filtered[0].tabClassDrugs = 'selected single';
+            filtered.tabClassAdvice = 'disabled';
+            filtered.tabClassDrugs = 'selected single';
         }
     }
 
+    filtered = {
+        fields: [filtered], // Wrap in 'fields' as this is how we get the data when in preview mode.
+        isWeb: true //Set variable to be able to determin if we're in web/preview/mobile app mode in hbs template.
+    };
 
-	printTemplate(filtered, '#details-' + tab + '-template', '#details-' + tab + '-placeholder');
+    var hbsTemplate = '';
+    if (tab === 'drugs') {
+        hbsTemplate = rekData.hbsDrugs;
+    } else if (tab === 'advice') {
+        hbsTemplate = rekData.hbsAdvice;
+    }
+
+	printTemplate(filtered, '', '#details-' + tab + '-placeholder', hbsTemplate);
 
     // Remove active classes for big screen
     if (tab === 'drugs') {
@@ -494,7 +718,6 @@ function showDetails(chapter, details, tab) {
     }
 
     // Flip Active Classes
-//    jqSubmenu.addClass('anim-slided-left');
     jqSubmenu.removeClass('active');
     jqDetails.addClass('active');
 
@@ -521,8 +744,6 @@ function backToSubmenu() {
         // Flip Active Classes
         jqSubmenu.addClass('active');
         jqSubmenu.addClass('active-submenu');
-//        jqSubmenu.removeClass('anim-slided-right');
-//        jqSubmenu.removeClass('anim-slided-left');
         jqDetails.removeClass('active');
     }
 }
@@ -543,13 +764,7 @@ function backToMainMenu() {
 
     // Set currentView
     setCurrentView('mainmenu', '', '');
-
-
 }
-
-
-
-
 
 
 /* ************************************************************************* *\
@@ -558,30 +773,110 @@ function backToMainMenu() {
  *
 \* ************************************************************************* */
 
-function isSectionAvailableOnOtherTab(chapter, details, tab) {
+/**
+ * Clean user input of #/ and anything before that.
+ * @param {string} url
+ */
+function cleanInternalURL(url) {
+    if (url.indexOf('#/') > -1) {
+        url = url.substring(url.indexOf('#/') + 2);
+    }
+    return url;
+}
 
-    var filtered = getNoneActiveTabData(tab).entries.filter(function (entry) {
-        return (makeUrlSafe(entry._title, true) === chapter);
+/**
+ * Spawn a web worker which takes dataDrugs and dataAdvice and mangle the data
+ * and turns the objects into two arrays ready to be feeded into lunr.js
+ * search engine.
+ *
+ * @param dataDrugs
+ * @param dataAdvice
+ */
+function wwMangleSearchData(dataDrugs, dataAdvice){
+    // Check if webworker is available.
+    if(!window.Worker) {
+        return;
+    }
+    var worker = new Worker("/reklistan-theme/js/webworker-searchdata.js");
+    worker.postMessage(JSON.stringify({
+        dataDrugs: dataDrugs,
+        dataAdvice: dataAdvice
+    }));
+    worker.onmessage = function(event) {
+        var data = (JSON.parse(event.data));
+        search.initialize(data.drugs, data.advice);
+    };
+}
+
+/**
+ * Handlebar helpers
+ */
+function registerHandlebarHelpers() {
+    /**
+     * Make URL safe URL
+     *
+     * Usage:
+     * {{urlencode variable}}
+     *
+     */
+    Handlebars.registerHelper('urlencode', function(context) {
+        var ret = context || '';
+        ret = ret.replace(/ /g, '_');
+        ret = removeDiacritics(ret);
+        ret = encodeURIComponent(ret);
+
+        return new Handlebars.SafeString(ret);
+    });
+
+    /**
+     * Parse the text and do some replacing
+     *
+     * Usage:
+     * {{markdownify variable}}
+     */
+    Handlebars.registerHelper('markdownify', function(context) {
+        var text = context || '';
+
+        // Convert markdown links to html links
+        text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="\$2">\$1</a>');
+
+        // Convert {{replaceable}} with icon
+        text = text.replace(/\{\{replaceable\}\}/g, '<span class="replaceable">&#8860;</span>');
+        text = text.replace(/\{\{child\}\}/g, '<img src="/reklistan-theme/images/theme/child.png" class="child-icon">');
+
+        // Make sure external links open in new tab/window
+        text = text.replace(/href=[\"\'](http[s]?\:\/\/[^\"\']+)[\"\']/gi, 'href="$1" target="_blank"');
+
+        return new Handlebars.SafeString(text);
+    });
+}
+
+/**
+ * Determine if section is available on the other tab.
+ * E.g. if on advice/Blod/Trombos, determine if there's a
+ * drugs/Blod/Trombos available.
+ *
+ * @param chapter
+ * @param details
+ * @param tab
+ * @returns {boolean}
+ */
+function isSectionAvailableOnOtherTab(chapter, details, tab) {
+    var filtered = getNoneActiveTabData(tab).filter(function (entry) {
+        return (makeUrlSafe(entry.title, true) === chapter);
     });
     
     if (details.length > 0) {
         if (filtered.length === 1 ) {
-            filtered = filtered[0].heading.filter(function (entry) {
-                return (makeUrlSafe(entry.fieldValue, true) === details);
+            filtered = filtered[0].fields.filter(function (entry) {
+                return (makeUrlSafe(entry.value, true) === details);
             });
         } else {
             return false;
         }
     }
-
-    if (filtered.length > 0) {
-        return true;
-    } else {
-        return false;
-    }
-
+    return (filtered.length > 0);
 }
-
 
 
 /**
@@ -591,17 +886,13 @@ function isSectionAvailableOnOtherTab(chapter, details, tab) {
  * 'advice' actually contains a heading. If so, return true, else return false.
  *
  */
-function isDataOnOtherTab(chapter, details, tab) {
-    var filtered = getNoneActiveTabData(tab).entries.filter(function (entry) {
-        return (makeUrlSafe(entry._title, true) === chapter);
+function isDataOnOtherTab(chapter, tab) {
+    var filtered = getNoneActiveTabData(tab).filter(function (entry) {
+        return (makeUrlSafe(entry.title, true) === chapter);
     });
 
     if (filtered.length > 0 ) {
-        if(filtered[0].heading[0].fieldValue.length > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return (filtered[0].fields[0].value.length > 0);
     } else {
         return false;
     }
@@ -609,19 +900,33 @@ function isDataOnOtherTab(chapter, details, tab) {
 
 
  /**
- * Mangle data + template and create output
+ * Print Handlebars template
  *
- * @param {string} data JSON-data
+ * @param {Object} data JSON-data
  * @param {string} templateSelector Selector for the element holding the template
  * @param {string} targetSelector Selector for the element where finished DOM should be placed.
+ * *@param {string} templateStr Template as HTML, use instead of templateSelector.
  */
-function printTemplate(data, templateSelector, targetSelector) {
-    var templateHTML = $(templateSelector).html();
+function printTemplate(data, templateSelector, targetSelector, templateStr) {
+    var templateHTML = '';
+    if (templateStr) {
+        templateHTML = templateStr;
+    } else {
+        templateHTML = $(templateSelector).html();
+    }
+
     var target = $(targetSelector);
     var template = Handlebars.compile(templateHTML);
     target.html(template(data));
 }
 
+/**
+ * Removes all HTML "unsafe" characters from a string.
+ *
+ * @param str
+ * @param dontURIEncode
+ * @returns {*|string}
+ */
 function makeUrlSafe(str, dontURIEncode) {
     var ret = str || '';
     ret = ret.replace(/ /g, '_');
@@ -636,26 +941,28 @@ function makeUrlSafe(str, dontURIEncode) {
 
 function getActiveTabData(tab) {
     if (tab === 'drugs' ) {
-        return dataDrugs;
+        return rekData.dataDrugs;
     } else if (tab === 'advice') {
-        return dataAdvice;
+        return rekData.dataAdvice;
     }
 }
 
 function getNoneActiveTabData(tab) {
     if (tab === 'drugs' ) {
-        return dataAdvice;
+        return rekData.dataAdvice;
     } else if (tab === 'advice') {
-        return dataDrugs;
+        return rekData.dataDrugs;
     }
 }
 
-function otherTab(tab) {
-    if (tab === 'drugs' ) {
-        return 'advice';
-    } else if (tab === 'advice') {
-        return 'drugs';
+function cleanArray(actual){
+    var newArray = [];
+    for(var i = 0; i<actual.length; i++){
+        if (actual[i]){
+            newArray.push(actual[i]);
+        }
     }
+    return newArray;
 }
 
 
@@ -768,32 +1075,34 @@ function removeDiacritics (str) {
 }
 
 
-
-
 /* ************************************************************************* *\
  * 
  * SEARCH
  *
 \* ************************************************************************* */
-
-
 var search = {
 
     _prevSearch: '',
     _splitter: '|',
 
-    initialize: function () {
+    initialize: function(searchDataDrugs, searchDataAdvice) {
         search.index = lunr(function () {
             this.field('chapter', { boost: 20 });
             this.field('section', { boost: 10 });
             this.field('body');
             this.ref('id');
         });
-        search.createIndex();
+        search.createIndex(searchDataDrugs, searchDataAdvice);
+        $('.js-search-input-container').addClass('on');
     },
 
-    createIndex: function () {
-        dataSearchDrugs.forEach(function (item) {
+    loadIndex: function(searchIndex) {
+        search.index = lunr.Index.load(searchIndex);
+        $('.js-search-input-container').addClass('on');
+    },
+
+    createIndex: function(searchDataDrugs, searchDataAdvice) {
+        searchDataDrugs.forEach(function (item) {
             search.index.add({
                 id: 'drugs' + search._splitter + item.chapter + search._splitter + item.section,
                 chapter: item.chapter,
@@ -802,9 +1111,7 @@ var search = {
             });
         });
 
-        // TODO, STRIP HTML TAGS FROM dataSearchAdvie and "true" strings from dataSearchDrugs.
-
-        dataSearchAdvice.forEach(function (item) {
+        searchDataAdvice.forEach(function (item) {
             search.index.add({
                 id: 'advice' + search._splitter + item.chapter + search._splitter + item.section,
                 chapter: item.chapter,
@@ -813,6 +1120,9 @@ var search = {
             });
         });
 
+        storage.set({
+            searchIndex: search.index
+        });
 
     },
 
@@ -821,10 +1131,6 @@ var search = {
         var jqMainMenu = $('#mainmenu');
         var jqClearButton = $('.js-search-clear');
         var jqSearchResultsHeader = $('.jq-search-results-heading');
-
-        var jqMainMenuItems = $('.js-mainmenu-items');
-        var jqMainMenuNewsContainer = $('.js-main-menu-news-container');
-        var jqSearchResultsContainer = $('.js-search-results');
 
         if (searchFor.length > 0) {
             jqClearButton.fadeIn(250);
@@ -862,22 +1168,9 @@ var search = {
     }
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
+/* ************************************************************************* *\
+ *
+ * SEARCH
  * THIS IS A MODIFIER VERSION OF STACKTABLE.JS
  *
  * - Only prints content if there's an actual content, else print a divider
@@ -894,8 +1187,8 @@ var search = {
  *
  * jQuery plugin for stacking tables on small screens
  *
- */
-;(function($) {
+ \* ************************************************************************* */
+(function($) {
 
   $.fn.stacktable = function(options) {
     var $tables = this,
@@ -909,8 +1202,8 @@ var search = {
 
     return $tables.each(function() {
 
-        $table = $(this);
-        $topRow = $table.find('tr').first();
+        var $table = $(this);
+        var $topRow = $table.find('tr').first();
         var columnCount = $topRow.find('td, th').length;
 
         if (columnCount > settings.minColCount && $table.hasClass('no-responsive') === false) {
@@ -921,7 +1214,7 @@ var search = {
             if (typeof settings.myClass !== undefined) $stacktable.addClass(settings.myClass);
             var markup = '';
 
-            $table.find('tr').each(function(index,value) {
+            $table.find('tr').each(function(index) {
             markup += '<tr>';
             // for the first row, top left table cell is the head of the table
             if (index===0) {
@@ -930,7 +1223,7 @@ var search = {
             // for the other rows, put the left table cell as the head for that row
             // then iterate through the key/values
             else {
-              $(this).find('td').each(function(index,value) {
+              $(this).find('td').each(function(index) {
                 if (index===0) {
 
                   if ($(this).html().replace('&nbsp;', '').trim().length > 0) {
@@ -964,12 +1257,3 @@ var search = {
   };
 
 }(jQuery));
-
-
-
-
-
-
-
-
-

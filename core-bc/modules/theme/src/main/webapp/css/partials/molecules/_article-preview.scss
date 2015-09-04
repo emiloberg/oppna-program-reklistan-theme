@@ -1,0 +1,155 @@
+.preview-wrapper {
+    padding: 2em 0;
+
+    ins {
+        color: rgb(35, 137, 35);
+    }
+
+    del {
+        color: rgb(255, 0, 0);
+    }
+
+    .preview-title {
+        background-color: #dedede;
+        padding: 0.5em;
+        margin: 0.5em 0;
+    }
+
+
+    .replaceable,
+    .section-details-generic h2,
+    .section-details-advice h2,
+    .subheading-2,
+    .subheading,
+    .infobox-heading h3 {
+        color: $color-vgr-blue;
+    }
+
+    .advice-infobox-small,
+    .infobox {
+        border-left: 5px solid $color-vgr-blue;
+    }
+
+}
+
+.preview-article-title {
+    text-align: center;
+}
+
+.preview-box {
+    width: 40%;
+    width: calc(48% - 2px - 4em);
+    border: 1px solid #ccc;
+    padding: 2em;
+    float: left;
+    margin: 1%;
+    background-color: #ffffff;
+}
+
+.single-preview-box.preview-box {
+    width: 90%;
+    width: calc(98% - 2px - 4em);
+}
+
+.preview-box-heading {
+    margin: -1em -1em 0 -1em;
+    text-align: center;
+    padding: 1em;
+    font-size: 2em;
+    background-color: #ccc;
+}
+
+.preview-box-draft .preview-box-heading {
+    background-color: #FCE189;
+}
+
+.preview-box-published .preview-box-heading {
+    background-color: #b8e78d;
+}
+
+.hide-me {
+    display: none;
+}
+
+p.no-diffs {
+    text-align: center;
+    margin-top: 2em;
+}
+
+.preview-settings {
+    text-align: center;
+
+    label {
+        display: inline-block;
+
+        input[type="checkbox"] {
+            margin: 0 0.25em 0 1em;
+        }
+    }
+}
+
+.only-print {
+    display: none;
+}
+
+@media print {
+
+    body {
+        background-color: #ffffff;
+    }
+
+    .preview-wrapper {
+        .only-print {
+            display: block;
+        }
+
+        .preview-printed-date {
+            text-align: center;
+            font-size: 1.2em;
+        }
+
+        .preview-box {
+            float: none;
+            width: 100%;
+            padding: 0;
+            border: 0;
+            margin: 0;
+        }
+
+        .no-print,
+        .preview-settings {
+            display: none;
+        }
+
+        .preview-box-heading {
+            margin-top: 1em;
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+        }
+
+        .preview-title {
+            border-bottom: 1px solid #ccc;
+            font-weight: 200;
+            font-size: 1.4em;
+            margin: 0.5em 0;
+            padding: 0.2em 0;
+        }
+
+        ins {
+            color: rgb(35, 137, 35) !important; /* needed because of stupid rule-them-all aui print classes */
+        }
+
+        del {
+            color: rgb(255, 0, 0) !important; /* needed because of stupid rule-them-all aui print classes */
+        }
+
+        .replaceable,
+        .section-details-generic h2,
+        .section-details-advice h2,
+        .subheading-2,
+        .subheading,
+        .infobox-heading h3 {
+            color: $color-vgr-blue !important; /* needed because of stupid rule-them-all aui print classes */
+        }
+    }
+}

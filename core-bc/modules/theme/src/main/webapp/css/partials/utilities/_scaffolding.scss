@@ -140,3 +140,12 @@
     }    
 
 }
+
+#details-filler-placeholder,
+#main-menu-placeholder {
+    @include single-transition(opacity, 350ms);
+    opacity: 0.5;
+    &.on {
+        opacity: 1;
+    }
+}
