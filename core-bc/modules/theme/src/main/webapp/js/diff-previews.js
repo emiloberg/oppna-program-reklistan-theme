@@ -110,6 +110,23 @@ function registerHandlebarHelpers() {
 
       return new Handlebars.SafeString(text);
   });
+
+
+    /**
+     * Replace medium selector (web, mobile, both) to plain text
+     *
+     * Usage:
+     * {{parsemedium variable}}
+     */
+    Handlebars.registerHelper('parsemedium', function(context) {
+        var text = context || '';
+
+        text = text.replace(/\[\"both\"\]/g, 'både mobil och webb');
+        text = text.replace(/\[\"web\"\]/g, 'enbart mobil');
+        text = text.replace(/\[\"mobile\"\]/g, 'enbart webb');
+
+        return new Handlebars.SafeString(text);
+    });
 }
 
 
