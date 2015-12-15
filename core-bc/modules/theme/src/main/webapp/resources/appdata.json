@@ -1,9 +1,9 @@
 {
-    "companyId": 10155,
+    "companyId": 1712101,
     "groupName": "Guest",
-    "drugsStructureId": 11571,
-    "adviceStructureId": 12602,
-    "resourcesStructureId": 14304,
-    "newsStructureId": 19302,
+    "drugsStructureId": 1715233,
+    "adviceStructureId": 1715235,
+    "resourcesStructureId": 1715238,
+    "newsStructureId": 2080202,
     "locale": "sv_SE"
 }
