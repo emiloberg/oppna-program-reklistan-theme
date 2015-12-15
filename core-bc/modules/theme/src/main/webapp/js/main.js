@@ -25,19 +25,19 @@ var rekData = {
     hbsResources: '',
     properties: {
 
-        // Stage
-        //companyId: 1674701,
-        //drugsStructureId: 1728835,
-        //adviceStructureId: 1728833,
-        //resourcesStructureId: 1728837,
-        //newsStructureId: 1770002,
-
         // Local Dev
         //companyId: 10155,
         //drugsStructureId: 11571,
         //adviceStructureId: 12602,
         //resourcesStructureId: 14304,
         //newsStructureId: 19302,
+
+        // Stage
+        //companyId: 1674701,
+        //drugsStructureId: 1728835,
+        //adviceStructureId: 1728833,
+        //resourcesStructureId: 1728837,
+        //newsStructureId: 1770002,
 
         // Live:
         companyId: 1712101,
