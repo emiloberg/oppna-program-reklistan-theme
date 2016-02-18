@@ -198,6 +198,16 @@
 	}
 }
 
+.force-stacktable {
+	table.stacktable {
+		max-width: 320px !important;
+		display: table !important;
+	}
+
+	table.stacktable-original {
+		display: none !important;
+	}
+}
 
 .section-details-generic,
 .section-details-advice {

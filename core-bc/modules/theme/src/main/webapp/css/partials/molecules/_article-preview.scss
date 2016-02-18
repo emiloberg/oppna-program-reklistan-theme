@@ -15,6 +15,13 @@
         margin: 0.5em 0;
     }
 
+    .preview-meta-title {
+        color: #fff;
+        background-color: #353535;
+        padding: 0.5em;
+        margin: 0.5em 0;
+    }
+
 
     .replaceable,
     .section-details-generic h2,
@@ -128,6 +135,16 @@ p.no-diffs {
         }
 
         .preview-title {
+            border-bottom: 1px solid #ccc;
+            font-weight: 200;
+            font-size: 1.4em;
+            margin: 0.5em 0;
+            padding: 0.2em 0;
+        }
+
+        .preview-meta-title {
+            text-align: center;
+            border-top: 1px solid #ccc;
             border-bottom: 1px solid #ccc;
             font-weight: 200;
             font-size: 1.4em;
