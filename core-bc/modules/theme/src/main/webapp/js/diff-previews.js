@@ -111,6 +111,7 @@ function extractAndPrintTables(jqHtmlPublished, jqHtmlDraft, jqHtmlDiff) {
 
     function convertTables(jqSource, jqTarget) {
         var hasAdded = false;
+        jqTarget.empty();
         jqSource.find('table').each(function (i) {
             var jqThis = $(this);
             var columnCount = jqThis.find('tr').first().find('td, th').length;
