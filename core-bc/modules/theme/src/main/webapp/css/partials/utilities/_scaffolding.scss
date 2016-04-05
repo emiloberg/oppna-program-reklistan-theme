@@ -28,7 +28,7 @@
     #details-drugs,
     #details-advice {
         display: none;
-    }    
+    }
 }
 
 .showing-submenu {
@@ -72,6 +72,10 @@
         height: 100%;
     }
 
+    #app-wrapper.showing-adminbar {
+        height: calc(100% - 56px - 10px);
+    }
+
     #topbar {
         width: 1000px;
         height: $appbar-height;
@@ -106,15 +110,15 @@
     #details-generic, {
         position: relative;
         width: 100%;
-        height: 100%;    
+        height: 100%;
         padding-left:$tablet-left-menu-width;
         box-sizing:border-box;
         padding-top: $appbar-height;
-        overflow: auto;    
+        overflow: auto;
     }
 
     .screen {
-        &.active-submenu {    
+        &.active-submenu {
             display: block;
         }
     }
@@ -137,7 +141,7 @@
     #details-drugs,
     #details-advice {
         padding-left:$desktop-left-menu-width;
-    }    
+    }
 
 }
 

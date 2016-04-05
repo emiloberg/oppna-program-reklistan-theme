@@ -55,10 +55,9 @@
   			Din sökning matchade inga dokument
   		</div>
 	  </div>
-	  {{/unless}}		
+	  {{/unless}}
 	</div>
 </script>
-
 
 <#-- HBS MAIN MENU -->
 <script id="main-menu-template" type="text/x-handlebars-template">
@@ -196,7 +195,7 @@
 					{{/each}}
 				</ul>
 			</div>
-		{{/if}}	
+		{{/if}}
 
 	</div>
 </script>
@@ -225,9 +224,25 @@
 	</div>
 </script>
 
+<#-- HBS FLY OUT MENU -->
+<script id="admin-bar-template" type="text/x-handlebars-template">
+	<div class="admin-bar admin-bar-{{#is present show}}same-year{{else}}other-year{{/is}}">
+		<div>
+			Visar {{#is show present}}nuvarande publicerad utgåva{{else}}ej publicerad utgåva{{/is}}
+			<select class="js-year-selector">
+				{{#each unique}}
+					<option value="{{this}}" {{#is @root/show this}}selected{{/is}}>{{this}}</option>
+				{{/each}}
+			</select>
+			<div class="admin-bar-meta">Du ser det här för att du är inloggad. Redigera artiklar i <a href="/admin">administrationsgränssnittet</a></div>
+		</div>
+	</div>
+</script>
 
 
 <#-- HTML -->
+<div id="admin-bar-placeholder"></div>
+
 <div id="app-wrapper">
 	<div class="blurrer js-menu-blurrer"></div>
 
@@ -249,12 +264,12 @@
 			</a>
 			<div class="appbar-menu-sink-wrapper js-appbar-menu-sink-toggle">
 				<div class="appbar-menu-sink-button">
-					<span class="flaticon-menu55 icon-4x"></span> 
+					<span class="flaticon-menu55 icon-4x"></span>
 				</div>
 			</div>
 			<a class="appbar-menu-back-wrapper js-navigation-button">
 				<div class="appbar-menu-back-button">
-					<i class="flaticon-left216 icon-4x"></i> 
+					<i class="flaticon-left216 icon-4x"></i>
 			    </div>
 		    	<div class="appbar-menu-back-label mt-small">Tillbaka</div>
 			</a>
