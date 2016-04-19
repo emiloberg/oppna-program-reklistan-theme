@@ -25,11 +25,14 @@
 	<link class="lfr-css-file" href="${themeDisplay.pathThemeRoot}/css/custom.css?browserId=${browserId}&themeId=${themeDisplay.themeId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_local}" rel="stylesheet" type="text/css">
 	<script src="${themeDisplay.pathThemeRoot}/js/libs.min.js" type="text/javascript"></script>
 	<!--<script src="${themeDisplay.pathThemeRoot}/js/main.js?browserId=${browserId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_local}" type="text/javascript"></script>-->
-	<script src="${themeDisplay.pathThemeRoot}/js/main.js?browserId=${browserId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=123" type="text/javascript"></script>
+	<script src="${themeDisplay.pathThemeRoot}/js/main.js?browserId=${browserId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=124" type="text/javascript"></script>
 </head>
 
 <body class="${css_class}">
 
+<script>
+	window.isSignedIn = ${currentUserSignedIn?string};
+</script>
 
 <#-- HBS SEARCH RESULTS -->
 <script id="search-results-template" type="text/x-handlebars-template">
@@ -234,7 +237,7 @@
 					<option value="{{this}}" {{#is @root/show this}}selected{{/is}}>{{this}}</option>
 				{{/each}}
 			</select>
-			<div class="admin-bar-meta">Du ser det här för att du är inloggad. Redigera artiklar i <a href="/admin">administrationsgränssnittet</a></div>
+			<div class="admin-bar-meta">Du ser det här för att du är inloggad. <a href="/#/refresh">Ladda om artiklar</a>. Redigera artiklar i <a href="/admin">administrationsgränssnittet</a>.</div>
 		</div>
 	</div>
 </script>

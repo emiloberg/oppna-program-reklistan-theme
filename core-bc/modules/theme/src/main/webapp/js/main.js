@@ -48,7 +48,7 @@ var rekData = {
 
         groupName: 'Guest',
         locale: 'sv_SE',
-        secondsCacheData: 0 //3600 == 1h.
+        secondsCacheData: 3600 //3600 == 1h.
     }
 };
 
@@ -63,36 +63,49 @@ $(function() {
     initApp();
 });
 
+
+function clearCache() {
+    storage
+        .remove('searchIndex')
+        .remove('rekDataLastSaved')
+        .remove('dataDrugs')
+        .remove('dataAdvice')
+        .remove('dataResources')
+        //.remove('mainMenuData')
+        .remove('dataNews')
+        .remove('hbsDrugs')
+        .remove('hbsAdvice')
+        .remove('hbsResources');
+}
+
 /**
  * Init app by determine if we need to load data over json or if we can grab
  * cached data from local storage
  */
 function initApp() {
+    if (isSignedIn) {
+        clearCache()
+    }
+
     var timestampLastDl = storage.get('rekDataLastSaved');
     if (timestampLastDl === undefined) {
         downloadResources();
     } else {
         var timestampDiff = (new Date().getTime() - timestampLastDl) / 1000;
-        if (timestampDiff > rekData.properties.secondsCacheData) {
+        if (window.isSignedIn || timestampDiff > rekData.properties.secondsCacheData) {
             downloadResources();
         } else {
             rekData = storage.get([
                 'dataDrugs',
                 'dataAdvice',
                 'dataResources',
-                'mainMenuData',
+                //'mainMenuData',
                 'dataNews',
                 'hbsDrugs',
                 'hbsAdvice',
                 'hbsResources'
             ]);
-            startApp(false,
-                rekData.mainMenuData,
-                rekData.dataResources,
-                rekData.dataNews,
-                rekData.dataDrugs,
-                rekData.dataAdvice
-            );
+            mangleData(false, rekData);
         }
     }
 }
@@ -150,7 +163,6 @@ function downloadResources(){
         $.ajax(urls.news)
     )
     .then(function(drugs, advice, resources, hbsDrugs, hbsAdvice, hbsResources, news) {
-
         rekData.dataDrugs = drugs[0];
         rekData.dataAdvice = advice[0];
         rekData.dataNews = news[0];
@@ -168,111 +180,8 @@ function downloadResources(){
             rekData.dataResources = jQuery.parseJSON(rekData.dataResources);
         }
 
-        // Find and filter years
-        rekData.dataYears = {};
-        rekData.dataYears.unique = findUniqueYears([rekData.dataDrugs, rekData.dataAdvice]);
-        rekData.dataYears.hasMultiple = rekData.dataYears.unique.length > 1;
-        rekData.dataYears.present = rekData.dataYears.unique[0];
-        rekData.dataYears.show = storage.get('showYear') || rekData.dataYears.present;
+        mangleData(true, rekData);
 
-        if (rekData.dataYears.hasMultiple) {
-            rekData.dataDrugs = filterYear(rekData.dataDrugs, rekData.dataYears.show);
-            rekData.dataAdvice = filterYear(rekData.dataAdvice, rekData.dataYears.show);
-        }
-
-        // Create and sort main menu data
-        rekData.mainMenuData = rekData.dataDrugs.map(function (entry) {
-            return {
-                _title: entry.title,
-                hasDrugs: (entry.fields[0].value.length !== 0),
-                tempDrugs: entry.fields[0].value
-            };
-        })
-        .sort(function (a, b) {
-            if (a._title > b._title) {
-                return 1;
-            }
-            if (a._title < b._title) {
-                return -1;
-            }
-            return 0;
-        });
-
-        var workingResources = rekData.dataResources.map(function(article) {
-            var fieldOut = {
-                uuid: article.uuid,
-                title: article.title,
-                body: '',
-                externallink: '',
-                medium: 'web',
-                sortOrder: '0',
-                id: makeUrlSafe(article.title)
-            };
-            article.fields.forEach(function (field) {
-                fieldOut[field.name] = field.value;
-            });
-
-            if (fieldOut.medium.indexOf('both') > 0 || fieldOut.medium.indexOf('web') > 0) { // Only include news targeted to mobile.
-                return fieldOut;
-            } else {
-                return undefined;
-            }
-
-        });
-
-        workingResources = cleanArray(workingResources);
-
-        rekData.dataResources = workingResources.sort(function (a, b) {
-            if (a.sortOrder.value > b.sortOrder.value) {
-                return 1;
-            }
-            if (a.sortOrder.value < b.sortOrder.value) {
-                return -1;
-            }
-            return 0;
-        });
-
-
-        // Mangle News
-        var newsArticles = rekData.dataNews.map(function(article) {
-            var fieldOut = {
-                uuid: article.uuid,
-                title: article.title,
-                body: '',
-                externallink: '',
-                medium: '',
-                lead: '',
-                date: '2010-01-01',
-                id: makeUrlSafe(article.title)
-            };
-            article.fields.forEach(function (field) {
-                fieldOut[field.name] = field.value;
-            });
-
-            if (fieldOut.medium.indexOf('both') > 0 || fieldOut.medium.indexOf('web') > 0) { // Only include news targeted to mobile.
-                return fieldOut;
-            } else {
-                return undefined;
-            }
-
-        });
-
-        newsArticles = cleanArray(newsArticles);
-
-
-        newsArticles = newsArticles.sort(function (a, b) {
-            if (a.date > b.date) {
-                return 1;
-            }
-            if (a.date < b.date) {
-                return -1;
-            }
-            return 0;
-        });
-
-        rekData.dataNews = newsArticles;
-
-        startApp(true, rekData.mainMenuData, rekData.dataResources, rekData.dataNews, rekData.dataDrugs, rekData.dataAdvice, rekData.dataYears);
     })
     .fail(function(err) {
         alert('Could not load all resources needed');
@@ -304,22 +213,138 @@ function filterYear(data, year) {
 }
 
 function changeYear(year) {
+    clearCache();
     storage
-        .remove('searchIndex')
-        .remove('rekDataLastSaved')
-        .remove('dataDrugs')
-        .remove('dataAdvice')
-        .remove('dataResources')
-        .remove('mainMenuData')
-        .remove('dataNews')
-        .remove('hbsDrugs')
-        .remove('hbsAdvice')
-        .remove('hbsResources')
         .set({showYear: year});
     location.hash = '';
     location.reload(true);
 }
 
+
+/**
+ * Mangle data
+ */
+function mangleData(isFreshDownload, rekData) {
+
+    // Save all data to local storage
+    if(isFreshDownload && !window.isSignedIn) {
+        storage.set({
+            dataDrugs: rekData.dataDrugs,
+            dataAdvice: rekData.dataAdvice,
+            dataResources: rekData.dataResources,
+            //mainMenuData: rekData.dataMainMenu,
+            dataNews: rekData.dataNews,
+            hbsDrugs: rekData.hbsDrugs,
+            hbsAdvice: rekData.hbsAdvice,
+            hbsResources: rekData.hbsResources,
+            rekDataLastSaved: new Date().getTime()
+        });
+    }
+
+    // Find and filter years
+    rekData.dataYears = {};
+    rekData.dataYears.unique = findUniqueYears([rekData.dataDrugs, rekData.dataAdvice]);
+    rekData.dataYears.hasMultiple = rekData.dataYears.unique.length > 1;
+    rekData.dataYears.present = rekData.dataYears.unique[0];
+    rekData.dataYears.show = storage.get('showYear') || rekData.dataYears.present;
+
+    if (rekData.dataYears.hasMultiple) {
+        rekData.dataDrugs = filterYear(rekData.dataDrugs, rekData.dataYears.show);
+        rekData.dataAdvice = filterYear(rekData.dataAdvice, rekData.dataYears.show);
+    }
+
+    // Create and sort main menu data
+    rekData.mainMenuData = rekData.dataDrugs.map(function (entry) {
+            return {
+                _title: entry.title,
+                hasDrugs: (entry.fields[0].value.length !== 0),
+                tempDrugs: entry.fields[0].value
+            };
+        })
+        .sort(function (a, b) {
+            if (a._title > b._title) {
+                return 1;
+            }
+            if (a._title < b._title) {
+                return -1;
+            }
+            return 0;
+        });
+
+    var workingResources = rekData.dataResources.map(function(article) {
+        var fieldOut = {
+            uuid: article.uuid,
+            title: article.title,
+            body: '',
+            externallink: '',
+            medium: 'web',
+            sortOrder: '0',
+            id: makeUrlSafe(article.title)
+        };
+        article.fields.forEach(function (field) {
+            fieldOut[field.name] = field.value;
+        });
+
+        if (fieldOut.medium.indexOf('both') > 0 || fieldOut.medium.indexOf('web') > 0) { // Only include news targeted to mobile.
+            return fieldOut;
+        } else {
+            return undefined;
+        }
+
+    });
+
+    workingResources = cleanArray(workingResources);
+
+    rekData.dataResources = workingResources.sort(function (a, b) {
+        if (a.sortOrder.value > b.sortOrder.value) {
+            return 1;
+        }
+        if (a.sortOrder.value < b.sortOrder.value) {
+            return -1;
+        }
+        return 0;
+    });
+
+
+    // Mangle News
+    var newsArticles = rekData.dataNews.map(function(article) {
+        var fieldOut = {
+            uuid: article.uuid,
+            title: article.title,
+            body: '',
+            externallink: '',
+            medium: '',
+            lead: '',
+            date: '2010-01-01',
+            id: makeUrlSafe(article.title)
+        };
+        article.fields.forEach(function (field) {
+            fieldOut[field.name] = field.value;
+        });
+
+        if (fieldOut.medium.indexOf('both') > 0 || fieldOut.medium.indexOf('web') > 0) { // Only include news targeted to mobile.
+            return fieldOut;
+        } else {
+            return undefined;
+        }
+
+    });
+
+    newsArticles = cleanArray(newsArticles);
+    newsArticles = newsArticles.sort(function (a, b) {
+        if (a.date > b.date) {
+            return 1;
+        }
+        if (a.date < b.date) {
+            return -1;
+        }
+        return 0;
+    });
+
+    rekData.dataNews = newsArticles;
+
+    startApp(isFreshDownload, rekData.mainMenuData, rekData.dataResources, rekData.dataNews, rekData.dataDrugs, rekData.dataAdvice, rekData.dataYears);
+}
 
 /**
  * Start the App
@@ -357,21 +382,6 @@ function startApp(isFreshDataDownload, dataMainMenu, dataResources, dataNews, da
     $(window).resize(function() {
         navObj.isMobileView = ($(window).width() < sizeMedium);
     });
-
-    // Save all data to local storage
-    if(isFreshDataDownload) {
-        storage.set({
-            dataDrugs: dataDrugs,
-            dataAdvice: dataAdvice,
-            dataResources: dataResources,
-            mainMenuData: dataMainMenu,
-            dataNews: dataNews,
-            hbsDrugs: rekData.hbsDrugs,
-            hbsAdvice: rekData.hbsAdvice,
-            hbsResources: rekData.hbsResources,
-            rekDataLastSaved: new Date().getTime()
-        });
-    }
 }
 
 function initializeRoute() {
@@ -399,17 +409,7 @@ function initializeRoute() {
 
         },
         '/refresh': function() {
-            storage
-                .remove('searchIndex')
-                .remove('rekDataLastSaved')
-                .remove('dataDrugs')
-                .remove('dataAdvice')
-                .remove('dataResources')
-                .remove('mainMenuData')
-                .remove('dataNews')
-                .remove('hbsDrugs')
-                .remove('hbsAdvice')
-                .remove('hbsResources');
+            clearCache();
             location.hash = '';
             location.reload(true);
         },
@@ -1174,9 +1174,11 @@ var search = {
             });
         });
 
-        storage.set({
-            searchIndex: search.index
-        });
+        if (!window.isSignedIn) {
+            storage.set({
+                searchIndex: search.index
+            });
+        }
 
     },
 
