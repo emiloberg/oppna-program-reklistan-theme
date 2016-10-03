@@ -231,7 +231,7 @@
 <script id="admin-bar-template" type="text/x-handlebars-template">
 	<div class="admin-bar admin-bar-{{#is present show}}same-year{{else}}other-year{{/is}}">
 		<div>
-			Visar {{#is show present}}nuvarande publicerad utgåva{{else}}ej publicerad utgåva{{/is}}
+			Visar utgåva
 			<select class="js-year-selector">
 				{{#each unique}}
 					<option value="{{this}}" {{#is @root/show this}}selected{{/is}}>{{this}}</option>
