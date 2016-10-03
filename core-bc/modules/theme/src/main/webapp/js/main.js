@@ -26,25 +26,25 @@ var rekData = {
     properties: {
 
         // Local Dev
-        companyId: 10155,
-        drugsStructureId: 11571,
-        adviceStructureId: 12602,
-        resourcesStructureId: 14304,
-        newsStructureId: 19302,
+        // companyId: 10155,
+        // drugsStructureId: 11571,
+        // adviceStructureId: 12602,
+        // resourcesStructureId: 14304,
+        // newsStructureId: 19302,
 
         // Stage
-        //companyId: 1674701,
-        //drugsStructureId: 1728835,
-        //adviceStructureId: 1728833,
-        //resourcesStructureId: 1728837,
-        //newsStructureId: 1770002,
+        // companyId: 1674701,
+        // drugsStructureId: 1728835,
+        // adviceStructureId: 1728833,
+        // resourcesStructureId: 1728837,
+        // newsStructureId: 1770002,
 
         // Live:
-        //companyId: 1712101,
-        //drugsStructureId: 1715233,
-        //adviceStructureId: 1715235,
-        //resourcesStructureId: 1715238,
-        //newsStructureId: 2080202,
+        companyId: 1712101,
+        drugsStructureId: 1715233,
+        adviceStructureId: 1715235,
+        resourcesStructureId: 1715238,
+        newsStructureId: 2080202,
 
         groupName: 'Guest',
         locale: 'sv_SE',
@@ -251,6 +251,7 @@ function mangleData(isFreshDownload, rekData) {
     if (rekData.dataYears.hasMultiple) {
         rekData.dataDrugs = filterYear(rekData.dataDrugs, rekData.dataYears.show);
         rekData.dataAdvice = filterYear(rekData.dataAdvice, rekData.dataYears.show);
+        rekData.dataResources = filterYear(rekData.dataResources, rekData.dataYears.show);
     }
 
     // Create and sort main menu data
