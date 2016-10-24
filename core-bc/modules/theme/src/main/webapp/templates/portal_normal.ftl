@@ -25,11 +25,14 @@
 	<link class="lfr-css-file" href="${themeDisplay.pathThemeRoot}/css/custom.css?browserId=${browserId}&themeId=${themeDisplay.themeId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_local}" rel="stylesheet" type="text/css">
 	<script src="${themeDisplay.pathThemeRoot}/js/libs.min.js" type="text/javascript"></script>
 	<!--<script src="${themeDisplay.pathThemeRoot}/js/main.js?browserId=${browserId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_local}" type="text/javascript"></script>-->
-	<script src="${themeDisplay.pathThemeRoot}/js/main.js?browserId=${browserId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=123" type="text/javascript"></script>
+	<script src="${themeDisplay.pathThemeRoot}/js/main.js?browserId=${browserId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=125" type="text/javascript"></script>
 </head>
 
 <body class="${css_class}">
 
+<script>
+	window.isSignedIn = ${currentUserSignedIn?string};
+</script>
 
 <#-- HBS SEARCH RESULTS -->
 <script id="search-results-template" type="text/x-handlebars-template">
@@ -55,10 +58,9 @@
   			Din sökning matchade inga dokument
   		</div>
 	  </div>
-	  {{/unless}}		
+	  {{/unless}}
 	</div>
 </script>
-
 
 <#-- HBS MAIN MENU -->
 <script id="main-menu-template" type="text/x-handlebars-template">
@@ -196,7 +198,7 @@
 					{{/each}}
 				</ul>
 			</div>
-		{{/if}}	
+		{{/if}}
 
 	</div>
 </script>
@@ -225,9 +227,25 @@
 	</div>
 </script>
 
+<#-- HBS FLY OUT MENU -->
+<script id="admin-bar-template" type="text/x-handlebars-template">
+	<div class="admin-bar admin-bar-{{#is present show}}same-year{{else}}other-year{{/is}}">
+		<div>
+			Visar utgåva
+			<select class="js-year-selector">
+				{{#each unique}}
+					<option value="{{this}}" {{#is @root/show this}}selected{{/is}}>{{this}}</option>
+				{{/each}}
+			</select>
+			<div class="admin-bar-meta">Du ser det här för att du är inloggad. <a href="/#/refresh">Ladda om artiklar</a>. Redigera artiklar i <a href="/admin">administrationsgränssnittet</a>.</div>
+		</div>
+	</div>
+</script>
 
 
 <#-- HTML -->
+<div id="admin-bar-placeholder"></div>
+
 <div id="app-wrapper">
 	<div class="blurrer js-menu-blurrer"></div>
 
@@ -249,12 +267,12 @@
 			</a>
 			<div class="appbar-menu-sink-wrapper js-appbar-menu-sink-toggle">
 				<div class="appbar-menu-sink-button">
-					<span class="flaticon-menu55 icon-4x"></span> 
+					<span class="flaticon-menu55 icon-4x"></span>
 				</div>
 			</div>
 			<a class="appbar-menu-back-wrapper js-navigation-button">
 				<div class="appbar-menu-back-button">
-					<i class="flaticon-left216 icon-4x"></i> 
+					<i class="flaticon-left216 icon-4x"></i>
 			    </div>
 		    	<div class="appbar-menu-back-label mt-small">Tillbaka</div>
 			</a>

@@ -1,0 +1,37 @@
+
+.admin-bar {
+    height: 56px;
+    text-align: center;
+    padding-top: 10px;
+}
+
+.admin-bar-other-year {
+    background-color: #8A1414;
+    color: white;
+}
+
+.admin-bar-same-year {
+    background-color: black;
+    color: white;
+}
+
+.adminmode-other-year {
+    border-left: 10px solid #8A1414;
+    border-right: 10px solid #8A1414;
+}
+
+.admin-bar-meta {
+    font-style: italic;
+
+    a,
+    a:visited,
+    a:active,
+    a:hover {
+        color: white;
+        text-decoration: underline;
+    }
+
+    a:hover {
+        color: grey;
+    }
+}

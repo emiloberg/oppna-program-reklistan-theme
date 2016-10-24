@@ -25,7 +25,7 @@
       var articleDiff;
 
       if (htmlDraft === htmlPublished) {
-        articleDiff = '<p class="no-diffs">Inga ändringar från publicerad version</p>';
+        articleDiff = '<p class="no-diffs">Inga ändringar mellan versionerna</p>';
       } else {
         articleDiff = htmldiff(htmlPublished, htmlDraft);
       }
@@ -35,21 +35,17 @@
       $('.toggle-show-published').click(function (event) {
         event.preventDefault();
         $('.preview-box-draft').addClass('hide-me');
-        $('.preview-box-published').removeClass('hide-me');
       });
 
       $('.toggle-show-draft').click(function (event) {
           event.preventDefault();
-          $('.preview-box-published').addClass('hide-me');
           $('.preview-box-draft').removeClass('hide-me');
       });
 
       $('.checkbox-show-preview-published-draft').change(function () {
           if (this.checked) {
-              $('.preview-box-published').addClass('hide-me');
               $('.preview-box-draft').removeClass('hide-me');
           } else {
-              $('.preview-box-published').addClass('hide-me');
               $('.preview-box-draft').addClass('hide-me');
           }
           setSinglePreviewClass();
@@ -74,6 +70,31 @@
           $('.preview-box').addClass('single-preview-box');
         }
       }
+
+      var leftSelected = $('#versions-left option:selected');
+      var rightSelected = $('#versions-right option:selected');
+
+      var leftPosition = '';
+      if (leftSelected.attr('data-isfirst') === 'true') {
+          leftPosition = ' (senaste version)';
+      } else if (leftSelected.attr('data-islast') === 'true') {
+          leftPosition = ' (första version)';
+      }
+
+      var rightPosition = '';
+      if (rightSelected.attr('data-isfirst') === 'true') {
+          rightPosition = ' (senaste version)';
+      } else if (rightSelected.attr('data-islast') === 'true') {
+          rightPosition = ' (första version)';
+      }
+
+      $('.version-a-heading').html(
+          leftSelected.text() + '<br>' + leftPosition
+      );
+
+      $('.diff-heading').html(
+          'Jämför v' + $('#versions-left').val() + leftPosition + ' med v' + $('#versions-right').val() + rightPosition
+      );
 
       function pad(number) {
           if (number < 10) {

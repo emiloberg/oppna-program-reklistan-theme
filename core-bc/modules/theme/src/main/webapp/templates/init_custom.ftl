@@ -12,3 +12,5 @@
 <#assign browserId = 'other'>
 <#assign ReleaseLocalService = serviceLocator.findService("com.liferay.portal.service.ReleaseLocalService") />
 <#assign liferayBuild = ReleaseLocalService.getBuildNumberOrCreate() />
+
+<#assign currentUserSignedIn = themeDisplay.isSignedIn() />
