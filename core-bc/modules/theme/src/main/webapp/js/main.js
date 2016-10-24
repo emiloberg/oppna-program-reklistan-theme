@@ -26,18 +26,18 @@ var rekData = {
     properties: {
 
         // Local Dev
-        //companyId: 10155,
-        //drugsStructureId: 11571,
-        //adviceStructureId: 12602,
-        //resourcesStructureId: 14304,
-        //newsStructureId: 19302,
+        // companyId: 10155,
+        // drugsStructureId: 11571,
+        // adviceStructureId: 12602,
+        // resourcesStructureId: 14304,
+        // newsStructureId: 19302,
 
         // Stage
-        //companyId: 1674701,
-        //drugsStructureId: 1728835,
-        //adviceStructureId: 1728833,
-        //resourcesStructureId: 1728837,
-        //newsStructureId: 1770002,
+        // companyId: 1674701,
+        // drugsStructureId: 1728835,
+        // adviceStructureId: 1728833,
+        // resourcesStructureId: 1728837,
+        // newsStructureId: 1770002,
 
         // Live:
         companyId: 1712101,
@@ -54,7 +54,7 @@ var rekData = {
 
 
 /* ************************************************************************* *\
- * 
+ *
  * INITIALIZE
  *
 \* ************************************************************************* */
@@ -63,36 +63,49 @@ $(function() {
     initApp();
 });
 
+
+function clearCache() {
+    storage
+        .remove('searchIndex')
+        .remove('rekDataLastSaved')
+        .remove('dataDrugs')
+        .remove('dataAdvice')
+        .remove('dataResources')
+        //.remove('mainMenuData')
+        .remove('dataNews')
+        .remove('hbsDrugs')
+        .remove('hbsAdvice')
+        .remove('hbsResources');
+}
+
 /**
  * Init app by determine if we need to load data over json or if we can grab
  * cached data from local storage
  */
 function initApp() {
+    if (isSignedIn) {
+        clearCache()
+    }
+
     var timestampLastDl = storage.get('rekDataLastSaved');
     if (timestampLastDl === undefined) {
         downloadResources();
     } else {
         var timestampDiff = (new Date().getTime() - timestampLastDl) / 1000;
-        if (timestampDiff > rekData.properties.secondsCacheData) {
+        if (window.isSignedIn || timestampDiff > rekData.properties.secondsCacheData) {
             downloadResources();
         } else {
             rekData = storage.get([
                 'dataDrugs',
                 'dataAdvice',
                 'dataResources',
-                'mainMenuData',
+                //'mainMenuData',
                 'dataNews',
                 'hbsDrugs',
                 'hbsAdvice',
                 'hbsResources'
             ]);
-            startApp(false,
-                rekData.mainMenuData,
-                rekData.dataResources,
-                rekData.dataNews,
-                rekData.dataDrugs,
-                rekData.dataAdvice
-            );
+            mangleData(false, rekData);
         }
     }
 }
@@ -109,7 +122,7 @@ function downloadResources(){
     setTimeout(function () {
         $('.js-loading-indicator').addClass('on');
     }, 500);
-    
+
     var urls = {
         drugs: '/api/jsonws/skinny-web.skinny/get-skinny-journal-articles/' +
         'company-id/' + rekData.properties.companyId +
@@ -134,7 +147,7 @@ function downloadResources(){
         '/group-name/' + rekData.properties.groupName +
         '/ddm-structure-id/' + rekData.properties.newsStructureId +
         '/locale/' + rekData.properties.locale,
-        
+
         hbsDrugs: '/reklistan-theme/handlebars/details-drugs.hbs',
         hbsAdvice: '/reklistan-theme/handlebars/details-advice.hbs',
         hbsResources: '/reklistan-theme/handlebars/resources.hbs'
@@ -150,7 +163,6 @@ function downloadResources(){
         $.ajax(urls.news)
     )
     .then(function(drugs, advice, resources, hbsDrugs, hbsAdvice, hbsResources, news) {
-
         rekData.dataDrugs = drugs[0];
         rekData.dataAdvice = advice[0];
         rekData.dataNews = news[0];
@@ -160,8 +172,6 @@ function downloadResources(){
         rekData.hbsAdvice = hbsAdvice[0];
         rekData.hbsResources = hbsResources[0];
 
-
-
         // Old IE versions gives data as string and not as an object...
         if(typeof drugs[0] === 'string') {
             rekData.dataDrugs = jQuery.parseJSON(rekData.dataDrugs);
@@ -170,9 +180,82 @@ function downloadResources(){
             rekData.dataResources = jQuery.parseJSON(rekData.dataResources);
         }
 
-            
-        // Create and sort main menu data
-        rekData.mainMenuData = rekData.dataDrugs.map(function (entry) {
+        mangleData(true, rekData);
+
+    })
+    .fail(function(err) {
+        alert('Could not load all resources needed');
+        // TODO Better error msg.
+        // TODO Put this back to somewhere good. Also add timeout
+        //$('#main-menu-placeholder').html('<div class="error-box"><h1>Något gick snett</h1><p>Tyvärr kunde datan inte hämtas från servern. <b>Försök ladda om sidan.</b></p><p>Fungerar det fortfarande inte? Skicka ett epost till Christer Printz <a href="mailto:christer.printz@vgregion.se">christer.printz@vgregion.se</a></p></div>');
+    });
+}
+
+/**
+ * YEAR STUFF
+ */
+function findUniqueYears(data) {
+    var years = {};
+    data.forEach(function(type) {
+        type.forEach(function(item) {
+            if(item.path[0]) {
+                years[item.path[0]] = true;
+            }
+        })
+    });
+    return Object.keys(years).sort();
+}
+
+function filterYear(data, year) {
+    return data.filter(function(item) {
+       return item.path[0] === year
+    });
+}
+
+function changeYear(year) {
+    clearCache();
+    storage
+        .set({showYear: year});
+    location.hash = '';
+    location.reload(true);
+}
+
+
+/**
+ * Mangle data
+ */
+function mangleData(isFreshDownload, rekData) {
+
+    // Save all data to local storage
+    if(isFreshDownload && !window.isSignedIn) {
+        storage.set({
+            dataDrugs: rekData.dataDrugs,
+            dataAdvice: rekData.dataAdvice,
+            dataResources: rekData.dataResources,
+            //mainMenuData: rekData.dataMainMenu,
+            dataNews: rekData.dataNews,
+            hbsDrugs: rekData.hbsDrugs,
+            hbsAdvice: rekData.hbsAdvice,
+            hbsResources: rekData.hbsResources,
+            rekDataLastSaved: new Date().getTime()
+        });
+    }
+
+    // Find and filter years
+    rekData.dataYears = {};
+    rekData.dataYears.unique = findUniqueYears([rekData.dataDrugs, rekData.dataAdvice]);
+    rekData.dataYears.hasMultiple = rekData.dataYears.unique.length > 1;
+    rekData.dataYears.present = rekData.dataYears.unique[0];
+    rekData.dataYears.show = storage.get('showYear') || rekData.dataYears.present;
+
+    if (rekData.dataYears.hasMultiple) {
+        rekData.dataDrugs = filterYear(rekData.dataDrugs, rekData.dataYears.show);
+        rekData.dataAdvice = filterYear(rekData.dataAdvice, rekData.dataYears.show);
+        rekData.dataResources = filterYear(rekData.dataResources, rekData.dataYears.show);
+    }
+
+    // Create and sort main menu data
+    rekData.mainMenuData = rekData.dataDrugs.map(function (entry) {
             return {
                 _title: entry.title,
                 hasDrugs: (entry.fields[0].value.length !== 0),
@@ -189,90 +272,80 @@ function downloadResources(){
             return 0;
         });
 
-        var workingResources = rekData.dataResources.map(function(article) {
-            var fieldOut = {
-                uuid: article.uuid,
-                title: article.title,
-                body: '',
-                externallink: '',
-                medium: 'web',
-                sortOrder: '0',
-                id: makeUrlSafe(article.title)
-            };
-            article.fields.forEach(function (field) {
-                fieldOut[field.name] = field.value;
-            });
-
-            if (fieldOut.medium.indexOf('both') > 0 || fieldOut.medium.indexOf('web') > 0) { // Only include news targeted to mobile.
-                return fieldOut;
-            } else {
-                return undefined;
-            }
-
+    var workingResources = rekData.dataResources.map(function(article) {
+        var fieldOut = {
+            uuid: article.uuid,
+            title: article.title,
+            body: '',
+            externallink: '',
+            medium: 'web',
+            sortOrder: '0',
+            id: makeUrlSafe(article.title)
+        };
+        article.fields.forEach(function (field) {
+            fieldOut[field.name] = field.value;
         });
 
-        workingResources = cleanArray(workingResources);
+        if (fieldOut.medium.indexOf('both') > 0 || fieldOut.medium.indexOf('web') > 0) { // Only include news targeted to mobile.
+            return fieldOut;
+        } else {
+            return undefined;
+        }
 
-        rekData.dataResources = workingResources.sort(function (a, b) {
-            if (a.sortOrder.value > b.sortOrder.value) {
-                return 1;
-            }
-            if (a.sortOrder.value < b.sortOrder.value) {
-                return -1;
-            }
-            return 0;
-        });
-
-            
-        // Mangle News
-        var newsArticles = rekData.dataNews.map(function(article) {
-            var fieldOut = {
-                uuid: article.uuid,
-                title: article.title,
-                body: '',
-                externallink: '',
-                medium: '',
-                lead: '',
-                date: '2010-01-01',
-                id: makeUrlSafe(article.title)
-            };
-            article.fields.forEach(function (field) {
-                fieldOut[field.name] = field.value;
-            });
-
-            if (fieldOut.medium.indexOf('both') > 0 || fieldOut.medium.indexOf('web') > 0) { // Only include news targeted to mobile.
-                return fieldOut;
-            } else {
-                return undefined;
-            }
-
-        });
-
-        newsArticles = cleanArray(newsArticles);
-
-
-        newsArticles = newsArticles.sort(function (a, b) {
-            if (a.date > b.date) {
-                return 1;
-            }
-            if (a.date < b.date) {
-                return -1;
-            }
-            return 0;
-        });
-            
-        rekData.dataNews = newsArticles;
-
-        startApp(true, rekData.mainMenuData, rekData.dataResources, rekData.dataNews, rekData.dataDrugs, rekData.dataAdvice);
-    })
-    .fail(function(err) {
-        alert('Could not load all resources needed');
-        // TODO Better error msg.
-        // TODO Put this back to somewhere good. Also add timeout
-        //$('#main-menu-placeholder').html('<div class="error-box"><h1>Något gick snett</h1><p>Tyvärr kunde datan inte hämtas från servern. <b>Försök ladda om sidan.</b></p><p>Fungerar det fortfarande inte? Skicka ett epost till Christer Printz <a href="mailto:christer.printz@vgregion.se">christer.printz@vgregion.se</a></p></div>');
     });
-}
 
+    workingResources = cleanArray(workingResources);
+
+    rekData.dataResources = workingResources.sort(function (a, b) {
+        if (a.sortOrder.value > b.sortOrder.value) {
+            return 1;
+        }
+        if (a.sortOrder.value < b.sortOrder.value) {
+            return -1;
+        }
+        return 0;
+    });
+
+
+    // Mangle News
+    var newsArticles = rekData.dataNews.map(function(article) {
+        var fieldOut = {
+            uuid: article.uuid,
+            title: article.title,
+            body: '',
+            externallink: '',
+            medium: '',
+            lead: '',
+            date: '2010-01-01',
+            id: makeUrlSafe(article.title)
+        };
+        article.fields.forEach(function (field) {
+            fieldOut[field.name] = field.value;
+        });
+
+        if (fieldOut.medium.indexOf('both') > 0 || fieldOut.medium.indexOf('web') > 0) { // Only include news targeted to mobile.
+            return fieldOut;
+        } else {
+            return undefined;
+        }
+
+    });
+
+    newsArticles = cleanArray(newsArticles);
+    newsArticles = newsArticles.sort(function (a, b) {
+        if (a.date > b.date) {
+            return 1;
+        }
+        if (a.date < b.date) {
+            return -1;
+        }
+        return 0;
+    });
+
+    rekData.dataNews = newsArticles;
+
+    startApp(isFreshDownload, rekData.mainMenuData, rekData.dataResources, rekData.dataNews, rekData.dataDrugs, rekData.dataAdvice, rekData.dataYears);
+}
 
 /**
  * Start the App
@@ -284,16 +357,16 @@ function downloadResources(){
  * @param dataDrugs
  * @param dataAdvice
  */
-function startApp(isFreshDataDownload, dataMainMenu, dataResources, dataNews, dataDrugs, dataAdvice) {
+function startApp(isFreshDataDownload, dataMainMenu, dataResources, dataNews, dataDrugs, dataAdvice, dataYears) {
     registerHandlebarHelpers();
     Swag.registerHelpers(Handlebars);
     registerEvents();
     initializeRoute();
-    createMenuesAndBigStartPage(dataMainMenu, dataResources, dataNews);
+    createMenuesAndBigStartPage(dataMainMenu, dataResources, dataNews, dataYears);
 
     // Initialize FastClick to make it snappier on mobile browsers.
     FastClick.attach(document.body);
-    
+
     // Create Search Index if it's a fresh set of data,
     // else load the existing searchIndex from local storage.
     // Only working in >IE10
@@ -301,7 +374,6 @@ function startApp(isFreshDataDownload, dataMainMenu, dataResources, dataNews, da
         if (isFreshDataDownload) {
             wwMangleSearchData(dataDrugs, dataAdvice);
         } else {
-
             search.loadIndex(storage.get('searchIndex'));
         }
     }
@@ -311,21 +383,6 @@ function startApp(isFreshDataDownload, dataMainMenu, dataResources, dataNews, da
     $(window).resize(function() {
         navObj.isMobileView = ($(window).width() < sizeMedium);
     });
-
-    // Save all data to local storage
-    if(isFreshDataDownload) {
-        storage.set({
-            dataDrugs: dataDrugs,
-            dataAdvice: dataAdvice,
-            dataResources: dataResources,
-            mainMenuData: dataMainMenu,
-            dataNews: dataNews,
-            hbsDrugs: rekData.hbsDrugs,
-            hbsAdvice: rekData.hbsAdvice,
-            hbsResources: rekData.hbsResources,
-            rekDataLastSaved: new Date().getTime()
-        });
-    }
 }
 
 function initializeRoute() {
@@ -353,18 +410,7 @@ function initializeRoute() {
 
         },
         '/refresh': function() {
-            console.log('CLEARING');
-            storage
-                .remove('searchIndex')
-                .remove('rekDataLastSaved')
-                .remove('dataDrugs')
-                .remove('dataAdvice')
-                .remove('dataResources')
-                .remove('mainMenuData')
-                .remove('dataNews')
-                .remove('hbsDrugs')
-                .remove('hbsAdvice')
-                .remove('hbsResources');
+            clearCache();
             location.hash = '';
             location.reload(true);
         },
@@ -388,7 +434,7 @@ function setBackButtonURL(url) {
 }
 
 /* ************************************************************************* *\
- * 
+ *
  * EVENT LISTENERS
  *
 \* ************************************************************************* */
@@ -423,6 +469,9 @@ function registerEvents() {
 	})
     .on( "click", ".js-menu-blurrer", function() {
         hideFlyOutMenu();
+    })
+    .on("change", ".js-year-selector", function() {
+        changeYear($('.js-year-selector').val());
     });
 
 }
@@ -441,17 +490,23 @@ function hideFlyOutMenu() {
 
 
 /* ************************************************************************* *\
- * 
+ *
  * CREATE MAIN MENU
  *
 \* ************************************************************************* */
-function createMenuesAndBigStartPage(mainMenuData, dataResources, dataNews) {
+function createMenuesAndBigStartPage(mainMenuData, dataResources, dataNews, dataYears) {
     var nNewsToShow = 3;
     var data = {
         areas: mainMenuData,
         news: dataNews ? dataNews.slice(0, nNewsToShow) : [],
         resources: dataResources
     };
+
+    if (dataYears.hasMultiple) {
+        $('#app-wrapper').addClass('showing-adminbar');
+        $('body').addClass(dataYears.present === dataYears.show ? 'adminmode-present-year' : 'adminmode-other-year');
+        printTemplate(dataYears, "#admin-bar-template", '#admin-bar-placeholder');
+    }
     printTemplate(data, "#main-menu-template", '#main-menu-placeholder');
     printTemplate(data, "#filler-template", '#details-filler-placeholder');
     printTemplate(data, "#fly-menu-template", '#fly-menu-placeholder');
@@ -462,7 +517,7 @@ function createMenuesAndBigStartPage(mainMenuData, dataResources, dataNews) {
 
 
 /* ************************************************************************* *\
- * 
+ *
  * SHOW GENERIC
  *
 \* ************************************************************************* */
@@ -498,12 +553,12 @@ function showGeneric(type, clickedItem) {
     printTemplate(data, templateSelector, '#details-generic-placeholder', templateStr);
 
     // Make responsive tables
-    $('.section-details-generic table').stacktable({minColCount:2}); // Make responsive tables 
+    $('.section-details-generic table').stacktable({minColCount:2}); // Make responsive tables
 }
 
 
 /* ************************************************************************* *\
- * 
+ *
  * SHOW SUBMENU
  *
 \* ************************************************************************* */
@@ -558,7 +613,7 @@ function showSubmenu(chapter, section, tab) {
             filtered.sameSectionOnOtherTab = section;
         }
     }
-    
+
     printTemplate(filtered, "#submenu-template", '#submenu-' + tab + '-placeholder');
 
     // Remove active classes for big screen
@@ -637,7 +692,7 @@ function findLinkToArticle(content) {
 
 
 /* ************************************************************************* *\
- * 
+ *
  * SHOW SECTION
  *
 \* ************************************************************************* */
@@ -648,7 +703,7 @@ function showDetails(chapter, details, tab) {
     // Elements
     var jqDetails = $('#details-' + tab);
     var jqSubmenu = $('#submenu-' + tab);
-    
+
     // Filter big fat data array to only show current details and print template
 	var filtered = getActiveTabData(tab).filter(function (entry) {
 		return (makeUrlSafe(entry.title, true) === chapter);
@@ -672,7 +727,7 @@ function showDetails(chapter, details, tab) {
         return;
     }
 
-    // Adding chapter to object, to be able to pick it up from 
+    // Adding chapter to object, to be able to pick it up from
     // handlebars. Used to create tab links.
     filtered._urlSafeChapter = chapter;
 
@@ -724,13 +779,13 @@ function showDetails(chapter, details, tab) {
     // Set Current View
     setCurrentView('details', chapter, details);
 
-    $('.section-details-advice table').stacktable({minColCount:2}); // Make responsive tables 
-    
+    $('.section-details-advice table').stacktable({minColCount:2}); // Make responsive tables
+
 }
 
 
 /* ************************************************************************* *\
- * 
+ *
  * BACK TO
  *
 \* ************************************************************************* */
@@ -768,7 +823,7 @@ function backToMainMenu() {
 
 
 /* ************************************************************************* *\
- * 
+ *
  * HELPERS
  *
 \* ************************************************************************* */
@@ -865,7 +920,7 @@ function isSectionAvailableOnOtherTab(chapter, details, tab) {
     var filtered = getNoneActiveTabData(tab).filter(function (entry) {
         return (makeUrlSafe(entry.title, true) === chapter);
     });
-    
+
     if (details.length > 0) {
         if (filtered.length === 1 ) {
             filtered = filtered[0].fields.filter(function (entry) {
@@ -881,7 +936,7 @@ function isSectionAvailableOnOtherTab(chapter, details, tab) {
 
 /**
  * Checking if there's data available on the other tab.
- * 
+ *
  * If we're currently seeing 'drugs', check that the first entry on
  * 'advice' actually contains a heading. If so, return true, else return false.
  *
@@ -967,7 +1022,7 @@ function cleanArray(actual){
 
 
 /* ************************************************************************* *\
- * 
+ *
  * REMOVE DIACRITICS
  *
 \* ************************************************************************* */
@@ -1076,7 +1131,7 @@ function removeDiacritics (str) {
 
 
 /* ************************************************************************* *\
- * 
+ *
  * SEARCH
  *
 \* ************************************************************************* */
@@ -1120,9 +1175,11 @@ var search = {
             });
         });
 
-        storage.set({
-            searchIndex: search.index
-        });
+        if (!window.isSignedIn) {
+            storage.set({
+                searchIndex: search.index
+            });
+        }
 
     },
 

@@ -35,6 +35,7 @@ body {
 @import 'partials/molecules/tabs';
 @import 'partials/molecules/secondbar';
 @import 'partials/molecules/appbar';
+@import 'partials/molecules/adminbar';
 @import 'partials/molecules/recommended-drugs';
 @import 'partials/molecules/meta-navigation';
 @import 'partials/molecules/fly-menu';
