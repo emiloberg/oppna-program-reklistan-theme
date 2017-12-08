@@ -301,3 +301,23 @@
 	text-align: right;
 	font-style: italic;
 }
+
+table.fixed-head {
+	position: relative;
+	top: 31.5px;
+
+	thead {
+		position: fixed;
+		top: 56px;
+		width: 618px;
+
+		tr {
+			display: block;
+
+			th {
+				//display: block;
+				//box-sizing: border-box;
+			}
+		}
+	}
+}

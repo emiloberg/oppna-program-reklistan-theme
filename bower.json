@@ -20,6 +20,6 @@
     "svg4everybody": "~1.0.0",
     "routie": "~0.3.2",
     "fastclick": "~1.0.3",
-    "lunr.js": "~0.5.6"
+    "lunr.js": "~2.1.5"
   }
 }

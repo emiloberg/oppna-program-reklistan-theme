@@ -25,7 +25,7 @@
 			<plugin>
 				<groupId>com.liferay.maven.plugins</groupId>
 				<artifactId>liferay-maven-plugin</artifactId>
-				<version>6.2.10.9</version>
+				<version>6.2.10.16</version>
 				<executions>
 					<execution>
 						<id>exec-generate-sources</id>
@@ -66,6 +66,6 @@
 		<liferay.auto.deploy.dir>${project.build.directory}/dummy-deploy</liferay.auto.deploy.dir>
 		<liferay.theme.parent>_unstyled</liferay.theme.parent>
 		<liferay.theme.type>ftl</liferay.theme.type>
-		<liferay.version>6.2.10.8</liferay.version>
+		<liferay.version>6.2.10.17</liferay.version>
 	</properties>
 </project>

@@ -33,18 +33,18 @@ var rekData = {
         // newsStructureId: 19302,
 
         // Stage
-        // companyId: 1674701,
-        // drugsStructureId: 1728835,
-        // adviceStructureId: 1728833,
-        // resourcesStructureId: 1728837,
-        // newsStructureId: 1770002,
+        companyId: 1674701,
+        drugsStructureId: 1728835,
+        adviceStructureId: 1728833,
+        resourcesStructureId: 1728837,
+        newsStructureId: 1770002,
 
         // Live:
-        companyId: 1712101,
-        drugsStructureId: 1715233,
-        adviceStructureId: 1715235,
-        resourcesStructureId: 1715238,
-        newsStructureId: 2080202,
+        // companyId: 1712101,
+        // drugsStructureId: 1715233,
+        // adviceStructureId: 1715235,
+        // resourcesStructureId: 1715238,
+        // newsStructureId: 2080202,
 
         groupName: 'Guest',
         locale: 'sv_SE',
@@ -371,10 +371,12 @@ function startApp(isFreshDataDownload, dataMainMenu, dataResources, dataNews, da
     // else load the existing searchIndex from local storage.
     // Only working in >IE10
     if(!($('html').hasClass('lt-ie10') || $('html').hasClass('lt-ie9') || $('html').hasClass('lt-ie8'))) {
-        if (isFreshDataDownload) {
+        var searchIndex = storage.get('searchIndex');
+
+        if (isFreshDataDownload || !searchIndex || searchIndex.version !== lunr.version) {
             wwMangleSearchData(dataDrugs, dataAdvice);
         } else {
-            search.loadIndex(storage.get('searchIndex'));
+            search.loadIndex(searchIndex);
         }
     }
 
@@ -472,8 +474,55 @@ function registerEvents() {
     })
     .on("change", ".js-year-selector", function() {
         changeYear($('.js-year-selector').val());
+    })
+    .on("scroll", "#details-advice, #details-drugs", function(e) {
+        console.log('scrolled... ' + e);
     });
 
+    var rememberedPositions = [];
+    $( "#details-advice, #details-drugs" ).bind("scroll",function(e) {
+
+        var headerHeight = 56;
+        // $("#details-advice, #details-drugs").trigger("reposition");
+        var target = $(e.target);
+        var theads = target.find('thead');
+        // var theads = $('table:not(.stacktable)').find('th').parent();
+        // var theads = $('table.stacktable-original').find('th').parent();
+        var targetPosition = target[0].scrollTop;
+        // var rememberedTargetPosition;
+
+        theads.each(function(i) {
+            var thead = $(theads[i]);
+            var table = thead.parents('table');
+            var top = thead.position().top;
+
+            if (top < headerHeight && !table.hasClass('fixed-head')) {
+                table.addClass('fixed-head');
+                // thead.addClass('fixed');
+                // rememberedTargetPosition = targetPosition;
+                rememberedPositions[i] = targetPosition;
+                // todo set column widths like before... also table columns...
+                var ths = thead.find('th');
+                ths.each(function (e) {
+                    var tds = table.find('tbody tr td');
+                    var currentWidth = $(tds[e]).innerWidth();
+                    $(ths[e]).css('width', currentWidth);
+                });
+            }
+        });
+
+        rememberedPositions.forEach(function (remembered, i) {
+            // var rememberedPosition = rememberedPositions[i];
+            if (remembered && targetPosition < remembered) {
+                // "Unfix" the relevant thead
+                var thead = $(theads[i]);
+                // thead.removeClass('fixed');
+                var table = thead.parents('table');
+                table.removeClass('fixed-head');
+                rememberedPositions[i] = null;
+            }
+        });
+    });
 }
 
 /**
@@ -883,6 +932,27 @@ function registerHandlebarHelpers() {
         return new Handlebars.SafeString(ret);
     });
 
+    Handlebars.registerHelper('findLinkToArticle', function(context) {
+        var foundLinkToArticle = null;
+        var hasLinkToArticle = context.some(function (field) {
+            if (field.name) {
+                if (field.name === 'linktoarticle') {
+                    if (field.value.length > 0) {
+                        foundLinkToArticle = field.value;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        });
+
+        if (hasLinkToArticle) {
+            return foundLinkToArticle;
+        } else {
+            return false;
+        }
+    });
+
     /**
      * Parse the text and do some replacing
      *
@@ -1146,33 +1216,24 @@ var search = {
             this.field('section', { boost: 10 });
             this.field('body');
             this.ref('id');
-        });
-        search.createIndex(searchDataDrugs, searchDataAdvice);
-        $('.js-search-input-container').addClass('on');
-    },
 
-    loadIndex: function(searchIndex) {
-        search.index = lunr.Index.load(searchIndex);
-        $('.js-search-input-container').addClass('on');
-    },
+            searchDataDrugs.forEach(function (item) {
+                this.add({
+                    id: 'drugs' + search._splitter + item.chapter + search._splitter + item.section,
+                    chapter: item.chapter,
+                    section: item.section,
+                    body: item.content
+                });
+            }, this);
 
-    createIndex: function(searchDataDrugs, searchDataAdvice) {
-        searchDataDrugs.forEach(function (item) {
-            search.index.add({
-                id: 'drugs' + search._splitter + item.chapter + search._splitter + item.section,
-                chapter: item.chapter,
-                section: item.section,
-                body: item.content
-            });
-        });
-
-        searchDataAdvice.forEach(function (item) {
-            search.index.add({
-                id: 'advice' + search._splitter + item.chapter + search._splitter + item.section,
-                chapter: item.chapter,
-                section: item.section,
-                body: item.content
-            });
+            searchDataAdvice.forEach(function (item) {
+                this.add({
+                    id: 'advice' + search._splitter + item.chapter + search._splitter + item.section,
+                    chapter: item.chapter,
+                    section: item.section,
+                    body: item.content
+                });
+            }, this);
         });
 
         if (!window.isSignedIn) {
@@ -1181,6 +1242,12 @@ var search = {
             });
         }
 
+        $('.js-search-input-container').addClass('on');
+    },
+
+    loadIndex: function(searchIndex) {
+        search.index = lunr.Index.load(searchIndex);
+        $('.js-search-input-container').addClass('on');
     },
 
     search: function (searchFor) {
@@ -1208,14 +1275,16 @@ var search = {
 
             jqMainMenu.addClass('showing-searchresults');
 
-            var matches = search.index.search(searchFor).map(function (item) {
-                var fields = item.ref.split(search._splitter);
-                return {
-                    type: fields[0],
-                    link: fields[0] + '/' + makeUrlSafe(fields[1]) + '/' + makeUrlSafe(fields[2]),
-                    chapter: fields[1],
-                    section: fields[2]
-                };
+            var unicodeNormalized = lunr.unicodeNormalizer(searchFor);
+            var matches = search.index.search(unicodeNormalized + ' ' + '*' + unicodeNormalized + '*') // with or without asterisks
+                .map(function (item) {
+                    var fields = item.ref.split(search._splitter);
+                    return {
+                        type: fields[0],
+                        link: fields[0] + '/' + makeUrlSafe(fields[1]) + '/' + makeUrlSafe(fields[2]),
+                        chapter: fields[1],
+                        section: fields[2]
+                    };
 
             });
 
