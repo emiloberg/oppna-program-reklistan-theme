@@ -482,32 +482,32 @@ function registerEvents() {
     var rememberedPositions = [];
     $( "#details-advice, #details-drugs" ).bind("scroll",function(e) {
 
-        var headerHeight = 56;
-        // $("#details-advice, #details-drugs").trigger("reposition");
+        var appbarMenuTitleHeight = $('.appbar-menu-title').height() || 0;
+
         var target = $(e.target);
         var theads = target.find('thead');
-        // var theads = $('table:not(.stacktable)').find('th').parent();
-        // var theads = $('table.stacktable-original').find('th').parent();
+
         var targetPosition = target[0].scrollTop;
-        // var rememberedTargetPosition;
 
         theads.each(function(i) {
             var thead = $(theads[i]);
             var table = thead.parents('table');
             var top = thead.position().top;
 
-            if (top < headerHeight && !table.hasClass('fixed-head')) {
-                table.addClass('fixed-head');
-                // thead.addClass('fixed');
-                // rememberedTargetPosition = targetPosition;
+            if (top < appbarMenuTitleHeight && !table.hasClass('fixed-head')) {
                 rememberedPositions[i] = targetPosition;
-                // todo set column widths like before... also table columns...
                 var ths = thead.find('th');
                 ths.each(function (e) {
                     var tds = table.find('tbody tr td');
                     var currentWidth = $(tds[e]).innerWidth();
                     $(ths[e]).css('width', currentWidth);
                 });
+
+                var thead = table.find('thead');
+                $(thead[0]).css('width', $(thead[0]).innerWidth());
+                $(thead[0]).css('height', $(thead[0]).innerHeight());
+
+                table.addClass('fixed-head');
             }
         });
 
