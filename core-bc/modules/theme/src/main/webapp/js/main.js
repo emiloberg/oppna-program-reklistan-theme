@@ -33,18 +33,18 @@ var rekData = {
         // newsStructureId: 19302,
 
         // Stage
-        companyId: 1674701,
-        drugsStructureId: 1728835,
-        adviceStructureId: 1728833,
-        resourcesStructureId: 1728837,
-        newsStructureId: 1770002,
+        // companyId: 1674701,
+        // drugsStructureId: 1728835,
+        // adviceStructureId: 1728833,
+        // resourcesStructureId: 1728837,
+        // newsStructureId: 1770002,
 
         // Live:
-        // companyId: 1712101,
-        // drugsStructureId: 1715233,
-        // adviceStructureId: 1715235,
-        // resourcesStructureId: 1715238,
-        // newsStructureId: 2080202,
+        companyId: 1712101,
+        drugsStructureId: 1715233,
+        adviceStructureId: 1715235,
+        resourcesStructureId: 1715238,
+        newsStructureId: 2080202,
 
         groupName: 'Guest',
         locale: 'sv_SE',
@@ -505,7 +505,7 @@ function registerEvents() {
         var appbarMenuTitleHeight = $('.appbar-menu-title').height() || 0;
 
         var target = $(e.target);
-        var theads = target.find('thead');
+        var theads = target.find('table.fixed-head-enabled thead');
 
         var targetPosition = target[0].scrollTop;
 
@@ -518,14 +518,13 @@ function registerEvents() {
                 rememberedPositions[i] = targetPosition;
                 var ths = thead.find('th');
                 ths.each(function (e) {
-                    var tds = table.find('tbody tr td');
-                    var currentWidth = $(tds[e]).innerWidth();
+                    var currentWidth = $(ths[e]).outerWidth();
                     $(ths[e]).css('width', currentWidth);
                 });
 
                 var thead = table.find('thead');
-                $(thead[0]).css('width', $(thead[0]).innerWidth());
-                $(thead[0]).css('height', $(thead[0]).innerHeight());
+                $(thead[0]).css('width', $(thead[0]).outerWidth());
+                $(thead[0]).css('height', $(thead[0]).outerHeight());
 
                 table.addClass('fixed-head');
             }
