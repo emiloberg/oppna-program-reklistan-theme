@@ -371,10 +371,12 @@ function startApp(isFreshDataDownload, dataMainMenu, dataResources, dataNews, da
     // else load the existing searchIndex from local storage.
     // Only working in >IE10
     if(!($('html').hasClass('lt-ie10') || $('html').hasClass('lt-ie9') || $('html').hasClass('lt-ie8'))) {
-        if (isFreshDataDownload) {
+        var searchIndex = storage.get('searchIndex');
+
+        if (isFreshDataDownload || !searchIndex || searchIndex.version !== lunr.version) {
             wwMangleSearchData(dataDrugs, dataAdvice);
         } else {
-            search.loadIndex(storage.get('searchIndex'));
+            search.loadIndex(searchIndex);
         }
     }
 
@@ -385,28 +387,31 @@ function startApp(isFreshDataDownload, dataMainMenu, dataResources, dataNews, da
     });
 }
 
+var navigationCounter = 0;
+
 function initializeRoute() {
+
     routie({
         '/resource/:newsitem': function(resourceItem) {
             window.scrollTo(0, 0);
             showGeneric('resource', resourceItem);
-            setBackButtonURL('#');
+            setBackButtonURL('#', navigationCounter++);
         },
         '/news/:newsitem': function(newsItem) {
             window.scrollTo(0, 0);
             showGeneric('news', newsItem);
-            setBackButtonURL('#');
+            setBackButtonURL('#', navigationCounter++);
         },
         '/:tab/:chapter': function(tab, chapter) {
             window.scrollTo(0, 0);
             showSubmenu(chapter, '', tab);
-            setBackButtonURL('#');
+            setBackButtonURL('#', navigationCounter++);
         },
         '/:tab/:chapter/:section': function(tab, chapter, section) {
             window.scrollTo(0, 0);
             showSubmenu(chapter, section, tab);
             showDetails(chapter, section, tab);
-            setBackButtonURL('#/' + tab + '/' + chapter);
+            setBackButtonURL('#/' + tab + '/' + chapter, navigationCounter++);
 
         },
         '/refresh': function() {
@@ -421,7 +426,27 @@ function initializeRoute() {
     });
 }
 
-function setBackButtonURL(url) {
+// This method tries to achieve a behaviour where the webpage back button to behaves mainly like the browser back
+// button, except when the user hasn't navigated on the site yet. If user e.g. hits
+// https://reklistan.vgregion.se/#/advice/Barn_och_ungdom in the address bar we want the back button to go up a level
+// instead of going back to the previous site the user visited. This algorithm works fairly well. If it turns out to be
+// problematic, just replace with a behaviour where it always does history.back().
+function setBackButtonURL(url, counter) {
+    var body = $('body');
+
+    body.off("click", ".appbar-menu-back-wrapper");
+
+    if (counter > 0) {
+        body.on("click", ".appbar-menu-back-wrapper", function (e) {
+            history.back();
+            navigationCounter -= 2; // Since it is incremented by the calling method we need to decrement by two.
+            if (navigationCounter < 0) {
+                navigationCounter = 0;
+            }
+            e.preventDefault();
+        });
+    }
+
     if (navObj.isMobileView) {
         $('.js-navigation-button')
             .attr("href", url)
@@ -474,6 +499,49 @@ function registerEvents() {
         changeYear($('.js-year-selector').val());
     });
 
+    var rememberedPositions = [];
+    $( "#details-advice, #details-drugs" ).bind("scroll",function(e) {
+
+        var appbarMenuTitleHeight = $('.appbar-menu-title').height() || 0;
+
+        var target = $(e.target);
+        var theads = target.find('table.fixed-head-enabled thead');
+
+        var targetPosition = target[0].scrollTop;
+
+        theads.each(function(i) {
+            var thead = $(theads[i]);
+            var table = thead.parents('table');
+            var top = thead.position().top;
+
+            if (top < appbarMenuTitleHeight && !table.hasClass('fixed-head')) {
+                rememberedPositions[i] = targetPosition;
+                var ths = thead.find('th');
+                ths.each(function (e) {
+                    var currentWidth = $(ths[e]).outerWidth();
+                    $(ths[e]).css('width', currentWidth);
+                });
+
+                var thead = table.find('thead');
+                $(thead[0]).css('width', $(thead[0]).outerWidth());
+                $(thead[0]).css('height', $(thead[0]).outerHeight());
+
+                table.addClass('fixed-head');
+            }
+        });
+
+        rememberedPositions.forEach(function (remembered, i) {
+            // var rememberedPosition = rememberedPositions[i];
+            if (remembered && targetPosition < remembered) {
+                // "Unfix" the relevant thead
+                var thead = $(theads[i]);
+                // thead.removeClass('fixed');
+                var table = thead.parents('table');
+                table.removeClass('fixed-head');
+                rememberedPositions[i] = null;
+            }
+        });
+    });
 }
 
 /**
@@ -883,6 +951,27 @@ function registerHandlebarHelpers() {
         return new Handlebars.SafeString(ret);
     });
 
+    Handlebars.registerHelper('findLinkToArticle', function(context) {
+        var foundLinkToArticle = null;
+        var hasLinkToArticle = context.some(function (field) {
+            if (field.name) {
+                if (field.name === 'linktoarticle') {
+                    if (field.value.length > 0) {
+                        foundLinkToArticle = field.value;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        });
+
+        if (hasLinkToArticle) {
+            return foundLinkToArticle;
+        } else {
+            return false;
+        }
+    });
+
     /**
      * Parse the text and do some replacing
      *
@@ -1146,33 +1235,24 @@ var search = {
             this.field('section', { boost: 10 });
             this.field('body');
             this.ref('id');
-        });
-        search.createIndex(searchDataDrugs, searchDataAdvice);
-        $('.js-search-input-container').addClass('on');
-    },
 
-    loadIndex: function(searchIndex) {
-        search.index = lunr.Index.load(searchIndex);
-        $('.js-search-input-container').addClass('on');
-    },
+            searchDataDrugs.forEach(function (item) {
+                this.add({
+                    id: 'drugs' + search._splitter + item.chapter + search._splitter + item.section,
+                    chapter: item.chapter,
+                    section: item.section,
+                    body: item.content
+                });
+            }, this);
 
-    createIndex: function(searchDataDrugs, searchDataAdvice) {
-        searchDataDrugs.forEach(function (item) {
-            search.index.add({
-                id: 'drugs' + search._splitter + item.chapter + search._splitter + item.section,
-                chapter: item.chapter,
-                section: item.section,
-                body: item.content
-            });
-        });
-
-        searchDataAdvice.forEach(function (item) {
-            search.index.add({
-                id: 'advice' + search._splitter + item.chapter + search._splitter + item.section,
-                chapter: item.chapter,
-                section: item.section,
-                body: item.content
-            });
+            searchDataAdvice.forEach(function (item) {
+                this.add({
+                    id: 'advice' + search._splitter + item.chapter + search._splitter + item.section,
+                    chapter: item.chapter,
+                    section: item.section,
+                    body: item.content
+                });
+            }, this);
         });
 
         if (!window.isSignedIn) {
@@ -1181,6 +1261,12 @@ var search = {
             });
         }
 
+        $('.js-search-input-container').addClass('on');
+    },
+
+    loadIndex: function(searchIndex) {
+        search.index = lunr.Index.load(searchIndex);
+        $('.js-search-input-container').addClass('on');
     },
 
     search: function (searchFor) {
@@ -1208,14 +1294,16 @@ var search = {
 
             jqMainMenu.addClass('showing-searchresults');
 
-            var matches = search.index.search(searchFor).map(function (item) {
-                var fields = item.ref.split(search._splitter);
-                return {
-                    type: fields[0],
-                    link: fields[0] + '/' + makeUrlSafe(fields[1]) + '/' + makeUrlSafe(fields[2]),
-                    chapter: fields[1],
-                    section: fields[2]
-                };
+            var unicodeNormalized = lunr.unicodeNormalizer(searchFor);
+            var matches = search.index.search(unicodeNormalized + ' ' + '*' + unicodeNormalized + '*') // with or without asterisks
+                .map(function (item) {
+                    var fields = item.ref.split(search._splitter);
+                    return {
+                        type: fields[0],
+                        link: fields[0] + '/' + makeUrlSafe(fields[1]) + '/' + makeUrlSafe(fields[2]),
+                        chapter: fields[1],
+                        section: fields[2]
+                    };
 
             });
 

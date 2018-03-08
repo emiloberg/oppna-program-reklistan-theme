@@ -220,7 +220,7 @@
 			display: none;
 			@include small {
 				display: table;
-			}			
+			}
 		}
 
 		&.stacktable {
@@ -229,10 +229,16 @@
 				display: none;
 			}
 		}
+
+		ul {
+			margin-top: 0;
+			margin-bottom: 0;
+		}
 	}
 
 	td, th {
 		border-width: 0;
+		box-sizing: border-box;
 		@include rhythm(0, 0.25, 0.25, 0);
 		padding-left: 1em;
 		padding-right: 1em;
@@ -253,7 +259,7 @@
 		text-align: left;
 
 		&.st-head-row {
-			@include text-color-primary();			
+			@include text-color-primary();
 			background-color: $color-gray-temp4;
 		}
 	}
@@ -300,4 +306,28 @@
 .details-physical-exercise-meta {
 	text-align: right;
 	font-style: italic;
+}
+
+table.fixed-head {
+	position: relative;
+	top: 31.5px;
+
+	thead {
+		position: fixed;
+		top: 56px;
+		width: 618px;
+
+		tr {
+			display: block;
+
+			th {
+				//display: block;
+				//box-sizing: border-box;
+			}
+		}
+	}
+}
+
+.showing-adminbar table.fixed-head thead {
+	top: 122px;
 }

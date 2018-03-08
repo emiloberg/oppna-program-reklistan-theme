@@ -11,7 +11,7 @@ var jsFiles = [
 	'./lib/svg4everybody/svg4everybody.ie8.min.js',
 	'./lib/fastclick/lib/fastclick.js',
 	'./lib/routie/dist/routie.min.js',
-	'./lib/lunr.js/lunr.min.js',
+	'./lib/lunr/lunr.js',
 	'./custom-lib/swag/swag.min.js',
 	'./custom-lib/loStorage.js/loStorage.js'
 ];
