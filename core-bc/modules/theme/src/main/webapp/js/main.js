@@ -387,28 +387,31 @@ function startApp(isFreshDataDownload, dataMainMenu, dataResources, dataNews, da
     });
 }
 
+var navigationCounter = 0;
+
 function initializeRoute() {
+
     routie({
         '/resource/:newsitem': function(resourceItem) {
             window.scrollTo(0, 0);
             showGeneric('resource', resourceItem);
-            setBackButtonURL('#');
+            setBackButtonURL('#', navigationCounter++);
         },
         '/news/:newsitem': function(newsItem) {
             window.scrollTo(0, 0);
             showGeneric('news', newsItem);
-            setBackButtonURL('#');
+            setBackButtonURL('#', navigationCounter++);
         },
         '/:tab/:chapter': function(tab, chapter) {
             window.scrollTo(0, 0);
             showSubmenu(chapter, '', tab);
-            setBackButtonURL('#');
+            setBackButtonURL('#', navigationCounter++);
         },
         '/:tab/:chapter/:section': function(tab, chapter, section) {
             window.scrollTo(0, 0);
             showSubmenu(chapter, section, tab);
             showDetails(chapter, section, tab);
-            setBackButtonURL('#/' + tab + '/' + chapter);
+            setBackButtonURL('#/' + tab + '/' + chapter, navigationCounter++);
 
         },
         '/refresh': function() {
@@ -423,7 +426,27 @@ function initializeRoute() {
     });
 }
 
-function setBackButtonURL(url) {
+// This method tries to achieve a behaviour where the webpage back button to behaves mainly like the browser back
+// button, except when the user hasn't navigated on the site yet. If user e.g. hits
+// https://reklistan.vgregion.se/#/advice/Barn_och_ungdom in the address bar we want the back button to go up a level
+// instead of going back to the previous site the user visited. This algorithm works fairly well. If it turns out to be
+// problematic, just replace with a behaviour where it always does history.back().
+function setBackButtonURL(url, counter) {
+    var body = $('body');
+
+    body.off("click", ".appbar-menu-back-wrapper");
+
+    if (counter > 0) {
+        body.on("click", ".appbar-menu-back-wrapper", function (e) {
+            history.back();
+            navigationCounter -= 2; // Since it is incremented by the calling method we need to decrement by two.
+            if (navigationCounter < 0) {
+                navigationCounter = 0;
+            }
+            e.preventDefault();
+        });
+    }
+
     if (navObj.isMobileView) {
         $('.js-navigation-button')
             .attr("href", url)
@@ -474,9 +497,6 @@ function registerEvents() {
     })
     .on("change", ".js-year-selector", function() {
         changeYear($('.js-year-selector').val());
-    })
-    .on("scroll", "#details-advice, #details-drugs", function(e) {
-        console.log('scrolled... ' + e);
     });
 
     var rememberedPositions = [];
