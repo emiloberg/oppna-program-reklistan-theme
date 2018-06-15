@@ -43,7 +43,7 @@
 }
 
 .appbar-menu-title {
-    line-height: $appbar-height;
+    line-height: 40px;
     padding: 0 13px;
     font-size: 20px;
 
@@ -55,6 +55,16 @@
         text-decoration: none;
     }
 
+    .appbar-menu-sub-title {
+        position: absolute;
+        text-align: center;
+        margin: 0 auto 0 calc(50% - 143px);
+        text-decoration: none;
+        font-size: 13px;
+        bottom: 6px;
+        line-height: 12px;
+        font-weight: 300;
+    }
 }
 
 /**
@@ -114,28 +124,4 @@
     font-size: 20px;
     float: left;
     font-weight: 300;
-}
-
-
-/**
- * Feedback link
- *
- */
- .appbar-menu-feedback {
-    position: absolute;
-    right: 0;
-    display: block;
-    line-height: $appbar-height;
-    font-size: 18px;
-    font-weight: 300;
-    padding: 0 16px;
-    outline: none;
-
-    text-decoration: none; 
-    &:visited,
-    &:hover,
-    &:active {
-        text-decoration: none;
-    }
-
 }

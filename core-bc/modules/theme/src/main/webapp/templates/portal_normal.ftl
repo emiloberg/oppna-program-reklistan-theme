@@ -265,11 +265,12 @@
 	<div id="topbar">
 		<div class="appbar">
 			<div class="appbar-menu-title-wrapper">
-				<div class="appbar-menu-title"><a href="#">REK<span class="thin">listan</span></a></div>
+				<div class="appbar-menu-title">
+					<a href="#">REK<span class="thin">listan</span></a>
+                    <div class="appbar-menu-sub-title">Läkemedelskommittén i Västra Götalandsregionen</div>
+                </div>
 			</div>
-			<a href="${txtFeedbackURL}" class="appbar-menu-feedback">
-				${txtFeedback}
-			</a>
+
 			<div class="appbar-menu-sink-wrapper js-appbar-menu-sink-toggle">
 				<div class="appbar-menu-sink-button">
 					<span class="flaticon-menu55 icon-4x"></span>
