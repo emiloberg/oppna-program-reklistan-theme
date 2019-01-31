@@ -26,7 +26,7 @@
 	<script src="${themeDisplay.pathThemeRoot}/js/libs.min.js?t=2" type="text/javascript"></script>
     <script src="${themeDisplay.pathThemeRoot}/js/lunr.unicodeNormalizer.js?t=1" type="text/javascript"></script>
     <!--<script src="${themeDisplay.pathThemeRoot}/js/main.js?browserId=${browserId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=${.now?datetime?iso_local}" type="text/javascript"></script>-->
-    <script src="${themeDisplay.pathThemeRoot}/js/main.js?browserId=${browserId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=160" type="text/javascript"></script>
+    <script src="${themeDisplay.pathThemeRoot}/js/main.js?browserId=${browserId}&languageId=${themeDisplay.languageId}&b=${liferayBuild}&t=163" type="text/javascript"></script>
 </head>
 
 <body class="${css_class}">

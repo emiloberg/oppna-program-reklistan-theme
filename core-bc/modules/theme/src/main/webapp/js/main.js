@@ -254,6 +254,15 @@ function mangleData(isFreshDownload, rekData) {
         rekData.dataResources = filterYear(rekData.dataResources, rekData.dataYears.show);
     }
 
+    // Hack to hide a specific article in the web application only (and not the mobile app).
+    var index = rekData.dataDrugs.findIndex(function (item) {
+        return item.title.indexOf('Rek. läkemedel är numera inkluderade i Terapiråd') > -1
+    });
+    
+    if (index > -1) {
+        rekData.dataDrugs.splice(index, 1);        
+    }
+
     // Create and sort main menu data
     rekData.mainMenuData = rekData.dataDrugs.map(function (entry) {
             return {
