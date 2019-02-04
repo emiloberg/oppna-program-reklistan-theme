@@ -255,9 +255,11 @@ function mangleData(isFreshDownload, rekData) {
     }
 
     // Hack to hide a specific article in the web application only (and not the mobile app).
-    var index = rekData.dataDrugs.findIndex(function (item) {
+    var filterElement = rekData.dataDrugs.filter(function (item) {
         return item.title.indexOf('Rek. läkemedel är numera inkluderade i Terapiråd') > -1
-    });
+    })[0];
+
+    var index = rekData.dataDrugs.indexOf(filterElement);
     
     if (index > -1) {
         rekData.dataDrugs.splice(index, 1);        
